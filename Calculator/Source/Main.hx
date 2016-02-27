@@ -37,6 +37,19 @@ class Main extends Sprite {
 		resultDecimal=new TextField();
 		resultBinary=new TextField();
 		resultHexadecimal=new TextField();
+
+		resultDecimal.x=40;
+		resultDecimal.y=20;
+		resultDecimal.border=true;
+		resultDecimal.background=true;
+		
+		resultBinary.x=20.0;
+		resultBinary.y=100.0;
+		resultBinary.border=true;
+
+		resultHexadecimal.x=20.0;
+		resultHexadecimal.y=200.0;
+		resultHexadecimal.border=true;
 		
 		operation.x=20.0;
 		operation.y=500.0;
@@ -46,18 +59,7 @@ class Main extends Sprite {
 		operations.x=200.0;
 		operations.y=10.0;
 		operations.border=true;
-
-		resultDecimal.x=40;
-		resultDecimal.y=20;
-		resultDecimal.border=true;
-
-		resultBinary.x=20.0;
-		resultBinary.y=100.0;
-		resultBinary.border=true;
-
-		resultHexadecimal.x=20.0;
-		resultHexadecimal.y=200.0;
-		resultHexadecimal.border=true;
+		operations.multiline=true;
 	}
 	
 	private function onKeyUp(event:KeyboardEvent):Void{
@@ -65,7 +67,7 @@ class Main extends Sprite {
 		operations.text="";
 		calc.setOperation(operation.text);
 		for(i in calc.printOperations())
-		      operations.text+=i;
+		      operations.appendText(i);
 		resultDecimal.text=calc.print()+"";
 		resultBinary.text=calc.printBinary();
 		resultHexadecimal.text=calc.printHexadecimal();
