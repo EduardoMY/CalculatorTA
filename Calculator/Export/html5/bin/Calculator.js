@@ -49,7 +49,7 @@ ApplicationMain.init = function() {
 	if(total == 0) ApplicationMain.start();
 };
 ApplicationMain.main = function() {
-	ApplicationMain.config = { build : "172", company : "Company Name", file : "Calculator", fps : 60, name : "Calculator", orientation : "", packageName : "com.sample.calculator", version : "1.0.0", windows : [{ antialiasing : 0, background : 3355443, borderless : false, depthBuffer : false, display : 0, fullscreen : false, hardware : false, height : 600, parameters : "{}", resizable : true, stencilBuffer : true, title : "Calculator", vsync : false, width : 800, x : null, y : null}]};
+	ApplicationMain.config = { build : "243", company : "Company Name", file : "Calculator", fps : 60, name : "Calculator", orientation : "", packageName : "com.sample.calculator", version : "1.0.0", windows : [{ antialiasing : 0, background : 3355443, borderless : false, depthBuffer : false, display : 0, fullscreen : false, hardware : false, height : 600, parameters : "{}", resizable : true, stencilBuffer : true, title : "Calculator", vsync : false, width : 800, x : null, y : null}]};
 };
 ApplicationMain.start = function() {
 	var hasMain = false;
@@ -1378,24 +1378,39 @@ Main.prototype = $extend(openfl_display_Sprite.prototype,{
 		this.resultDecimal = new openfl_text_TextField();
 		this.resultBinary = new openfl_text_TextField();
 		this.resultHexadecimal = new openfl_text_TextField();
-		this.resultDecimal.set_x(40);
+		this.resultDecimal.set_x(20);
 		this.resultDecimal.set_y(20);
+		this.resultDecimal.set_height(30.0);
+		this.resultDecimal.set_width(200.0);
+		this.resultDecimal.set_selectable(true);
 		this.resultDecimal.set_border(true);
 		this.resultDecimal.set_background(true);
 		this.resultBinary.set_x(20.0);
 		this.resultBinary.set_y(100.0);
+		this.resultBinary.set_height(30.0);
+		this.resultBinary.set_width(200.0);
 		this.resultBinary.set_border(true);
+		this.resultBinary.set_background(true);
 		this.resultHexadecimal.set_x(20.0);
 		this.resultHexadecimal.set_y(200.0);
+		this.resultHexadecimal.set_height(30.0);
+		this.resultHexadecimal.set_width(200.0);
 		this.resultHexadecimal.set_border(true);
+		this.resultHexadecimal.set_background(true);
 		this.operation.set_x(20.0);
 		this.operation.set_y(500.0);
+		this.operation.set_height(30.0);
+		this.operation.set_width(500.0);
 		this.operation.set_border(true);
 		this.operation.set_type(1);
-		this.operations.set_x(200.0);
-		this.operations.set_y(10.0);
+		this.operation.set_background(true);
+		this.operations.set_x(500.0);
+		this.operations.set_y(20.0);
+		this.operations.set_height(400.0);
+		this.operations.set_width(200.0);
 		this.operations.set_border(true);
 		this.operations.set_multiline(true);
+		this.operations.set_background(true);
 	}
 	,onKeyUp: function(event) {
 		if(event.keyCode == 13) {
@@ -1434,28 +1449,22 @@ Calculator.__name__ = ["Calculator"];
 Calculator.prototype = {
 	setOperation: function(newOperation) {
 		this.originalOperation = newOperation;
-		this.operations = [];
-		this.result = this.evaluate(this.originalOperation);
-		this.resultBinary = this.getBinaryValue(this.result);
-		this.resultHexadecimal = this.getHexadecimalValue(this.resultBinary);
+		if(this.checkIntegrity()) {
+			this.operations = [];
+			this.result = this.evaluate(this.originalOperation);
+			this.resultBinary = this.getBinaryValue(this.result);
+			this.resultHexadecimal = this.getHexadecimalValue(this.resultBinary);
+		} else {
+			this.operations = ["Error"];
+			this.result = 0;
+			this.resultBinary = "Holis";
+			this.resultHexadecimal = "Holas";
+		}
 	}
 	,checkIntegrity: function() {
-		var alphabet_0 = "0";
-		var alphabet_1 = "1";
-		var alphabet_2 = "2";
-		var alphabet_3 = "3";
-		var alphabet_4 = "4";
-		var alphabet_5 = "5";
-		var alphabet_6 = "6";
-		var alphabet_7 = "7";
-		var alphabet_8 = "8";
-		var alphabet_9 = "9";
-		var alphabetOperations_0 = "+";
-		var alphabetOperations_1 = "-";
-		var alphabetOperations_2 = "*";
-		var alphabetOperations_3 = "/";
-		var states;
-		return true;
+		var exp = new EReg("([ ]*[-+]?[0-9]{1,12})([ ]*[+-/*][ ]*[+-]?[0-9]{1,12})*([ ]*[=]{1}[ ]*)","g");
+		exp.match(this.originalOperation);
+		return exp.matched(0) == this.originalOperation;
 	}
 	,print: function() {
 		return this.result;
@@ -1470,22 +1479,41 @@ Calculator.prototype = {
 		return this.operations;
 	}
 	,evaluate: function(expression) {
-		var tokens = expression.split("");
+		var tokensb = expression.split("");
+		var tokens = [];
+		var _g = 0;
+		while(_g < tokensb.length) {
+			var i1 = tokensb[_g];
+			++_g;
+			if(i1 != " ") tokens.push(i1);
+		}
 		var length = tokens.length;
 		var i = 0;
 		var values = [];
 		var ops = [];
+		var signs = [];
 		while(i < length) {
-			if(tokens[i] == " ") continue;
-			if(tokens[i] >= "0" && tokens[i] <= "9") {
+			if(tokens[i] == "=") break; else if(tokens[i] == " ") continue;
+			if("0123456789".indexOf(tokens[i]) != -1) {
 				var stringNumber = "";
-				while(i < length && tokens[i] >= "0" && tokens[i] <= "9") stringNumber += tokens[i++];
+				while(i < length && "0123456789".indexOf(tokens[i]) != -1) {
+					stringNumber += tokens[i];
+					i++;
+				}
 				values.push(Std.parseInt(stringNumber));
+				if(signs.length != 0) {
+					var _g1 = signs.pop();
+					if(_g1 != null) switch(_g1) {
+					case "-":
+						values.push(values.pop() * -1);
+						break;
+					}
+				}
 				i--;
 			} else if(tokens[i] == "(") ops.push(tokens[i]); else if(tokens[i] == ")") {
 				while(ops[ops.length - 1] != "(") values.push(this.applyOp(ops.pop(),values.pop(),values.pop()));
 				ops.pop();
-			} else if(tokens[i] == "+" || tokens[i] == "-" || tokens[i] == "*" || tokens[i] == "/") {
+			} else if((tokens[i] == "+" || tokens[i] == "-") && (i == 0 || "*-+/".indexOf(tokens[i - 1]) != -1)) signs.push(tokens[i]); else if(tokens[i] == "+" || tokens[i] == "-" || tokens[i] == "*" || tokens[i] == "/") {
 				while(ops.length != 0 && this.hasPrecedence(tokens[i],ops[ops.length - 1])) values.push(this.applyOp(ops.pop(),values.pop(),values.pop()));
 				ops.push(tokens[i]);
 			}
@@ -1525,12 +1553,18 @@ Calculator.prototype = {
 		return 0;
 	}
 	,getBinaryValue: function(x) {
-		var f1 = this.recursiveBinarySolution(x);
+		var f1 = "";
 		var f2 = "";
-		var _g = -f1.length + 1;
-		while(_g < 1) {
-			var i = _g++;
-			f2 += f1.charAt(-i);
+		var s2 = new StringBuf();
+		if(x <= 0) f2 = "0"; else {
+			f1 = this.recursiveBinarySolution(x);
+			var _g1 = 0;
+			var _g = f1.length - 1;
+			while(_g1 < _g) {
+				var i = _g1++;
+				s2.addChar(HxOverrides.cca(f1,f1.length - 1 - i));
+			}
+			f2 = s2.b;
 		}
 		return f2;
 	}
@@ -2028,7 +2062,10 @@ var StringBuf = function() {
 $hxClasses["StringBuf"] = StringBuf;
 StringBuf.__name__ = ["StringBuf"];
 StringBuf.prototype = {
-	__class__: StringBuf
+	addChar: function(c) {
+		this.b += String.fromCharCode(c);
+	}
+	,__class__: StringBuf
 };
 var StringTools = function() { };
 $hxClasses["StringTools"] = StringTools;

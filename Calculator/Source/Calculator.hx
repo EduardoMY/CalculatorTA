@@ -13,14 +13,25 @@ class Calculator{
     
     public function setOperation(newOperation:String){
     	   this.originalOperation=newOperation;
-	   this.operations=[];
-	   this.result=evaluate(originalOperation);
-	   this.resultBinary=getBinaryValue(this.result);
-	   this.resultHexadecimal=getHexadecimalValue(resultBinary);
+	   if(checkIntegrity()){
+		this.operations=[];
+	   	this.result=evaluate(originalOperation);
+	  	 this.resultBinary=getBinaryValue(this.result);
+	   	 this.resultHexadecimal=getHexadecimalValue(resultBinary);
+	   }
+	   else {
+	   	   this.operations=["Error"];
+	   	   this.result=0;
+	   	   this.resultBinary="Holis";
+	   	   this.resultHexadecimal="Holas";
+	   }
     }
 
     public function checkIntegrity(){
-     	   return true;	   
+    	   var exp:EReg=new EReg("([ ]*[-+]?[0-9]{1,12})([ ]*[+-/*][ ]*[+-]?[0-9]{1,12})*([ ]*[=]{1}[ ]*)", "g");
+	   //error indexOf("="); numbers to big;
+	   exp.match(this.originalOperation);
+	   return exp.matched(0)==this.originalOperation;
     }
 
     public function print(){
@@ -41,32 +52,47 @@ class Calculator{
 
     public function evaluate(expression:String)
     {
-        var tokens:Array<String> = expression.split("");
+    	var tokensb:Array<String>=expression.split("");
+	var tokens:Array<String>=new Array<String>();
+	for(i in tokensb)
+	      if(i!=" ")
+	      tokens.push(i);
+	      
 	var length:Int = tokens.length;
  	var i:Int =0;
         // Stack for numbers: 'values'
-        var values = new Array<Int>();
- 
+        var values:Array<Int> = new Array<Int>();
         // Stack for Operators: 'ops'
-        var ops = new Array<String>();
- 
+        var ops:Array<String> = new Array<String>();
+ 	//Stacks the Sign of the next value
+	var signs:Array<String>=new Array<String>();
         while (i <length)
         {
              // Current token is a whitespace, skip it
-            if (tokens[i] == " ")
+	     if(tokens[i]=="=")
+		break;
+	     else if (tokens[i]==" ")
                 continue;
- 
-            // Current token is a number, push it to stack for numbers
-            if (tokens[i] >= "0" && tokens[i] <= "9")
+
+	// Current token is a number, push it to stack for numbers
+            if ("0123456789".indexOf(tokens[i])!=-1)
             {
                 var stringNumber = "";
                 // There may be more than one digits in number
-                while (i < length && tokens[i] >= "0" && tokens[i] <= "9")
-                    stringNumber+=tokens[i++];
+                while (i < length && "0123456789".indexOf(tokens[i])!=-1) {
+		      stringNumber+=tokens[i];
+		      i++;
+		    }
                 values.push(Std.parseInt(stringNumber));
-		i--;	
+		if(signs.length!=0){
+			switch(signs.pop()){
+			case "-":
+			     values.push(values.pop()*-1);
+			}
+		}
+		i--;
             }
- 
+			    
             // Current token is an opening brace, push it to 'ops'
             else if (tokens[i] == "(")
                 ops.push(tokens[i]);
@@ -78,7 +104,11 @@ class Calculator{
                   values.push(applyOp(ops.pop(), values.pop(), values.pop()));
                 ops.pop();
             }
- 
+	    // Current token is a sign
+	    else if((tokens[i]=="+" || tokens[i]=="-") &&
+	    	 (i==0 || "*-+/".indexOf(tokens[i-1])!=-1 )){
+		       signs.push(tokens[i]);
+		       }
             // Current token is an operator.
             else if (tokens[i] == "+" || tokens[i] == "-" ||
                      tokens[i] == "*" || tokens[i] == "/")
@@ -148,10 +178,18 @@ class Calculator{
     }
 
     public function getBinaryValue(x:Int){
-        var f1:String=recursiveBinarySolution(x);
+        var f1:String="";
         var f2:String="";
-        for(i in -f1.length+1...1) 
-    		f2+=f1.charAt(-i); 
+	var s2:StringBuf=new StringBuf();
+	if(x<=0)
+		f2="0";
+	else {
+	f1=recursiveBinarySolution(x);
+	for (i in 0...f1.length-1) 
+	     s2.addChar(f1.charCodeAt(f1.length-1-i));
+	f2=s2.toString();
+
+	}
 		return f2;        
     }
     

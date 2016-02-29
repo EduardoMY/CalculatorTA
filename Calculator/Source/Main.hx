@@ -15,6 +15,14 @@ class Main extends Sprite {
 	var resultDecimal:TextField;
 	var resultBinary:TextField;
 	var resultHexadecimal:TextField;
+
+	//Simple text
+	var operationTitle:TextField;
+	var operationsTitle:TextField;
+	var resultDecimalTitle:TextField;
+	var resultBinaryTitle:TextField;
+	var resultHexadecimalTitle:TextField;
+	
 	var calc:Calculator;
 
 	public function new () {
@@ -38,28 +46,45 @@ class Main extends Sprite {
 		resultBinary=new TextField();
 		resultHexadecimal=new TextField();
 
-		resultDecimal.x=40;
+		resultDecimal.x=20;
 		resultDecimal.y=20;
+		resultDecimal.height=30.0;
+		resultDecimal.width=200.0;
+//		resultDecimal.autoSize=TextFieldAutoSize.LEFT;
+		resultDecimal.selectable=true;
 		resultDecimal.border=true;
 		resultDecimal.background=true;
 		
+		
 		resultBinary.x=20.0;
 		resultBinary.y=100.0;
+		resultBinary.height=30.0;
+		resultBinary.width=200.0;
 		resultBinary.border=true;
+		resultBinary.background=true;
 
 		resultHexadecimal.x=20.0;
 		resultHexadecimal.y=200.0;
+		resultHexadecimal.height=30.0;
+		resultHexadecimal.width=200.0;
 		resultHexadecimal.border=true;
+		resultHexadecimal.background=true;
 		
 		operation.x=20.0;
 		operation.y=500.0;
+		operation.height=30.0;
+		operation.width=500.0;
 		operation.border=true;
 		operation.type=TextFieldType.INPUT;
+		operation.background=true;
 
-		operations.x=200.0;
-		operations.y=10.0;
+		operations.x=500.0;
+		operations.y=20.0;
+		operations.height=400.0;
+		operations.width=200.0;
 		operations.border=true;
 		operations.multiline=true;
+		operations.background=true;
 	}
 	
 	private function onKeyUp(event:KeyboardEvent):Void{
