@@ -45,7 +45,7 @@ ApplicationMain.init = function() {
 	if(total == 0) ApplicationMain.start();
 };
 ApplicationMain.main = function() {
-	ApplicationMain.config = { build : "411", company : "Company Name", file : "Calculator", fps : 60, name : "Calculator", orientation : "", packageName : "com.sample.calculator", version : "1.0.0", windows : [{ antialiasing : 0, background : 3355443, borderless : false, depthBuffer : false, display : 0, fullscreen : false, hardware : false, height : 600, parameters : "{}", resizable : true, stencilBuffer : true, title : "Calculator", vsync : false, width : 800, x : null, y : null}]};
+	ApplicationMain.config = { build : "428", company : "Company Name", file : "Calculator", fps : 60, name : "Calculator", orientation : "", packageName : "com.sample.calculator", version : "1.0.0", windows : [{ antialiasing : 0, background : 3355443, borderless : false, depthBuffer : false, display : 0, fullscreen : false, hardware : false, height : 600, parameters : "{}", resizable : true, stencilBuffer : true, title : "Calculator", vsync : false, width : 800, x : null, y : null}]};
 };
 ApplicationMain.start = function() {
 	var hasMain = false;
@@ -1358,10 +1358,15 @@ var Main = function() {
 	this.stage.addEventListener("keyUp",$bind(this,this.onKeyUp));
 	this.init();
 	this.addChild(this.operation);
+	this.addChild(this.operationTitle);
 	this.addChild(this.operations);
+	this.addChild(this.operationsTitle);
 	this.addChild(this.resultDecimal);
+	this.addChild(this.resultDecimalTitle);
 	this.addChild(this.resultBinary);
+	this.addChild(this.resultBinaryTitle);
 	this.addChild(this.resultHexadecimal);
+	this.addChild(this.resultHexadecimalTitle);
 };
 $hxClasses["Main"] = Main;
 Main.__name__ = ["Main"];
@@ -1374,25 +1379,43 @@ Main.prototype = $extend(openfl_display_Sprite.prototype,{
 		this.resultDecimal = new openfl_text_TextField();
 		this.resultBinary = new openfl_text_TextField();
 		this.resultHexadecimal = new openfl_text_TextField();
-		this.resultDecimal.set_x(20);
-		this.resultDecimal.set_y(20);
+		this.title = new openfl_text_TextField();
+		this.operationTitle = new openfl_text_TextField();
+		this.operationsTitle = new openfl_text_TextField();
+		this.resultDecimalTitle = new openfl_text_TextField();
+		this.resultBinaryTitle = new openfl_text_TextField();
+		this.resultHexadecimalTitle = new openfl_text_TextField();
+		this.resultDecimalTitle.set_x(20.0);
+		this.resultDecimalTitle.set_y(10.0);
+		this.resultDecimalTitle.set_text("Result: ");
+		this.resultDecimal.set_x(20.0);
+		this.resultDecimal.set_y(20.0);
 		this.resultDecimal.set_height(30.0);
 		this.resultDecimal.set_width(200.0);
 		this.resultDecimal.set_selectable(true);
 		this.resultDecimal.set_border(true);
 		this.resultDecimal.set_background(true);
+		this.resultBinaryTitle.set_x(20.0);
+		this.resultBinaryTitle.set_y(80.0);
+		this.resultBinaryTitle.set_text("Binary: ");
 		this.resultBinary.set_x(20.0);
 		this.resultBinary.set_y(100.0);
 		this.resultBinary.set_height(30.0);
 		this.resultBinary.set_width(300.0);
 		this.resultBinary.set_border(true);
 		this.resultBinary.set_background(true);
+		this.resultHexadecimalTitle.set_x(20.0);
+		this.resultHexadecimalTitle.set_y(180.0);
+		this.resultHexadecimalTitle.set_text("Hexadecimal: ");
 		this.resultHexadecimal.set_x(20.0);
 		this.resultHexadecimal.set_y(200.0);
 		this.resultHexadecimal.set_height(30.0);
 		this.resultHexadecimal.set_width(200.0);
 		this.resultHexadecimal.set_border(true);
 		this.resultHexadecimal.set_background(true);
+		this.operationTitle.set_x(20.0);
+		this.operationTitle.set_y(480.0);
+		this.operationTitle.set_text("Operation: <Insert the operation here>");
 		this.operation.set_x(20.0);
 		this.operation.set_y(500.0);
 		this.operation.set_height(30.0);
@@ -1400,10 +1423,13 @@ Main.prototype = $extend(openfl_display_Sprite.prototype,{
 		this.operation.set_border(true);
 		this.operation.set_type(1);
 		this.operation.set_background(true);
-		this.operations.set_x(500.0);
+		this.operationsTitle.set_x(450.0);
+		this.operationsTitle.set_y(10.0);
+		this.operationsTitle.set_text("Operations or errors: ");
+		this.operations.set_x(450.0);
 		this.operations.set_y(20.0);
-		this.operations.set_height(400.0);
-		this.operations.set_width(200.0);
+		this.operations.set_height(300.0);
+		this.operations.set_width(300.0);
 		this.operations.set_border(true);
 		this.operations.set_multiline(true);
 		this.operations.set_background(true);
@@ -1417,7 +1443,7 @@ Main.prototype = $extend(openfl_display_Sprite.prototype,{
 			while(_g < _g1.length) {
 				var i = _g1[_g];
 				++_g;
-				this.operations.appendText(i);
+				this.operations.appendText(i + "\n");
 			}
 			this.resultDecimal.set_text(haxe__$Int64_Int64_$Impl_$.toString(this.calc.print()) + "");
 			this.resultBinary.set_text(this.calc.printBinary());
@@ -1453,8 +1479,14 @@ Calculator.prototype = {
 		case "0":
 			this.operations = [];
 			this.result = this.evaluate(realTokens);
-			this.resultBinary = this.getBinaryValue(this.result);
-			this.resultHexadecimal = this.getHexadecimalValue(this.resultBinary);
+			if(!this.quitExecution) {
+				this.resultBinary = this.getBinaryValue(this.result);
+				this.resultHexadecimal = this.getHexadecimalValue(this.resultBinary);
+			} else {
+				this.resultBinary = "";
+				this.resultHexadecimal = "";
+				this.quitExecution = false;
+			}
 			break;
 		case "1":
 			this.operations = ["Token invalid (" + realTokens.pop() + ")"];
@@ -1529,40 +1561,42 @@ Calculator.prototype = {
 		var expressionStillValid = true;
 		var status = 6;
 		if(tokens.length == 0) {
-			haxe_Log.trace("emptyyyyyy",{ fileName : "Calculator.hx", lineNumber : 77, className : "Calculator", methodName : "checkIntegrity"});
+			haxe_Log.trace("emptyyyyyy",{ fileName : "Calculator.hx", lineNumber : 84, className : "Calculator", methodName : "checkIntegrity"});
 			status = 7;
 			expressionStillValid = false;
 		}
 		while(i < tokens.length && expressionStillValid) {
-			haxe_Log.trace(tokens[i],{ fileName : "Calculator.hx", lineNumber : 82, className : "Calculator", methodName : "checkIntegrity"});
+			haxe_Log.trace(tokens[i],{ fileName : "Calculator.hx", lineNumber : 89, className : "Calculator", methodName : "checkIntegrity"});
 			if(tokens[i] == " ") {
 				i++;
 				continue;
 			}
 			if(HxOverrides.indexOf(operators,tokens[i],0) != -1) {
 				if(previousSymbol == 0 && (tokens[i] == "+" || tokens[i] == "-")) {
-					haxe_Log.trace("sign star",{ fileName : "Calculator.hx", lineNumber : 89, className : "Calculator", methodName : "checkIntegrity"});
+					haxe_Log.trace("sign star",{ fileName : "Calculator.hx", lineNumber : 96, className : "Calculator", methodName : "checkIntegrity"});
 					values.push(tokens[i]);
 					previousSymbol = 2;
 				} else if(previousSymbol == 0) {
 					status = 5;
 					expressionStillValid = false;
 				} else if(previousSymbol == 1 && (tokens[i] == "+" || tokens[i] == "-")) {
-					haxe_Log.trace("weird sign",{ fileName : "Calculator.hx", lineNumber : 99, className : "Calculator", methodName : "checkIntegrity"});
+					haxe_Log.trace("weird sign",{ fileName : "Calculator.hx", lineNumber : 106, className : "Calculator", methodName : "checkIntegrity"});
 					values.push(tokens[i]);
 					previousSymbol = 2;
 				} else if(previousSymbol == 1) {
 					status = 3;
+					values.push(tokens[i]);
 					expressionStillValid = false;
 				} else if(previousSymbol == 2) {
 					status = 3;
+					values.push(tokens[i]);
 					expressionStillValid = false;
 				} else if(previousSymbol == 3) {
 					values.push(tokens[i]);
 					previousSymbol = 1;
 				}
 			} else if(tokens[i] >= "0" && tokens[i] <= "9") {
-				haxe_Log.trace(tokens[i] + "Number",{ fileName : "Calculator.hx", lineNumber : 118, className : "Calculator", methodName : "checkIntegrity"});
+				haxe_Log.trace(tokens[i] + "Number",{ fileName : "Calculator.hx", lineNumber : 127, className : "Calculator", methodName : "checkIntegrity"});
 				var posNumber = "";
 				var realNumber;
 				var numberDiff;
@@ -1573,13 +1607,13 @@ Calculator.prototype = {
 					numberDiff = false;
 					while(i < tokens.length && tokens[i] >= "0" && tokens[i] <= "9") {
 						if(numberDiff || tokens[i] != "0") {
-							haxe_Log.trace("hola" + tokens[i],{ fileName : "Calculator.hx", lineNumber : 130, className : "Calculator", methodName : "checkIntegrity"});
+							haxe_Log.trace("hola" + tokens[i],{ fileName : "Calculator.hx", lineNumber : 139, className : "Calculator", methodName : "checkIntegrity"});
 							posNumber += tokens[i];
 							numberDiff = true;
 						}
 						i++;
 					}
-					haxe_Log.trace(posNumber + "COmpleteNumber",{ fileName : "Calculator.hx", lineNumber : 136, className : "Calculator", methodName : "checkIntegrity"});
+					haxe_Log.trace(posNumber + "COmpleteNumber",{ fileName : "Calculator.hx", lineNumber : 145, className : "Calculator", methodName : "checkIntegrity"});
 					if(posNumber.length == 0) realNumber = "0"; else realNumber = posNumber;
 					if(realNumber.length <= 12) {
 						if(previousSymbol == 2 && values.pop() == "-" && realNumber != "0") values.push("-" + realNumber); else values.push(realNumber);
@@ -1606,7 +1640,7 @@ Calculator.prototype = {
 		while(_g < values.length) {
 			var c = values[_g];
 			++_g;
-			haxe_Log.trace(c + "Checar todos los digitos",{ fileName : "Calculator.hx", lineNumber : 172, className : "Calculator", methodName : "checkIntegrity"});
+			haxe_Log.trace(c + "Checar todos los digitos",{ fileName : "Calculator.hx", lineNumber : 179, className : "Calculator", methodName : "checkIntegrity"});
 		}
 		return values;
 	}
@@ -1627,7 +1661,8 @@ Calculator.prototype = {
 		var i = 0;
 		var values = [];
 		var ops = [];
-		while(i < length) {
+		this.quitExecution = false;
+		while(i < length && !this.quitExecution) {
 			if(tokens[i].length > 1 || tokens[i] >= "0" && tokens[i] <= "9") values.push(thx_Int64s.parse(tokens[i])); else if(tokens[i] == "(") ops.push(tokens[i]); else if(tokens[i] == ")") {
 				while(ops[ops.length - 1] != "(") values.push(this.applyOp(ops.pop(),values.pop(),values.pop()));
 				ops.pop();
@@ -1637,7 +1672,11 @@ Calculator.prototype = {
 			}
 			i++;
 		}
-		while(ops.length != 0) values.push(this.applyOp(ops.pop(),values.pop(),values.pop()));
+		while(ops.length != 0 && !this.quitExecution) values.push(this.applyOp(ops.pop(),values.pop(),values.pop()));
+		if(this.operations.length == 0) {
+			var a = values[0];
+			this.operations.push("" + haxe__$Int64_Int64_$Impl_$.toString(a) + " = " + haxe__$Int64_Int64_$Impl_$.toString(a));
+		}
 		return values.pop();
 	}
 	,hasPrecedence: function(op1,op2) {
@@ -1650,6 +1689,8 @@ Calculator.prototype = {
 			var x = new haxe__$Int64__$_$_$Int64(0,0);
 			res = x;
 		}
+		var dLimit = thx_Int64s.parse("-999999999999");
+		var uLimit = thx_Int64s.parse("999999999999");
 		switch(op) {
 		case "+":
 			var high = a.high + b.high | 0;
@@ -1661,8 +1702,30 @@ Calculator.prototype = {
 			}
 			var x1 = new haxe__$Int64__$_$_$Int64(high,low);
 			res = x1;
-			this.operations.push("" + haxe__$Int64_Int64_$Impl_$.toString(a) + " + " + haxe__$Int64_Int64_$Impl_$.toString(b) + " = " + haxe__$Int64_Int64_$Impl_$.toString(res));
-			return res;
+			if((function($this) {
+				var $r;
+				var v = res.high - uLimit.high | 0;
+				if(v != 0) v = v; else v = haxe__$Int32_Int32_$Impl_$.ucompare(res.low,uLimit.low);
+				$r = res.high < 0?uLimit.high < 0?v:-1:uLimit.high >= 0?v:1;
+				return $r;
+			}(this)) <= 0 && (function($this) {
+				var $r;
+				var v1 = res.high - dLimit.high | 0;
+				if(v1 != 0) v1 = v1; else v1 = haxe__$Int32_Int32_$Impl_$.ucompare(res.low,dLimit.low);
+				$r = res.high < 0?dLimit.high < 0?v1:-1:dLimit.high >= 0?v1:1;
+				return $r;
+			}(this)) >= 0) {
+				this.operations.push("" + haxe__$Int64_Int64_$Impl_$.toString(a) + " + " + haxe__$Int64_Int64_$Impl_$.toString(b) + " = " + haxe__$Int64_Int64_$Impl_$.toString(res));
+				return res;
+			} else {
+				this.operations.push("" + haxe__$Int64_Int64_$Impl_$.toString(a) + " + " + haxe__$Int64_Int64_$Impl_$.toString(b) + " = Overflow!!");
+				this.quitExecution = true;
+				{
+					var x2 = new haxe__$Int64__$_$_$Int64(0,0);
+					return x2;
+				}
+			}
+			break;
 		case "-":
 			var high1 = a.high - b.high | 0;
 			var low1 = a.low - b.low | 0;
@@ -1671,83 +1734,115 @@ Calculator.prototype = {
 				high1 = high1 | 0;
 				ret1;
 			}
-			var x2 = new haxe__$Int64__$_$_$Int64(high1,low1);
-			res = x2;
-			this.operations.push("" + haxe__$Int64_Int64_$Impl_$.toString(a) + " - " + haxe__$Int64_Int64_$Impl_$.toString(b) + " = " + haxe__$Int64_Int64_$Impl_$.toString(res));
-			return res;
-		case "*":
-			var mask = 65535;
-			var al = a.low & mask;
-			var ah = a.low >>> 16;
-			var bl = b.low & mask;
-			var bh = b.low >>> 16;
-			var p00 = haxe__$Int32_Int32_$Impl_$.mul(al,bl);
-			var p10 = haxe__$Int32_Int32_$Impl_$.mul(ah,bl);
-			var p01 = haxe__$Int32_Int32_$Impl_$.mul(al,bh);
-			var p11 = haxe__$Int32_Int32_$Impl_$.mul(ah,bh);
-			var low2 = p00;
-			var high2 = (p11 + (p01 >>> 16) | 0) + (p10 >>> 16) | 0;
-			p01 = p01 << 16;
-			low2 = low2 + p01 | 0;
-			if(haxe__$Int32_Int32_$Impl_$.ucompare(low2,p01) < 0) {
-				var ret2 = high2++;
-				high2 = high2 | 0;
-				ret2;
-			}
-			p10 = p10 << 16;
-			low2 = low2 + p10 | 0;
-			if(haxe__$Int32_Int32_$Impl_$.ucompare(low2,p10) < 0) {
-				var ret3 = high2++;
-				high2 = high2 | 0;
-				ret3;
-			}
-			var b1;
-			var a1 = haxe__$Int32_Int32_$Impl_$.mul(a.low,b.high);
-			var b2 = haxe__$Int32_Int32_$Impl_$.mul(a.high,b.low);
-			b1 = a1 + b2 | 0;
-			high2 = high2 + b1 | 0;
-			var x3 = new haxe__$Int64__$_$_$Int64(high2,low2);
+			var x3 = new haxe__$Int64__$_$_$Int64(high1,low1);
 			res = x3;
-			this.operations.push("" + haxe__$Int64_Int64_$Impl_$.toString(a) + " * " + haxe__$Int64_Int64_$Impl_$.toString(b) + " = " + haxe__$Int64_Int64_$Impl_$.toString(res));
-			var mask1 = 65535;
-			var al1 = a.low & mask1;
-			var ah1 = a.low >>> 16;
-			var bl1 = b.low & mask1;
-			var bh1 = b.low >>> 16;
-			var p001 = haxe__$Int32_Int32_$Impl_$.mul(al1,bl1);
-			var p101 = haxe__$Int32_Int32_$Impl_$.mul(ah1,bl1);
-			var p011 = haxe__$Int32_Int32_$Impl_$.mul(al1,bh1);
-			var p111 = haxe__$Int32_Int32_$Impl_$.mul(ah1,bh1);
-			var low3 = p001;
-			var high3 = (p111 + (p011 >>> 16) | 0) + (p101 >>> 16) | 0;
-			p011 = p011 << 16;
-			low3 = low3 + p011 | 0;
-			if(haxe__$Int32_Int32_$Impl_$.ucompare(low3,p011) < 0) {
-				var ret4 = high3++;
-				high3 = high3 | 0;
-				ret4;
+			if((function($this) {
+				var $r;
+				var v2 = res.high - uLimit.high | 0;
+				if(v2 != 0) v2 = v2; else v2 = haxe__$Int32_Int32_$Impl_$.ucompare(res.low,uLimit.low);
+				$r = res.high < 0?uLimit.high < 0?v2:-1:uLimit.high >= 0?v2:1;
+				return $r;
+			}(this)) <= 0 && (function($this) {
+				var $r;
+				var v3 = res.high - dLimit.high | 0;
+				if(v3 != 0) v3 = v3; else v3 = haxe__$Int32_Int32_$Impl_$.ucompare(res.low,dLimit.low);
+				$r = res.high < 0?dLimit.high < 0?v3:-1:dLimit.high >= 0?v3:1;
+				return $r;
+			}(this)) >= 0) {
+				this.operations.push("" + haxe__$Int64_Int64_$Impl_$.toString(a) + " - " + haxe__$Int64_Int64_$Impl_$.toString(b) + " = " + haxe__$Int64_Int64_$Impl_$.toString(res));
+				return res;
+			} else {
+				this.operations.push("" + haxe__$Int64_Int64_$Impl_$.toString(a) + " - " + haxe__$Int64_Int64_$Impl_$.toString(b) + " = Overflow");
+				this.quitExecution = true;
+				{
+					var x4 = new haxe__$Int64__$_$_$Int64(0,0);
+					return x4;
+				}
 			}
-			p101 = p101 << 16;
-			low3 = low3 + p101 | 0;
-			if(haxe__$Int32_Int32_$Impl_$.ucompare(low3,p101) < 0) {
-				var ret5 = high3++;
-				high3 = high3 | 0;
-				ret5;
+			break;
+		case "*":
+			if(this.checksMultiplicability(a,b)) {
+				var mask = 65535;
+				var al = a.low & mask;
+				var ah = a.low >>> 16;
+				var bl = b.low & mask;
+				var bh = b.low >>> 16;
+				var p00 = haxe__$Int32_Int32_$Impl_$.mul(al,bl);
+				var p10 = haxe__$Int32_Int32_$Impl_$.mul(ah,bl);
+				var p01 = haxe__$Int32_Int32_$Impl_$.mul(al,bh);
+				var p11 = haxe__$Int32_Int32_$Impl_$.mul(ah,bh);
+				var low2 = p00;
+				var high2 = (p11 + (p01 >>> 16) | 0) + (p10 >>> 16) | 0;
+				p01 = p01 << 16;
+				low2 = low2 + p01 | 0;
+				if(haxe__$Int32_Int32_$Impl_$.ucompare(low2,p01) < 0) {
+					var ret2 = high2++;
+					high2 = high2 | 0;
+					ret2;
+				}
+				p10 = p10 << 16;
+				low2 = low2 + p10 | 0;
+				if(haxe__$Int32_Int32_$Impl_$.ucompare(low2,p10) < 0) {
+					var ret3 = high2++;
+					high2 = high2 | 0;
+					ret3;
+				}
+				var b1;
+				var a1 = haxe__$Int32_Int32_$Impl_$.mul(a.low,b.high);
+				var b2 = haxe__$Int32_Int32_$Impl_$.mul(a.high,b.low);
+				b1 = a1 + b2 | 0;
+				high2 = high2 + b1 | 0;
+				var x5 = new haxe__$Int64__$_$_$Int64(high2,low2);
+				res = x5;
+				this.operations.push("" + haxe__$Int64_Int64_$Impl_$.toString(a) + " * " + haxe__$Int64_Int64_$Impl_$.toString(b) + " = " + haxe__$Int64_Int64_$Impl_$.toString(res));
+				var mask1 = 65535;
+				var al1 = a.low & mask1;
+				var ah1 = a.low >>> 16;
+				var bl1 = b.low & mask1;
+				var bh1 = b.low >>> 16;
+				var p001 = haxe__$Int32_Int32_$Impl_$.mul(al1,bl1);
+				var p101 = haxe__$Int32_Int32_$Impl_$.mul(ah1,bl1);
+				var p011 = haxe__$Int32_Int32_$Impl_$.mul(al1,bh1);
+				var p111 = haxe__$Int32_Int32_$Impl_$.mul(ah1,bh1);
+				var low3 = p001;
+				var high3 = (p111 + (p011 >>> 16) | 0) + (p101 >>> 16) | 0;
+				p011 = p011 << 16;
+				low3 = low3 + p011 | 0;
+				if(haxe__$Int32_Int32_$Impl_$.ucompare(low3,p011) < 0) {
+					var ret4 = high3++;
+					high3 = high3 | 0;
+					ret4;
+				}
+				p101 = p101 << 16;
+				low3 = low3 + p101 | 0;
+				if(haxe__$Int32_Int32_$Impl_$.ucompare(low3,p101) < 0) {
+					var ret5 = high3++;
+					high3 = high3 | 0;
+					ret5;
+				}
+				var b3;
+				var a2 = haxe__$Int32_Int32_$Impl_$.mul(a.low,b.high);
+				var b4 = haxe__$Int32_Int32_$Impl_$.mul(a.high,b.low);
+				b3 = a2 + b4 | 0;
+				high3 = high3 + b3 | 0;
+				var x6 = new haxe__$Int64__$_$_$Int64(high3,low3);
+				return x6;
+			} else {
+				this.operations.push("" + haxe__$Int64_Int64_$Impl_$.toString(a) + " * " + haxe__$Int64_Int64_$Impl_$.toString(b) + " = Overflow");
+				this.quitExecution = true;
+				{
+					var x7 = new haxe__$Int64__$_$_$Int64(0,0);
+					return x7;
+				}
 			}
-			var b3;
-			var a2 = haxe__$Int32_Int32_$Impl_$.mul(a.low,b.high);
-			var b4 = haxe__$Int32_Int32_$Impl_$.mul(a.high,b.low);
-			b3 = a2 + b4 | 0;
-			high3 = high3 + b3 | 0;
-			var x4 = new haxe__$Int64__$_$_$Int64(high3,low3);
-			return x4;
+			break;
 		case "/":
 			if((function($this) {
 				var $r;
 				var b5;
 				{
-					var x5 = new haxe__$Int64__$_$_$Int64(0,0);
-					b5 = x5;
+					var x8 = new haxe__$Int64__$_$_$Int64(0,0);
+					b5 = x8;
 				}
 				$r = b.high != b5.high || b.low != b5.low;
 				return $r;
@@ -1756,17 +1851,25 @@ Calculator.prototype = {
 				this.operations.push("" + haxe__$Int64_Int64_$Impl_$.toString(a) + " / " + haxe__$Int64_Int64_$Impl_$.toString(b) + " = " + haxe__$Int64_Int64_$Impl_$.toString(res));
 				return res;
 			}
-			this.operations.push("" + haxe__$Int64_Int64_$Impl_$.toString(a) + " / " + haxe__$Int64_Int64_$Impl_$.toString(b) + " = Error");
+			this.operations.push("" + haxe__$Int64_Int64_$Impl_$.toString(a) + " / " + haxe__$Int64_Int64_$Impl_$.toString(b) + " = Arith. Error");
+			this.quitExecution = true;
 			{
-				var x6 = new haxe__$Int64__$_$_$Int64(0,0);
-				return x6;
+				var x9 = new haxe__$Int64__$_$_$Int64(0,0);
+				return x9;
 			}
 			break;
 		}
 		{
-			var x7 = new haxe__$Int64__$_$_$Int64(0,0);
-			return x7;
+			var x10 = new haxe__$Int64__$_$_$Int64(0,0);
+			return x10;
 		}
+	}
+	,checksMultiplicability: function(a,b) {
+		var aLength;
+		var bLength;
+		if(a.high < 0) aLength = haxe__$Int64_Int64_$Impl_$.toString(a).length - 1; else aLength = haxe__$Int64_Int64_$Impl_$.toString(a).length;
+		if(b.high < 0) bLength = haxe__$Int64_Int64_$Impl_$.toString(b).length - 1; else bLength = haxe__$Int64_Int64_$Impl_$.toString(a).length;
+		return aLength + bLength <= 14;
 	}
 	,getBinaryValue: function(x) {
 		var f1 = "";

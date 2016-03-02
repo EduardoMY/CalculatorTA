@@ -11,7 +11,7 @@ class Calculator{
     var resultHexadecimal:String;
     var operations:Array<String>;
     var maxBits:Int=41;
-    
+    var quitExecution:Bool;
     public function new(){
     	   originalOperation="0";
     }
@@ -24,8 +24,15 @@ class Calculator{
 		case "0": //No error at all
 		     this.operations=[];
 	   	     this.result=evaluate(realTokens);
-	  	     this.resultBinary=getBinaryValue(this.result);
+		     if(!quitExecution){
+		     this.resultBinary=getBinaryValue(this.result);
 	   	     this.resultHexadecimal=getHexadecimalValue(this.resultBinary);
+		     }
+		     else{
+	  	     this.resultBinary="";
+	   	     this.resultHexadecimal="";
+		     quitExecution=false;
+		     }
 		case "1": //Error Invalid Token
 		     this.operations=["Token invalid ("+realTokens.pop()+")"];
 		     this.result=0;
@@ -194,12 +201,17 @@ class Calculator{
     
 	var length:Int = tokens.length;
  	var i:Int =0;
-        // Stack for numbers: 'values'
+
+	// Stack for numbers: 'values'
         var values:Array<Int64> = new Array<Int64>();
-        // Stack for Operators: 'ops'
+
+	// Stack for Operators: 'ops'
         var ops:Array<String> = new Array<String>();
-	
-        while (i <length)
+
+	//Checks if the operation has to quit
+	this.quitExecution=false;
+
+	while (i <length && !this.quitExecution)
         {
 	// Current token is a number, push it to stack for numbers
             if (tokens[i].length>1 || (tokens[i]>="0" && tokens[i]<="9"))
@@ -233,14 +245,19 @@ class Calculator{
             }
 	    i++;
         }
- 
+ 	
         // Entire expression has been parsed at this point, apply remaining
         // ops to remaining values
-        while (ops.length!=0)
+        while (ops.length!=0 && !quitExecution)
             values.push(applyOp(ops.pop(), values.pop(), values.pop()));
- 
+
+	 //checks if there is no operation to make
+	 if(this.operations.length==0){
+		var a:Int64=values[0];
+		operations.push('$a = $a');
+	}
         // Top of 'values' contains result, return it
-        return values.pop();
+	return values.pop();
     }
  
     // Returns true if 'op2' has higher or same precedence as 'op1',
@@ -260,30 +277,65 @@ class Calculator{
     public function applyOp(op:String, b:Int64, a:Int64)
     {
         var res:Int64=0;
+	var dLimit:Int64=Int64s.parse("-999999999999");
+	var uLimit:Int64=Int64s.parse("999999999999");
         switch (op)
         {
         case "+":
 	    res=Int64.add(a, b);
-	    operations.push('$a + $b = $res');
-            return res;
+	    if(res<=uLimit && res>=dLimit){
+	    		  operations.push('$a + $b = $res');
+            		  return res;
+	    }
+	    else {
+	    	 operations.push('$a + $b = Overflow!!');
+		 quitExecution=true;
+		 return 0;
+	    }
         case "-":
 	     res=Int64.sub(a,b);
-	     operations.push('$a - $b = $res');
-            return res;
+	     if(res<=uLimit && res>=dLimit){
+	     	     operations.push('$a - $b = $res');
+            	     return res;
+	     }
+	     else{
+	     	     operations.push('$a - $b = Overflow');
+		     quitExecution=true;
+            	     return 0;
+	     }
         case "*":
-	     res=Int64.mul(a,b);
-	     operations.push('$a * $b = $res');
-            return a * b;
+	     if(checksMultiplicability(a,b)){
+	     	     res=Int64.mul(a,b);
+	     	     operations.push('$a * $b = $res');
+            	     return a * b;
+	     }
+	     else{
+		operations.push('$a * $b = Overflow');
+		quitExecution=true;
+                 return 0;
+	     }	     
         case "/":
             if (b != 0){
 	       res=Int64.div(a ,b);
 	       operations.push('$a / $b = $res');
 	       return res;
 	    }
-		operations.push('$a / $b = Error');
+		operations.push('$a / $b = Arith. Error');
+		quitExecution=true;
 	       return 0;
         }
         return 0;
+    }
+    public function checksMultiplicability(a:Int64, b:Int64){
+    	   var aLength:Int;
+	   var bLength:Int;
+	   if(Int64.isNeg(a))
+		aLength=Int64.toStr(a).length-1;
+		else aLength=Int64.toStr(a).length;
+	if(Int64.isNeg(b))
+		bLength=Int64.toStr(b).length-1;
+		else bLength=Int64.toStr(a).length;
+	return aLength+bLength<=14;
     }
 
     public function getBinaryValue(x:Int64){
