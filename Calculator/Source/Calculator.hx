@@ -37,12 +37,12 @@ class Calculator{
 		     this.resultBinary="";
 		     this.resultHexadecimal="";
 		case "3": //Error Bad combination of signs
-		     this.operations=["Bad combination of signs"];
+		     this.operations=["Bad combination of signs("+realTokens[realTokens.length-2]+realTokens[realTokens.length-1]+")"];
 		     this.result=0;
 		     this.resultBinary="";
 		     this.resultHexadecimal="";
 		case "4": //Number too big
-		     this.operations=["Overflow"];
+		     this.operations=["Overflow "+realTokens.pop()];
 		     this.result=0;
 		     this.resultBinary="";
 		     this.resultHexadecimal="";
@@ -102,10 +102,12 @@ class Calculator{
 		     }
 		     else if(previousSymbol==1 ){
 		     	  status=3;
+			  values.push(tokens[i]);
 			  expressionStillValid=false;
 		     }
 		     else if(previousSymbol==2){
 		     	  status=3;
+			  values.push(tokens[i]);
 			  expressionStillValid=false;
 		     }
 		     else if(previousSymbol==3){
@@ -117,7 +119,7 @@ class Calculator{
 		else if(tokens[i]>="0" && tokens[i]<="9"){
 		     trace(tokens[i]+"Number");
 		     var posNumber:String="";
-		     var realNumber:Int64=0;
+		     var realNumber:String;
 		     var numberDiff:Bool;
 		     if(previousSymbol==3){
 			status=2;
@@ -134,22 +136,20 @@ class Calculator{
 			i++;
 		     }
 		     trace(posNumber+"COmpleteNumber");
-			trace("RR"+realNumber);
-		     if(posNumber.length<=12){
-		     	trace(Int64.make(999999,-999999));
-			if(previousSymbol==2){
-				trace("entro a realnumber");
-				realNumber=simplifyNumber(posNumber, values.pop());
-			}
-			else
-				realNumber=simplifyNumber(posNumber, "");
-		     	values.push(realNumber+"");
+			if(posNumber.length==0)
+				realNumber="0";
+			else realNumber=posNumber;
+		     if(realNumber.length<=12){
+			if(previousSymbol==2 && values.pop()=="-" && realNumber!="0")
+				values.push ("-"+realNumber);
+		     	else values.push(realNumber);
 			previousSymbol=3;
 			}
 		     else {
 		     	  status=4;
 			  expressionStillValid=false;
 		     }
+		     
 		     i--;
 		     }
 		}
@@ -157,14 +157,12 @@ class Calculator{
 		     status=0;
 		     expressionStillValid=false;
 		}
-		else {
-		     
+		else { 
 		     status=1;
 		     values.push(tokens[i]);
 		     expressionStillValid=false;
 		}
-	   	i++;
-		
+	   	i++;	
 	   }
 	if(status==0 && previousSymbol!=3){
 		status=2;
@@ -174,19 +172,6 @@ class Calculator{
 	      trace(c+"Checar todos los digitos");
 	   return values;
 	   
-    }
-    public function simplifyNumber(number:String, sign:String){
-    	   if(number.length==0)
-		number="0";
-    	   switch(sign){
-	   case "-":
-	   	trace (number);
-		trace ((-1) * Int64s.parse(number));
-	   	return (-1) * Int64s.parse(number);
-	   default:
-		return Int64s.parse(number);
-	   }
-	   return Int64s.parse(number);
     }
     public function print(){
     	return this.result;	

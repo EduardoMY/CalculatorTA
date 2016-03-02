@@ -45,7 +45,7 @@ ApplicationMain.init = function() {
 	if(total == 0) ApplicationMain.start();
 };
 ApplicationMain.main = function() {
-	ApplicationMain.config = { build : "401", company : "Company Name", file : "Calculator", fps : 60, name : "Calculator", orientation : "", packageName : "com.sample.calculator", version : "1.0.0", windows : [{ antialiasing : 0, background : 3355443, borderless : false, depthBuffer : false, display : 0, fullscreen : false, hardware : false, height : 600, parameters : "{}", resizable : true, stencilBuffer : true, title : "Calculator", vsync : false, width : 800, x : null, y : null}]};
+	ApplicationMain.config = { build : "411", company : "Company Name", file : "Calculator", fps : 60, name : "Calculator", orientation : "", packageName : "com.sample.calculator", version : "1.0.0", windows : [{ antialiasing : 0, background : 3355443, borderless : false, depthBuffer : false, display : 0, fullscreen : false, hardware : false, height : 600, parameters : "{}", resizable : true, stencilBuffer : true, title : "Calculator", vsync : false, width : 800, x : null, y : null}]};
 };
 ApplicationMain.start = function() {
 	var hasMain = false;
@@ -1475,7 +1475,7 @@ Calculator.prototype = {
 			this.resultHexadecimal = "";
 			break;
 		case "3":
-			this.operations = ["Bad combination of signs"];
+			this.operations = ["Bad combination of signs(" + realTokens[realTokens.length - 2] + realTokens[realTokens.length - 1] + ")"];
 			{
 				var x2 = new haxe__$Int64__$_$_$Int64(0,0);
 				this.result = x2;
@@ -1484,7 +1484,7 @@ Calculator.prototype = {
 			this.resultHexadecimal = "";
 			break;
 		case "4":
-			this.operations = ["Overflow"];
+			this.operations = ["Overflow " + realTokens.pop()];
 			{
 				var x3 = new haxe__$Int64__$_$_$Int64(0,0);
 				this.result = x3;
@@ -1565,10 +1565,6 @@ Calculator.prototype = {
 				haxe_Log.trace(tokens[i] + "Number",{ fileName : "Calculator.hx", lineNumber : 118, className : "Calculator", methodName : "checkIntegrity"});
 				var posNumber = "";
 				var realNumber;
-				{
-					var x = new haxe__$Int64__$_$_$Int64(0,0);
-					realNumber = x;
-				}
 				var numberDiff;
 				if(previousSymbol == 3) {
 					status = 2;
@@ -1584,19 +1580,9 @@ Calculator.prototype = {
 						i++;
 					}
 					haxe_Log.trace(posNumber + "COmpleteNumber",{ fileName : "Calculator.hx", lineNumber : 136, className : "Calculator", methodName : "checkIntegrity"});
-					haxe_Log.trace("RR" + haxe__$Int64_Int64_$Impl_$.toString(realNumber),{ fileName : "Calculator.hx", lineNumber : 137, className : "Calculator", methodName : "checkIntegrity"});
-					if(posNumber.length <= 12) {
-						haxe_Log.trace(haxe__$Int64_Int64_$Impl_$.toString((function($this) {
-							var $r;
-							var x1 = new haxe__$Int64__$_$_$Int64(999999,-999999);
-							$r = x1;
-							return $r;
-						}(this))),{ fileName : "Calculator.hx", lineNumber : 139, className : "Calculator", methodName : "checkIntegrity"});
-						if(previousSymbol == 2) {
-							haxe_Log.trace("entro a realnumber",{ fileName : "Calculator.hx", lineNumber : 141, className : "Calculator", methodName : "checkIntegrity"});
-							realNumber = this.simplifyNumber(posNumber,values.pop());
-						} else realNumber = this.simplifyNumber(posNumber,"");
-						values.push(haxe__$Int64_Int64_$Impl_$.toString(realNumber) + "");
+					if(posNumber.length == 0) realNumber = "0"; else realNumber = posNumber;
+					if(realNumber.length <= 12) {
+						if(previousSymbol == 2 && values.pop() == "-" && realNumber != "0") values.push("-" + realNumber); else values.push(realNumber);
 						previousSymbol = 3;
 					} else {
 						status = 4;
@@ -1620,105 +1606,9 @@ Calculator.prototype = {
 		while(_g < values.length) {
 			var c = values[_g];
 			++_g;
-			haxe_Log.trace(c + "Checar todos los digitos",{ fileName : "Calculator.hx", lineNumber : 174, className : "Calculator", methodName : "checkIntegrity"});
+			haxe_Log.trace(c + "Checar todos los digitos",{ fileName : "Calculator.hx", lineNumber : 172, className : "Calculator", methodName : "checkIntegrity"});
 		}
 		return values;
-	}
-	,simplifyNumber: function(number,sign) {
-		if(number.length == 0) number = "0";
-		switch(sign) {
-		case "-":
-			haxe_Log.trace(number,{ fileName : "Calculator.hx", lineNumber : 183, className : "Calculator", methodName : "simplifyNumber"});
-			haxe_Log.trace(haxe__$Int64_Int64_$Impl_$.toString((function($this) {
-				var $r;
-				var a;
-				{
-					var x = new haxe__$Int64__$_$_$Int64(-1,-1);
-					a = x;
-				}
-				var b = thx_Int64s.parse(number);
-				var mask = 65535;
-				var al = a.low & mask;
-				var ah = a.low >>> 16;
-				var bl = b.low & mask;
-				var bh = b.low >>> 16;
-				var p00 = haxe__$Int32_Int32_$Impl_$.mul(al,bl);
-				var p10 = haxe__$Int32_Int32_$Impl_$.mul(ah,bl);
-				var p01 = haxe__$Int32_Int32_$Impl_$.mul(al,bh);
-				var p11 = haxe__$Int32_Int32_$Impl_$.mul(ah,bh);
-				var low = p00;
-				var high = (p11 + (p01 >>> 16) | 0) + (p10 >>> 16) | 0;
-				p01 = p01 << 16;
-				low = low + p01 | 0;
-				if(haxe__$Int32_Int32_$Impl_$.ucompare(low,p01) < 0) {
-					var ret = high++;
-					high = high | 0;
-					ret;
-				}
-				p10 = p10 << 16;
-				low = low + p10 | 0;
-				if(haxe__$Int32_Int32_$Impl_$.ucompare(low,p10) < 0) {
-					var ret1 = high++;
-					high = high | 0;
-					ret1;
-				}
-				{
-					var b1;
-					var a1 = haxe__$Int32_Int32_$Impl_$.mul(a.low,b.high);
-					var b2 = haxe__$Int32_Int32_$Impl_$.mul(a.high,b.low);
-					b1 = a1 + b2 | 0;
-					high = high + b1 | 0;
-				}
-				$r = (function($this) {
-					var $r;
-					var x1 = new haxe__$Int64__$_$_$Int64(high,low);
-					$r = x1;
-					return $r;
-				}($this));
-				return $r;
-			}(this))),{ fileName : "Calculator.hx", lineNumber : 184, className : "Calculator", methodName : "simplifyNumber"});
-			var a2;
-			{
-				var x2 = new haxe__$Int64__$_$_$Int64(-1,-1);
-				a2 = x2;
-			}
-			var b3 = thx_Int64s.parse(number);
-			var mask1 = 65535;
-			var al1 = a2.low & mask1;
-			var ah1 = a2.low >>> 16;
-			var bl1 = b3.low & mask1;
-			var bh1 = b3.low >>> 16;
-			var p001 = haxe__$Int32_Int32_$Impl_$.mul(al1,bl1);
-			var p101 = haxe__$Int32_Int32_$Impl_$.mul(ah1,bl1);
-			var p011 = haxe__$Int32_Int32_$Impl_$.mul(al1,bh1);
-			var p111 = haxe__$Int32_Int32_$Impl_$.mul(ah1,bh1);
-			var low1 = p001;
-			var high1 = (p111 + (p011 >>> 16) | 0) + (p101 >>> 16) | 0;
-			p011 = p011 << 16;
-			low1 = low1 + p011 | 0;
-			if(haxe__$Int32_Int32_$Impl_$.ucompare(low1,p011) < 0) {
-				var ret2 = high1++;
-				high1 = high1 | 0;
-				ret2;
-			}
-			p101 = p101 << 16;
-			low1 = low1 + p101 | 0;
-			if(haxe__$Int32_Int32_$Impl_$.ucompare(low1,p101) < 0) {
-				var ret3 = high1++;
-				high1 = high1 | 0;
-				ret3;
-			}
-			var b4;
-			var a3 = haxe__$Int32_Int32_$Impl_$.mul(a2.low,b3.high);
-			var b5 = haxe__$Int32_Int32_$Impl_$.mul(a2.high,b3.low);
-			b4 = a3 + b5 | 0;
-			high1 = high1 + b4 | 0;
-			var x3 = new haxe__$Int64__$_$_$Int64(high1,low1);
-			return x3;
-		default:
-			return thx_Int64s.parse(number);
-		}
-		return thx_Int64s.parse(number);
 	}
 	,print: function() {
 		return this.result;
