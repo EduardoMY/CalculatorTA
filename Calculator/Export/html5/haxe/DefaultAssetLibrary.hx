@@ -52,15 +52,22 @@ class DefaultAssetLibrary extends AssetLibrary {
 		#if (openfl && !flash)
 		
 		
+		
 		#end
 		
 		#if flash
 		
+		className.set ("assets/help.png", __ASSET__assets_help_png);
+		type.set ("assets/help.png", AssetType.IMAGE);
 		
 		
 		#elseif html5
 		
 		var id;
+		id = "assets/help.png";
+		path.set (id, id);
+		
+		type.set (id, AssetType.IMAGE);
 		
 		
 		var assetsPrefix = null;
@@ -78,6 +85,9 @@ class DefaultAssetLibrary extends AssetLibrary {
 		#if (windows || mac || linux)
 		
 		var useManifest = false;
+		
+		className.set ("assets/help.png", __ASSET__assets_help_png);
+		type.set ("assets/help.png", AssetType.IMAGE);
 		
 		
 		if (useManifest) {
@@ -722,9 +732,11 @@ class DefaultAssetLibrary extends AssetLibrary {
 #if !display
 #if flash
 
+@:keep @:bind #if display private #end class __ASSET__assets_help_png extends flash.display.BitmapData { public function new () { super (0, 0, true, 0); } }
 
 
 #elseif html5
+
 
 
 
@@ -735,6 +747,7 @@ class DefaultAssetLibrary extends AssetLibrary {
 #if (windows || mac || linux || cpp)
 
 
+@:image("Assets/help.png") #if display private #end class __ASSET__assets_help_png extends lime.graphics.Image {}
 
 
 

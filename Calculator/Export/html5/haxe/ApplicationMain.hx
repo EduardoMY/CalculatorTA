@@ -30,6 +30,10 @@ class ApplicationMain {
 		var types = [];
 		
 		
+		urls.push ("assets/help.png");
+		types.push (lime.Assets.AssetType.IMAGE);
+		
+		
 		
 		if (config.assetsPrefix != null) {
 			
@@ -91,7 +95,7 @@ class ApplicationMain {
 		
 		config = {
 			
-			build: "428",
+			build: "522",
 			company: "Company Name",
 			file: "Calculator",
 			fps: 60,

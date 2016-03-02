@@ -23,6 +23,8 @@ ApplicationMain.create = function() {
 	ApplicationMain.preloader.create(ApplicationMain.config);
 	var urls = [];
 	var types = [];
+	urls.push("assets/help.png");
+	types.push("IMAGE");
 	if(ApplicationMain.config.assetsPrefix != null) {
 		var _g1 = 0;
 		var _g = urls.length;
@@ -45,7 +47,7 @@ ApplicationMain.init = function() {
 	if(total == 0) ApplicationMain.start();
 };
 ApplicationMain.main = function() {
-	ApplicationMain.config = { build : "428", company : "Company Name", file : "Calculator", fps : 60, name : "Calculator", orientation : "", packageName : "com.sample.calculator", version : "1.0.0", windows : [{ antialiasing : 0, background : 3355443, borderless : false, depthBuffer : false, display : 0, fullscreen : false, hardware : false, height : 600, parameters : "{}", resizable : true, stencilBuffer : true, title : "Calculator", vsync : false, width : 800, x : null, y : null}]};
+	ApplicationMain.config = { build : "522", company : "Company Name", file : "Calculator", fps : 60, name : "Calculator", orientation : "", packageName : "com.sample.calculator", version : "1.0.0", windows : [{ antialiasing : 0, background : 3355443, borderless : false, depthBuffer : false, display : 0, fullscreen : false, hardware : false, height : 600, parameters : "{}", resizable : true, stencilBuffer : true, title : "Calculator", vsync : false, width : 800, x : null, y : null}]};
 };
 ApplicationMain.start = function() {
 	var hasMain = false;
@@ -1355,8 +1357,17 @@ openfl_display_Sprite.prototype = $extend(openfl_display_DisplayObjectContainer.
 });
 var Main = function() {
 	openfl_display_Sprite.call(this);
-	this.stage.addEventListener("keyUp",$bind(this,this.onKeyUp));
 	this.init();
+	var bitmapData = openfl_Assets.getBitmapData("assets/help.png");
+	var helpImg = new openfl_display_Bitmap(bitmapData);
+	helpImg.set_width(100);
+	helpImg.set_height(100);
+	helpImg.set_x(600);
+	helpImg.set_y(480);
+	var sprite = new openfl_display_Sprite();
+	sprite.addChild(helpImg);
+	sprite.addEventListener("click",$bind(this,this.onButtonClick));
+	this.stage.addEventListener("keyUp",$bind(this,this.onKeyUp));
 	this.addChild(this.operation);
 	this.addChild(this.operationTitle);
 	this.addChild(this.operations);
@@ -1367,13 +1378,22 @@ var Main = function() {
 	this.addChild(this.resultBinaryTitle);
 	this.addChild(this.resultHexadecimal);
 	this.addChild(this.resultHexadecimalTitle);
+	this.addChild(sprite);
 };
 $hxClasses["Main"] = Main;
 Main.__name__ = ["Main"];
 Main.__super__ = openfl_display_Sprite;
 Main.prototype = $extend(openfl_display_Sprite.prototype,{
-	init: function() {
+	onButtonClick: function(e) {
+		this.operations.set_text(this.helpMessage);
+	}
+	,init: function() {
 		this.calc = new Calculator();
+		this.insideText = new openfl_text_TextFormat();
+		this.insideText.size = 15;
+		this.outsideText = new openfl_text_TextFormat();
+		this.outsideText.color = 16777215;
+		this.outsideText.size = 16;
 		this.operation = new openfl_text_TextField();
 		this.operations = new openfl_text_TextField();
 		this.resultDecimal = new openfl_text_TextField();
@@ -1386,53 +1406,71 @@ Main.prototype = $extend(openfl_display_Sprite.prototype,{
 		this.resultBinaryTitle = new openfl_text_TextField();
 		this.resultHexadecimalTitle = new openfl_text_TextField();
 		this.resultDecimalTitle.set_x(20.0);
-		this.resultDecimalTitle.set_y(10.0);
+		this.resultDecimalTitle.set_y(5.0);
 		this.resultDecimalTitle.set_text("Result: ");
+		this.resultDecimalTitle.setTextFormat(this.outsideText);
 		this.resultDecimal.set_x(20.0);
-		this.resultDecimal.set_y(20.0);
+		this.resultDecimal.set_y(22.0);
 		this.resultDecimal.set_height(30.0);
 		this.resultDecimal.set_width(200.0);
+		this.resultDecimal.setTextFormat(this.insideText);
 		this.resultDecimal.set_selectable(true);
 		this.resultDecimal.set_border(true);
 		this.resultDecimal.set_background(true);
+		this.resultDecimal.set_backgroundColor(8680821);
 		this.resultBinaryTitle.set_x(20.0);
 		this.resultBinaryTitle.set_y(80.0);
 		this.resultBinaryTitle.set_text("Binary: ");
+		this.resultBinaryTitle.setTextFormat(this.outsideText);
 		this.resultBinary.set_x(20.0);
 		this.resultBinary.set_y(100.0);
 		this.resultBinary.set_height(30.0);
 		this.resultBinary.set_width(300.0);
+		this.resultBinary.setTextFormat(this.insideText);
 		this.resultBinary.set_border(true);
 		this.resultBinary.set_background(true);
+		this.resultBinary.set_backgroundColor(8680821);
 		this.resultHexadecimalTitle.set_x(20.0);
 		this.resultHexadecimalTitle.set_y(180.0);
 		this.resultHexadecimalTitle.set_text("Hexadecimal: ");
+		this.resultHexadecimalTitle.setTextFormat(this.outsideText);
 		this.resultHexadecimal.set_x(20.0);
 		this.resultHexadecimal.set_y(200.0);
 		this.resultHexadecimal.set_height(30.0);
 		this.resultHexadecimal.set_width(200.0);
+		this.resultHexadecimal.setTextFormat(this.insideText);
 		this.resultHexadecimal.set_border(true);
 		this.resultHexadecimal.set_background(true);
+		this.resultHexadecimal.set_backgroundColor(8680821);
 		this.operationTitle.set_x(20.0);
-		this.operationTitle.set_y(480.0);
+		this.operationTitle.set_y(470.0);
+		this.operationTitle.set_width(250);
+		this.operationTitle.set_height(30);
 		this.operationTitle.set_text("Operation: <Insert the operation here>");
+		this.operationTitle.setTextFormat(this.outsideText);
 		this.operation.set_x(20.0);
-		this.operation.set_y(500.0);
+		this.operation.set_y(505.0);
 		this.operation.set_height(30.0);
 		this.operation.set_width(500.0);
+		this.operation.setTextFormat(this.insideText);
 		this.operation.set_border(true);
 		this.operation.set_type(1);
 		this.operation.set_background(true);
-		this.operationsTitle.set_x(450.0);
-		this.operationsTitle.set_y(10.0);
-		this.operationsTitle.set_text("Operations or errors: ");
-		this.operations.set_x(450.0);
-		this.operations.set_y(20.0);
-		this.operations.set_height(300.0);
-		this.operations.set_width(300.0);
+		this.operationsTitle.set_x(400.0);
+		this.operationsTitle.set_y(5.0);
+		this.operationsTitle.set_width(200.0);
+		this.operationsTitle.set_text("Operations, help or errors: ");
+		this.operationsTitle.setTextFormat(this.outsideText);
+		this.operations.set_x(400.0);
+		this.operations.set_y(23.0);
+		this.operations.set_height(400.0);
+		this.operations.set_width(360.0);
+		this.operations.setTextFormat(this.insideText);
 		this.operations.set_border(true);
 		this.operations.set_multiline(true);
 		this.operations.set_background(true);
+		this.helpMessage = "Seccion de Ayuda\n" + "================\n" + "Instrucciones:\n" + "*Dar click en la barra de abajo\n" + "*Insertar la operacion\n" + "*Presionar la tecla enter\n" + "==========================\n" + "Notas Importantes:\n" + "El sistema marcara error por problemas de sintaxis.\n" + "Al marcar un error el cuadro de resultados tendra cero,\n" + "binario y Hexadecimal estaran vaciosy\n" + "y este cuadro tendra el mensaje de error.\n" + "El sistema acepta numeros con signo (-N y +N).\n" + "No se puede utilizar mas de un signo por numero.\n" + "La operacion deben de tener un signo de igualdad al terminar.\n" + "Todo despues era ignorado.\n" + "Solo aceptan numeros enteros y de 12 digitos.\n" + "Numeros mayores seran marcados como overflow\n" + "Division entre cero tambien es error.\n" + "Puedes poner TODOS los espacios que gustes.\n" + "Binario/hexadecimal no sirve en numeros negativos :/\n";
+		this.operations.set_text(this.helpMessage);
 	}
 	,onKeyUp: function(event) {
 		if(event.keyCode == 13) {
@@ -1516,7 +1554,7 @@ Calculator.prototype = {
 			this.resultHexadecimal = "";
 			break;
 		case "4":
-			this.operations = ["Overflow " + realTokens.pop()];
+			this.operations = ["Overflow !!!"];
 			{
 				var x3 = new haxe__$Int64__$_$_$Int64(0,0);
 				this.result = x3;
@@ -1794,45 +1832,66 @@ Calculator.prototype = {
 				high2 = high2 + b1 | 0;
 				var x5 = new haxe__$Int64__$_$_$Int64(high2,low2);
 				res = x5;
-				this.operations.push("" + haxe__$Int64_Int64_$Impl_$.toString(a) + " * " + haxe__$Int64_Int64_$Impl_$.toString(b) + " = " + haxe__$Int64_Int64_$Impl_$.toString(res));
-				var mask1 = 65535;
-				var al1 = a.low & mask1;
-				var ah1 = a.low >>> 16;
-				var bl1 = b.low & mask1;
-				var bh1 = b.low >>> 16;
-				var p001 = haxe__$Int32_Int32_$Impl_$.mul(al1,bl1);
-				var p101 = haxe__$Int32_Int32_$Impl_$.mul(ah1,bl1);
-				var p011 = haxe__$Int32_Int32_$Impl_$.mul(al1,bh1);
-				var p111 = haxe__$Int32_Int32_$Impl_$.mul(ah1,bh1);
-				var low3 = p001;
-				var high3 = (p111 + (p011 >>> 16) | 0) + (p101 >>> 16) | 0;
-				p011 = p011 << 16;
-				low3 = low3 + p011 | 0;
-				if(haxe__$Int32_Int32_$Impl_$.ucompare(low3,p011) < 0) {
-					var ret4 = high3++;
-					high3 = high3 | 0;
-					ret4;
+				if((function($this) {
+					var $r;
+					var v4 = res.high - uLimit.high | 0;
+					if(v4 != 0) v4 = v4; else v4 = haxe__$Int32_Int32_$Impl_$.ucompare(res.low,uLimit.low);
+					$r = res.high < 0?uLimit.high < 0?v4:-1:uLimit.high >= 0?v4:1;
+					return $r;
+				}(this)) <= 0 && (function($this) {
+					var $r;
+					var v5 = res.high - dLimit.high | 0;
+					if(v5 != 0) v5 = v5; else v5 = haxe__$Int32_Int32_$Impl_$.ucompare(res.low,dLimit.low);
+					$r = res.high < 0?dLimit.high < 0?v5:-1:dLimit.high >= 0?v5:1;
+					return $r;
+				}(this)) >= 0) {
+					this.operations.push("" + haxe__$Int64_Int64_$Impl_$.toString(a) + " * " + haxe__$Int64_Int64_$Impl_$.toString(b) + " = " + haxe__$Int64_Int64_$Impl_$.toString(res));
+					var mask1 = 65535;
+					var al1 = a.low & mask1;
+					var ah1 = a.low >>> 16;
+					var bl1 = b.low & mask1;
+					var bh1 = b.low >>> 16;
+					var p001 = haxe__$Int32_Int32_$Impl_$.mul(al1,bl1);
+					var p101 = haxe__$Int32_Int32_$Impl_$.mul(ah1,bl1);
+					var p011 = haxe__$Int32_Int32_$Impl_$.mul(al1,bh1);
+					var p111 = haxe__$Int32_Int32_$Impl_$.mul(ah1,bh1);
+					var low3 = p001;
+					var high3 = (p111 + (p011 >>> 16) | 0) + (p101 >>> 16) | 0;
+					p011 = p011 << 16;
+					low3 = low3 + p011 | 0;
+					if(haxe__$Int32_Int32_$Impl_$.ucompare(low3,p011) < 0) {
+						var ret4 = high3++;
+						high3 = high3 | 0;
+						ret4;
+					}
+					p101 = p101 << 16;
+					low3 = low3 + p101 | 0;
+					if(haxe__$Int32_Int32_$Impl_$.ucompare(low3,p101) < 0) {
+						var ret5 = high3++;
+						high3 = high3 | 0;
+						ret5;
+					}
+					var b3;
+					var a2 = haxe__$Int32_Int32_$Impl_$.mul(a.low,b.high);
+					var b4 = haxe__$Int32_Int32_$Impl_$.mul(a.high,b.low);
+					b3 = a2 + b4 | 0;
+					high3 = high3 + b3 | 0;
+					var x6 = new haxe__$Int64__$_$_$Int64(high3,low3);
+					return x6;
+				} else {
+					this.operations.push("" + haxe__$Int64_Int64_$Impl_$.toString(a) + " * " + haxe__$Int64_Int64_$Impl_$.toString(b) + " = Overflow");
+					this.quitExecution = true;
+					{
+						var x7 = new haxe__$Int64__$_$_$Int64(0,0);
+						return x7;
+					}
 				}
-				p101 = p101 << 16;
-				low3 = low3 + p101 | 0;
-				if(haxe__$Int32_Int32_$Impl_$.ucompare(low3,p101) < 0) {
-					var ret5 = high3++;
-					high3 = high3 | 0;
-					ret5;
-				}
-				var b3;
-				var a2 = haxe__$Int32_Int32_$Impl_$.mul(a.low,b.high);
-				var b4 = haxe__$Int32_Int32_$Impl_$.mul(a.high,b.low);
-				b3 = a2 + b4 | 0;
-				high3 = high3 + b3 | 0;
-				var x6 = new haxe__$Int64__$_$_$Int64(high3,low3);
-				return x6;
 			} else {
 				this.operations.push("" + haxe__$Int64_Int64_$Impl_$.toString(a) + " * " + haxe__$Int64_Int64_$Impl_$.toString(b) + " = Overflow");
 				this.quitExecution = true;
 				{
-					var x7 = new haxe__$Int64__$_$_$Int64(0,0);
-					return x7;
+					var x8 = new haxe__$Int64__$_$_$Int64(0,0);
+					return x8;
 				}
 			}
 			break;
@@ -1841,8 +1900,8 @@ Calculator.prototype = {
 				var $r;
 				var b5;
 				{
-					var x8 = new haxe__$Int64__$_$_$Int64(0,0);
-					b5 = x8;
+					var x9 = new haxe__$Int64__$_$_$Int64(0,0);
+					b5 = x9;
 				}
 				$r = b.high != b5.high || b.low != b5.low;
 				return $r;
@@ -1854,14 +1913,14 @@ Calculator.prototype = {
 			this.operations.push("" + haxe__$Int64_Int64_$Impl_$.toString(a) + " / " + haxe__$Int64_Int64_$Impl_$.toString(b) + " = Arith. Error");
 			this.quitExecution = true;
 			{
-				var x9 = new haxe__$Int64__$_$_$Int64(0,0);
-				return x9;
+				var x10 = new haxe__$Int64__$_$_$Int64(0,0);
+				return x10;
 			}
 			break;
 		}
 		{
-			var x10 = new haxe__$Int64__$_$_$Int64(0,0);
-			return x10;
+			var x11 = new haxe__$Int64__$_$_$Int64(0,0);
+			return x11;
 		}
 	}
 	,checksMultiplicability: function(a,b) {
@@ -2067,6 +2126,9 @@ var DefaultAssetLibrary = function() {
 	this.className = new haxe_ds_StringMap();
 	lime_AssetLibrary.call(this);
 	var id;
+	id = "assets/help.png";
+	this.path.set(id,id);
+	this.type.set(id,"IMAGE");
 	var assetsPrefix = null;
 	if(ApplicationMain.config != null && Object.prototype.hasOwnProperty.call(ApplicationMain.config,"assetsPrefix")) assetsPrefix = ApplicationMain.config.assetsPrefix;
 	if(assetsPrefix != null) {
@@ -27695,6 +27757,196 @@ openfl_display_Shape.prototype = $extend(openfl_display_DisplayObject.prototype,
 	}
 	,__class__: openfl_display_Shape
 	,__properties__: $extend(openfl_display_DisplayObject.prototype.__properties__,{get_graphics:"get_graphics"})
+});
+var openfl_display_SimpleButton = function(upState,overState,downState,hitTestState) {
+	openfl_display_InteractiveObject.call(this);
+	this.enabled = true;
+	this.trackAsMenu = false;
+	this.useHandCursor = true;
+	this.set_upState(upState != null?upState:new openfl_display_DisplayObject());
+	this.set_overState(overState);
+	this.set_downState(downState);
+	this.set_hitTestState(hitTestState != null?hitTestState:new openfl_display_DisplayObject());
+	this.addEventListener("mouseDown",$bind(this,this.__this_onMouseDown));
+	this.addEventListener("mouseOut",$bind(this,this.__this_onMouseOut));
+	this.addEventListener("mouseOver",$bind(this,this.__this_onMouseOver));
+	this.addEventListener("mouseUp",$bind(this,this.__this_onMouseUp));
+	this.set___currentState(this.upState);
+};
+$hxClasses["openfl.display.SimpleButton"] = openfl_display_SimpleButton;
+openfl_display_SimpleButton.__name__ = ["openfl","display","SimpleButton"];
+openfl_display_SimpleButton.__super__ = openfl_display_InteractiveObject;
+openfl_display_SimpleButton.prototype = $extend(openfl_display_InteractiveObject.prototype,{
+	__getBounds: function(rect,matrix) {
+		openfl_display_InteractiveObject.prototype.__getBounds.call(this,rect,matrix);
+		if(matrix != null) {
+			this.__updateTransforms(matrix);
+			this.__updateChildren(true);
+		}
+		this.__currentState.__getBounds(rect,this.__currentState.__worldTransform);
+		if(matrix != null) {
+			this.__updateTransforms();
+			this.__updateChildren(true);
+		}
+	}
+	,__getRenderBounds: function(rect,matrix) {
+		if(this.__scrollRect != null) {
+			openfl_display_InteractiveObject.prototype.__getRenderBounds.call(this,rect,matrix);
+			return;
+		} else openfl_display_InteractiveObject.prototype.__getBounds.call(this,rect,matrix);
+		if(matrix != null) {
+			this.__updateTransforms(matrix);
+			this.__updateChildren(true);
+		}
+		this.__currentState.__getRenderBounds(rect,this.__currentState.__worldTransform);
+		if(matrix != null) {
+			this.__updateTransforms();
+			this.__updateChildren(true);
+		}
+	}
+	,__getCursor: function() {
+		if(this.useHandCursor && !this.__ignoreEvent) return lime_ui_MouseCursor.POINTER; else return null;
+	}
+	,__hitTest: function(x,y,shapeFlag,stack,interactiveOnly,hitObject) {
+		var hitTest = false;
+		if(this.hitTestState != null) {
+			var cacheTransform = this.__updateTransform(this.hitTestState);
+			if(this.hitTestState.__hitTest(x,y,shapeFlag,stack,interactiveOnly,hitObject)) {
+				stack[stack.length - 1] = hitObject;
+				hitTest = true;
+			}
+			this.__resetTransform(this.hitTestState,cacheTransform);
+		} else if(this.__currentState != null) {
+			if(!hitObject.get_visible() || this.__isMask || interactiveOnly && !this.mouseEnabled) return false;
+			if(this.get_mask() != null && !this.get_mask().__hitTestMask(x,y)) return false;
+			var cacheTransform1 = this.__updateTransform(this.__currentState);
+			if(this.__currentState.__hitTest(x,y,shapeFlag,stack,interactiveOnly,hitObject)) hitTest = interactiveOnly;
+			this.__resetTransform(this.__currentState,cacheTransform1);
+		}
+		return hitTest;
+	}
+	,__hitTestMask: function(x,y) {
+		var hitTest = false;
+		var cacheTransform = this.__updateTransform(this.__currentState);
+		if(this.__currentState.__hitTestMask(x,y)) hitTest = true;
+		this.__resetTransform(this.__currentState,cacheTransform);
+		return hitTest;
+	}
+	,__renderCairo: function(renderSession) {
+		if(!this.__renderable || this.__worldAlpha <= 0) return;
+		if(this.get_scrollRect() != null) renderSession.maskManager.pushRect(this.get_scrollRect(),this.__worldTransform);
+		if(this.__mask != null) renderSession.maskManager.pushMask(this.__mask);
+		this.__currentState.__renderCairo(renderSession);
+		if(this.__mask != null) renderSession.maskManager.popMask();
+		if(this.get_scrollRect() != null) renderSession.maskManager.popRect();
+	}
+	,__renderCairoMask: function(renderSession) {
+		this.__currentState.__renderCairoMask(renderSession);
+	}
+	,__renderCanvas: function(renderSession) {
+		if(!this.__renderable || this.__worldAlpha <= 0) return;
+		if(this.get_scrollRect() != null) renderSession.maskManager.pushRect(this.get_scrollRect(),this.__worldTransform);
+		if(this.__mask != null) renderSession.maskManager.pushMask(this.__mask);
+		this.__currentState.__renderCanvas(renderSession);
+		if(this.__mask != null) renderSession.maskManager.popMask();
+		if(this.get_scrollRect() != null) renderSession.maskManager.popRect();
+	}
+	,__renderCanvasMask: function(renderSession) {
+		var bounds = new openfl_geom_Rectangle();
+		this.__getBounds(bounds,this.__transform);
+		renderSession.context.rect(0,0,bounds.width,bounds.height);
+		this.__currentState.__renderCanvasMask(renderSession);
+	}
+	,__renderDOM: function(renderSession) {
+		if(this.__mask != null) renderSession.maskManager.pushMask(this.__mask);
+		this.__currentState.__renderDOM(renderSession);
+		if(this.__mask != null) renderSession.maskManager.popMask();
+	}
+	,__renderGL: function(renderSession) {
+		if(!this.__renderable || this.__worldAlpha <= 0) return;
+		if(this.__cacheAsBitmap) {
+			this.__cacheGL(renderSession);
+			return;
+		}
+		if(this.__scrollRect != null) renderSession.maskManager.pushRect(this.__scrollRect,this.__renderTransform);
+		if(this.__mask != null && this.__maskGraphics != null && this.__maskGraphics.__commands.get_length() > 0) renderSession.maskManager.pushMask(this);
+		if(this.__graphics != null) {
+			if(this.__graphics.__hardware) openfl__$internal_renderer_opengl_utils_GraphicsRenderer.render(this,renderSession); else {
+				openfl__$internal_renderer_canvas_CanvasGraphics.render(this.__graphics,renderSession);
+				openfl__$internal_renderer_opengl_GLRenderer.renderBitmap(this,renderSession);
+			}
+		}
+		this.__currentState.__renderGL(renderSession);
+		if(this.__mask != null && this.__maskGraphics != null && this.__maskGraphics.__commands.get_length() > 0) renderSession.maskManager.popMask();
+		if(this.__scrollRect != null) renderSession.maskManager.popRect();
+	}
+	,__resetTransform: function(state,cacheTransform) {
+		state.__updateTransforms(cacheTransform);
+		state.__updateChildren(false);
+	}
+	,__updateTransform: function(state) {
+		var cacheTransform = state.__worldTransform;
+		var local = state.__transform;
+		var parentTransform = this.__worldTransform;
+		var overrideTransform = openfl_geom_Matrix.__temp;
+		overrideTransform.a = local.a * parentTransform.a + local.b * parentTransform.c;
+		overrideTransform.b = local.a * parentTransform.b + local.b * parentTransform.d;
+		overrideTransform.c = local.c * parentTransform.a + local.d * parentTransform.c;
+		overrideTransform.d = local.c * parentTransform.b + local.d * parentTransform.d;
+		overrideTransform.tx = local.tx * parentTransform.a + local.ty * parentTransform.c + parentTransform.tx;
+		overrideTransform.ty = local.tx * parentTransform.b + local.ty * parentTransform.d + parentTransform.ty;
+		state.__updateTransforms(overrideTransform);
+		state.__updateChildren(true);
+		return cacheTransform;
+	}
+	,__updateTransforms: function(overrideTransform) {
+		openfl_display_InteractiveObject.prototype.__updateTransforms.call(this,overrideTransform);
+		this.__updateTransform(this.__currentState);
+	}
+	,set_downState: function(downState) {
+		if(this.downState != null && this.__currentState == this.downState) this.set___currentState(downState);
+		return this.downState = downState;
+	}
+	,set_hitTestState: function(hitTestState) {
+		return this.hitTestState = hitTestState;
+	}
+	,set_overState: function(overState) {
+		if(this.overState != null && this.__currentState == this.overState) this.set___currentState(overState);
+		return this.overState = overState;
+	}
+	,get_soundTransform: function() {
+		if(this.__soundTransform == null) this.__soundTransform = new openfl_media_SoundTransform();
+		return new openfl_media_SoundTransform(this.__soundTransform.volume,this.__soundTransform.pan);
+	}
+	,set_soundTransform: function(value) {
+		this.__soundTransform = new openfl_media_SoundTransform(value.volume,value.pan);
+		return value;
+	}
+	,set_upState: function(upState) {
+		if(this.upState != null && this.__currentState == this.upState) this.set___currentState(upState);
+		return this.upState = upState;
+	}
+	,set___currentState: function(value) {
+		if(value.parent != null) value.parent.removeChild(value);
+		return this.__currentState = value;
+	}
+	,__this_onMouseDown: function(event) {
+		if(this.downState != null) this.set___currentState(this.downState);
+	}
+	,__this_onMouseOut: function(event) {
+		this.__ignoreEvent = false;
+		if(this.upState != this.__currentState) this.set___currentState(this.upState);
+	}
+	,__this_onMouseOver: function(event) {
+		if(event.buttonDown) this.__ignoreEvent = true;
+		if(this.overState != this.__currentState && this.overState != null && !this.__ignoreEvent) this.set___currentState(this.overState);
+	}
+	,__this_onMouseUp: function(event) {
+		this.__ignoreEvent = false;
+		if(this.overState != null) this.set___currentState(this.overState); else this.set___currentState(this.upState);
+	}
+	,__class__: openfl_display_SimpleButton
+	,__properties__: $extend(openfl_display_InteractiveObject.prototype.__properties__,{set___currentState:"set___currentState",set_upState:"set_upState",set_soundTransform:"set_soundTransform",get_soundTransform:"get_soundTransform",set_overState:"set_overState",set_hitTestState:"set_hitTestState",set_downState:"set_downState"})
 });
 var openfl_display__$SpreadMethod_SpreadMethod_$Impl_$ = {};
 $hxClasses["openfl.display._SpreadMethod.SpreadMethod_Impl_"] = openfl_display__$SpreadMethod_SpreadMethod_$Impl_$;

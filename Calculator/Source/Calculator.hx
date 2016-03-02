@@ -49,7 +49,7 @@ class Calculator{
 		     this.resultBinary="";
 		     this.resultHexadecimal="";
 		case "4": //Number too big
-		     this.operations=["Overflow "+realTokens.pop()];
+		     this.operations=["Overflow !!!"];
 		     this.result=0;
 		     this.resultBinary="";
 		     this.resultHexadecimal="";
@@ -306,8 +306,15 @@ class Calculator{
         case "*":
 	     if(checksMultiplicability(a,b)){
 	     	     res=Int64.mul(a,b);
+		     if(res<=uLimit && res>=dLimit){
 	     	     operations.push('$a * $b = $res');
             	     return a * b;
+		     }
+		     else {
+		   	operations.push('$a * $b = Overflow');
+			quitExecution=true;
+                 	return 0;
+		     }
 	     }
 	     else{
 		operations.push('$a * $b = Overflow');
