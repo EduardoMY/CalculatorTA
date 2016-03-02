@@ -30,14 +30,6 @@ class ApplicationMain {
 		var types = [];
 		
 		
-		urls.push ("assets/c");
-		types.push (lime.Assets.AssetType.BINARY);
-		
-		
-		urls.push ("assets/mario.png");
-		types.push (lime.Assets.AssetType.IMAGE);
-		
-		
 		
 		if (config.assetsPrefix != null) {
 			
@@ -99,7 +91,7 @@ class ApplicationMain {
 		
 		config = {
 			
-			build: "243",
+			build: "401",
 			company: "Company Name",
 			file: "Calculator",
 			fps: 60,

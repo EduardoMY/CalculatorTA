@@ -59,7 +59,7 @@ class Main extends Sprite {
 		resultBinary.x=20.0;
 		resultBinary.y=100.0;
 		resultBinary.height=30.0;
-		resultBinary.width=200.0;
+		resultBinary.width=300.0;
 		resultBinary.border=true;
 		resultBinary.background=true;
 

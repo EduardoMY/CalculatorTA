@@ -1,4 +1,7 @@
 -main ApplicationMain 
+-D thx_core
+-cp /home/eduardomedina/haxelib/thx,core/0,39,0/src
+-D thx.core=0.39.0
 -cp /home/eduardomedina/haxelib/openfl/3,6,0
 -D openfl=3.6.0
 -cp /home/eduardomedina/haxelib/lime/2,9,0

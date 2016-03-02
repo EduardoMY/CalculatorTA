@@ -52,29 +52,15 @@ class DefaultAssetLibrary extends AssetLibrary {
 		#if (openfl && !flash)
 		
 		
-		
-		
 		#end
 		
 		#if flash
 		
-		className.set ("assets/c", __ASSET__assets_c);
-		type.set ("assets/c", AssetType.BINARY);
-		className.set ("assets/mario.png", __ASSET__assets_mario_png);
-		type.set ("assets/mario.png", AssetType.IMAGE);
 		
 		
 		#elseif html5
 		
 		var id;
-		id = "assets/c";
-		path.set (id, id);
-		
-		type.set (id, AssetType.BINARY);
-		id = "assets/mario.png";
-		path.set (id, id);
-		
-		type.set (id, AssetType.IMAGE);
 		
 		
 		var assetsPrefix = null;
@@ -92,12 +78,6 @@ class DefaultAssetLibrary extends AssetLibrary {
 		#if (windows || mac || linux)
 		
 		var useManifest = false;
-		
-		className.set ("assets/c", __ASSET__assets_c);
-		type.set ("assets/c", AssetType.BINARY);
-		
-		className.set ("assets/mario.png", __ASSET__assets_mario_png);
-		type.set ("assets/mario.png", AssetType.IMAGE);
 		
 		
 		if (useManifest) {
@@ -742,13 +722,9 @@ class DefaultAssetLibrary extends AssetLibrary {
 #if !display
 #if flash
 
-@:keep @:bind #if display private #end class __ASSET__assets_c extends null { }
-@:keep @:bind #if display private #end class __ASSET__assets_mario_png extends flash.display.BitmapData { public function new () { super (0, 0, true, 0); } }
 
 
 #elseif html5
-
-
 
 
 
@@ -759,8 +735,6 @@ class DefaultAssetLibrary extends AssetLibrary {
 #if (windows || mac || linux || cpp)
 
 
-@:file("Assets/c") #if display private #end class __ASSET__assets_c extends lime.utils.Bytes {}
-@:image("Assets/mario.png") #if display private #end class __ASSET__assets_mario_png extends lime.graphics.Image {}
 
 
 

@@ -1,96 +1,225 @@
+package ;
+
+import haxe.Int64;
+import thx.Int64s;
+
 class Calculator{
 
     var originalOperation: String;
-    
-    var result:Int;
+    var result:Int64;
     var resultBinary:String;
     var resultHexadecimal:String;
     var operations:Array<String>;
-
+    var maxBits:Int=41;
+    
     public function new(){
     	   originalOperation="0";
     }
     
     public function setOperation(newOperation:String){
     	   this.originalOperation=newOperation;
-	   if(checkIntegrity()){
-		this.operations=[];
-	   	this.result=evaluate(originalOperation);
-	  	 this.resultBinary=getBinaryValue(this.result);
-	   	 this.resultHexadecimal=getHexadecimalValue(resultBinary);
-	   }
-	   else {
-	   	   this.operations=["Error"];
-	   	   this.result=0;
-	   	   this.resultBinary="Holis";
-	   	   this.resultHexadecimal="Holas";
+	   var tokens:Array<String>=newOperation.split("");
+	   var realTokens:Array<String>=checkIntegrity(tokens);
+	   switch(realTokens.pop()){
+		case "0": //No error at all
+		     this.operations=[];
+	   	     this.result=evaluate(realTokens);
+	  	     this.resultBinary=getBinaryValue(this.result);
+	   	     this.resultHexadecimal=getHexadecimalValue(this.resultBinary);
+		case "1": //Error Invalid Token
+		     this.operations=["Token invalid ("+realTokens.pop()+")"];
+		     this.result=0;
+		     this.resultBinary="";
+		     this.resultHexadecimal="";
+		case "2": //Error  Missing Operation
+		     this.operations=["There is a missing operation"];
+		     this.result=0;
+		     this.resultBinary="";
+		     this.resultHexadecimal="";
+		case "3": //Error Bad combination of signs
+		     this.operations=["Bad combination of signs"];
+		     this.result=0;
+		     this.resultBinary="";
+		     this.resultHexadecimal="";
+		case "4": //Number too big
+		     this.operations=["Overflow"];
+		     this.result=0;
+		     this.resultBinary="";
+		     this.resultHexadecimal="";
+		case "5": //Single operation
+		     this.operations=["Error: Cannot aply an operation to a single number"];
+		     this.result=0;
+		     this.resultBinary="";
+		     this.resultHexadecimal="";
+		case "6":
+		     this.operations=["No = at the end"];
+		     this.result=0;
+		     this.resultBinary="";
+		     this.resultHexadecimal="";
+		case "7":
+		     this.operations=["Empty operation"];
+		     this.result=0;
+		     this.resultBinary="";
+		     this.resultHexadecimal="";
 	   }
     }
 
-    public function checkIntegrity(){
-    	   var exp:EReg=new EReg("([ ]*[-+]?[0-9]{1,12})([ ]*[+-/*][ ]*[+-]?[0-9]{1,12})*([ ]*[=]{1}[ ]*)", "g");
-	   //error indexOf("="); numbers to big;
-	   exp.match(this.originalOperation);
-	   return exp.matched(0)==this.originalOperation;
+    public function checkIntegrity(tokens:Array<String>){
+    	   //Regex ("([ ]*[-+]?[0-9]{1,12})([ ]*[+-/*][ ]*[+-]?[0-9]{1,12})*([ ]*[=]{1}[ ]*)", "g");   
+	   var i:Int=0;
+	   var previousSymbol:Int=0; //0=Nothing, 1=Symbol, 2=SIgn,3=Number
+	   var operators:Array<String>=["-", "+", "*", "/"];
+	   var values:Array<String>=[];
+	   var expressionStillValid:Bool=true;
+	   var status:Int=6;
+	   
+	   if(tokens.length==0){
+		trace("emptyyyyyy");
+		status=7;
+		expressionStillValid=false;
+	   }
+	   while(i<tokens.length && expressionStillValid){
+	   	trace(tokens[i]);
+	   	if(tokens[i] == " "){
+			     i++;
+			     continue;
+			     }
+		if(operators.indexOf(tokens[i])!=-1){
+		     if(previousSymbol==0 && (tokens[i]=="+" || tokens[i]=="-")){
+		     		trace("sign star");
+		     		values.push(tokens[i]);
+				previousSymbol=2;
+		     		}
+		     else if(previousSymbol==0)
+		     {
+			status= 5;
+			expressionStillValid=false;
+		     }
+		     else if(previousSymbol==1 && (tokens[i]=="+" || tokens[i]=="-")){
+		     trace("weird sign");
+		     	  values.push(tokens[i]);
+			  previousSymbol=2;
+		     }
+		     else if(previousSymbol==1 ){
+		     	  status=3;
+			  expressionStillValid=false;
+		     }
+		     else if(previousSymbol==2){
+		     	  status=3;
+			  expressionStillValid=false;
+		     }
+		     else if(previousSymbol==3){
+		     	values.push(tokens[i]);
+			previousSymbol=1;
+		     }
+		     
+		}
+		else if(tokens[i]>="0" && tokens[i]<="9"){
+		     trace(tokens[i]+"Number");
+		     var posNumber:String="";
+		     var realNumber:Int64=0;
+		     var numberDiff:Bool;
+		     if(previousSymbol==3){
+			status=2;
+			expressionStillValid=false;
+		     }
+		     else{
+		     numberDiff=false;
+		     while(i<tokens.length && tokens[i]>="0" && tokens[i]<="9"){
+		     	if(numberDiff || tokens[i]!="0"){
+				      trace("hola"+tokens[i]);
+				      posNumber+=tokens[i];
+				      numberDiff=true;
+			}
+			i++;
+		     }
+		     trace(posNumber+"COmpleteNumber");
+			trace("RR"+realNumber);
+		     if(posNumber.length<=12){
+		     	trace(Int64.make(999999,-999999));
+			if(previousSymbol==2){
+				trace("entro a realnumber");
+				realNumber=simplifyNumber(posNumber, values.pop());
+			}
+			else
+				realNumber=simplifyNumber(posNumber, "");
+		     	values.push(realNumber+"");
+			previousSymbol=3;
+			}
+		     else {
+		     	  status=4;
+			  expressionStillValid=false;
+		     }
+		     i--;
+		     }
+		}
+		else if(tokens[i]=="="){
+		     status=0;
+		     expressionStillValid=false;
+		}
+		else {
+		     
+		     status=1;
+		     values.push(tokens[i]);
+		     expressionStillValid=false;
+		}
+	   	i++;
+		
+	   }
+	if(status==0 && previousSymbol!=3){
+		status=2;
+	}
+	values.push(status+"");
+	for(c in values)
+	      trace(c+"Checar todos los digitos");
+	   return values;
+	   
     }
-
+    public function simplifyNumber(number:String, sign:String){
+    	   if(number.length==0)
+		number="0";
+    	   switch(sign){
+	   case "-":
+	   	trace (number);
+		trace ((-1) * Int64s.parse(number));
+	   	return (-1) * Int64s.parse(number);
+	   default:
+		return Int64s.parse(number);
+	   }
+	   return Int64s.parse(number);
+    }
     public function print(){
-    	   return this.result;    
+    	return this.result;	
     }
     
     public function printBinary(){
       	return this.resultBinary;
     }
-    
+   
     public function printHexadecimal(){
-    	   return this.resultHexadecimal;
+    	return this.resultHexadecimal;
     }
 
     public function printOperations(){
     	   return this.operations;
 	   }
 
-    public function evaluate(expression:String)
+	   public function evaluate(tokens:Array<String>)
     {
-    	var tokensb:Array<String>=expression.split("");
-	var tokens:Array<String>=new Array<String>();
-	for(i in tokensb)
-	      if(i!=" ")
-	      tokens.push(i);
-	      
+    
 	var length:Int = tokens.length;
  	var i:Int =0;
         // Stack for numbers: 'values'
-        var values:Array<Int> = new Array<Int>();
+        var values:Array<Int64> = new Array<Int64>();
         // Stack for Operators: 'ops'
         var ops:Array<String> = new Array<String>();
- 	//Stacks the Sign of the next value
-	var signs:Array<String>=new Array<String>();
+	
         while (i <length)
         {
-             // Current token is a whitespace, skip it
-	     if(tokens[i]=="=")
-		break;
-	     else if (tokens[i]==" ")
-                continue;
-
 	// Current token is a number, push it to stack for numbers
-            if ("0123456789".indexOf(tokens[i])!=-1)
+            if (tokens[i].length>1 || (tokens[i]>="0" && tokens[i]<="9"))
             {
-                var stringNumber = "";
-                // There may be more than one digits in number
-                while (i < length && "0123456789".indexOf(tokens[i])!=-1) {
-		      stringNumber+=tokens[i];
-		      i++;
-		    }
-                values.push(Std.parseInt(stringNumber));
-		if(signs.length!=0){
-			switch(signs.pop()){
-			case "-":
-			     values.push(values.pop()*-1);
-			}
-		}
-		i--;
+                values.push(Int64s.parse(tokens[i]));		
             }
 			    
             // Current token is an opening brace, push it to 'ops'
@@ -104,11 +233,6 @@ class Calculator{
                   values.push(applyOp(ops.pop(), values.pop(), values.pop()));
                 ops.pop();
             }
-	    // Current token is a sign
-	    else if((tokens[i]=="+" || tokens[i]=="-") &&
-	    	 (i==0 || "*-+/".indexOf(tokens[i-1])!=-1 )){
-		       signs.push(tokens[i]);
-		       }
             // Current token is an operator.
             else if (tokens[i] == "+" || tokens[i] == "-" ||
                      tokens[i] == "*" || tokens[i] == "/")
@@ -145,29 +269,29 @@ class Calculator{
         else
             return true;
     }
- 
+    
     // A utility method to apply an operator 'op' on operands 'a' 
     // and 'b'. Return the result.
-    public function applyOp(op:String, b:Int, a:Int)
+    public function applyOp(op:String, b:Int64, a:Int64)
     {
-        var res:Int=0;
+        var res:Int64=0;
         switch (op)
         {
         case "+":
-	     res=a + b;
+	    res=Int64.add(a, b);
 	    operations.push('$a + $b = $res');
             return res;
         case "-":
-	     res= a-b;
+	     res=Int64.sub(a,b);
 	     operations.push('$a - $b = $res');
             return res;
         case "*":
-	     res= a*b;
+	     res=Int64.mul(a,b);
 	     operations.push('$a * $b = $res');
             return a * b;
         case "/":
             if (b != 0){
-	       res=Std.int(a /b);
+	       res=Int64.div(a ,b);
 	       operations.push('$a / $b = $res');
 	       return res;
 	    }
@@ -177,39 +301,33 @@ class Calculator{
         return 0;
     }
 
-    public function getBinaryValue(x:Int){
+    public function getBinaryValue(x:Int64){
         var f1:String="";
         var f2:String="";
-	var s2:StringBuf=new StringBuf();
 	if(x<=0)
 		f2="0";
 	else {
-	f1=recursiveBinarySolution(x);
-	for (i in 0...f1.length-1) 
-	     s2.addChar(f1.charCodeAt(f1.length-1-i));
-	f2=s2.toString();
-
+	f2=recursiveBinarySolution(x);
 	}
 		return f2;        
     }
-    
-    public function recursiveBinarySolution(x:Int){
+        public function recursiveBinarySolution(x:Int64){
         if(x==0)
             return "";
-        return x%2 + "" + recursiveBinarySolution(Std.int(x/2));
+        return  recursiveBinarySolution(Int64.div(x,2))+"" +Int64.mod(x,2);
     }
-    
     public function getHexadecimalValue(x:String){
         var f:String=recursiveHexadecimalSolution(x);
         return f;
     }
-    public function recursiveHexadecimalSolution(x:String){
+     public function recursiveHexadecimalSolution(x:String){
 
     	   if(x.length<=4)
 		return getHexadecimalSymbol(x);
 	return recursiveHexadecimalSolution(x.substr(0,x.length-4)) +
 	       getHexadecimalSymbol(x.substr(x.length-4));
     }
+
     public function getHexadecimalSymbol(num:String){
         switch(num){
 	case "0000":return "0";
@@ -235,9 +353,9 @@ class Calculator{
 	case "1100":return "C";
 	case "1101":return "C";
 	case "1110":return "D";
-	case "1111":return "E";
-	     
+	case "1111":return "E";     
 	}
-	return "lel";
+	return "No";
     }
+    
 }
