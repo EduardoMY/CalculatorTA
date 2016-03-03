@@ -395,9 +395,9 @@ class Calculator{
 	case "1010":return "A";
 	case "1011":return "B";
 	case "1100":return "C";
-	case "1101":return "C";
-	case "1110":return "D";
-	case "1111":return "E";     
+	case "1101":return "D";
+	case "1110":return "E";
+	case "1111":return "F";     
 	}
 	return "No";
     }

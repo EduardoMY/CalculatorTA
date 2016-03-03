@@ -47,7 +47,7 @@ ApplicationMain.init = function() {
 	if(total == 0) ApplicationMain.start();
 };
 ApplicationMain.main = function() {
-	ApplicationMain.config = { build : "522", company : "Company Name", file : "Calculator", fps : 60, name : "Calculator", orientation : "", packageName : "com.sample.calculator", version : "1.0.0", windows : [{ antialiasing : 0, background : 3355443, borderless : false, depthBuffer : false, display : 0, fullscreen : false, hardware : false, height : 600, parameters : "{}", resizable : true, stencilBuffer : true, title : "Calculator", vsync : false, width : 800, x : null, y : null}]};
+	ApplicationMain.config = { build : "524", company : "Company Name", file : "Calculator", fps : 60, name : "Calculator", orientation : "", packageName : "com.sample.calculator", version : "1.0.0", windows : [{ antialiasing : 0, background : 3355443, borderless : false, depthBuffer : false, display : 0, fullscreen : false, hardware : false, height : 600, parameters : "{}", resizable : true, stencilBuffer : true, title : "Calculator", vsync : false, width : 800, x : null, y : null}]};
 };
 ApplicationMain.start = function() {
 	var hasMain = false;
@@ -1464,7 +1464,7 @@ Main.prototype = $extend(openfl_display_Sprite.prototype,{
 		this.operations.set_x(400.0);
 		this.operations.set_y(23.0);
 		this.operations.set_height(400.0);
-		this.operations.set_width(360.0);
+		this.operations.set_width(365.0);
 		this.operations.setTextFormat(this.insideText);
 		this.operations.set_border(true);
 		this.operations.set_multiline(true);
@@ -2035,11 +2035,11 @@ Calculator.prototype = {
 		case "1100":
 			return "C";
 		case "1101":
-			return "C";
-		case "1110":
 			return "D";
-		case "1111":
+		case "1110":
 			return "E";
+		case "1111":
+			return "F";
 		}
 		return "No";
 	}
