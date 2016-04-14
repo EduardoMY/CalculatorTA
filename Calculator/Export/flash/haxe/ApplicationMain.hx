@@ -30,8 +30,8 @@ class ApplicationMain {
 		var types = [];
 		
 		
-		urls.push ("assets/calculadora");
-		types.push (lime.Assets.AssetType.BINARY);
+		urls.push ("assets/help.png");
+		types.push (lime.Assets.AssetType.IMAGE);
 		
 		
 		
@@ -95,10 +95,10 @@ class ApplicationMain {
 		
 		config = {
 			
-			build: "31",
+			build: "539",
 			company: "Company Name",
 			file: "Calculator",
-			fps: 30,
+			fps: 60,
 			name: "Calculator",
 			orientation: "",
 			packageName: "com.sample.calculator",
@@ -107,7 +107,7 @@ class ApplicationMain {
 				
 				{
 					antialiasing: 0,
-					background: 16777215,
+					background: 3355443,
 					borderless: false,
 					depthBuffer: false,
 					display: 0,
@@ -137,7 +137,7 @@ class ApplicationMain {
 		
 		#if (js && html5)
 		#if (munit || utest)
-		openfl.Lib.embed (null, 800, 600, "FFFFFF");
+		openfl.Lib.embed (null, 800, 600, "333333");
 		#end
 		#else
 		create ();

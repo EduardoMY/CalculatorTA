@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<project>
-	
+<project>	
 	<meta title="Calculator" package="com.sample.calculator" version="1.0.0" company="Company Name" />
 	<app main="Main" path="Export" file="Calculator" />
 	<window background="#333333" width="800" height="600" fps="60"/>

@@ -53,24 +53,18 @@ class DefaultAssetLibrary extends AssetLibrary {
 		
 		
 		
-		
 		#end
 		
 		#if flash
 		
-		path.set ("assets/c", "assets/c");
-		type.set ("assets/c", AssetType.BINARY);
-		path.set ("assets/mario.png", "assets/mario.png");
-		type.set ("assets/mario.png", AssetType.IMAGE);
+		path.set ("assets/help.png", "assets/help.png");
+		type.set ("assets/help.png", AssetType.IMAGE);
 		
 		
 		#elseif html5
 		
 		var id;
-		id = "assets/c";
-		path.set (id, id);
-		type.set (id, AssetType.BINARY);
-		id = "assets/mario.png";
+		id = "assets/help.png";
 		path.set (id, id);
 		type.set (id, AssetType.IMAGE);
 		
@@ -90,7 +84,6 @@ class DefaultAssetLibrary extends AssetLibrary {
 		#if (windows || mac || linux)
 		
 		var useManifest = false;
-		useManifest = true;
 		useManifest = true;
 		
 		
@@ -739,9 +732,7 @@ class DefaultAssetLibrary extends AssetLibrary {
 
 
 
-
 #elseif html5
-
 
 
 

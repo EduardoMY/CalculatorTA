@@ -57,17 +57,17 @@ class DefaultAssetLibrary extends AssetLibrary {
 		
 		#if flash
 		
-		className.set ("assets/calculadora", __ASSET__assets_calculadora);
-		type.set ("assets/calculadora", AssetType.BINARY);
+		className.set ("assets/help.png", __ASSET__assets_help_png);
+		type.set ("assets/help.png", AssetType.IMAGE);
 		
 		
 		#elseif html5
 		
 		var id;
-		id = "assets/calculadora";
+		id = "assets/help.png";
 		path.set (id, id);
 		
-		type.set (id, AssetType.BINARY);
+		type.set (id, AssetType.IMAGE);
 		
 		
 		var assetsPrefix = null;
@@ -86,8 +86,8 @@ class DefaultAssetLibrary extends AssetLibrary {
 		
 		var useManifest = false;
 		
-		className.set ("assets/calculadora", __ASSET__assets_calculadora);
-		type.set ("assets/calculadora", AssetType.BINARY);
+		className.set ("assets/help.png", __ASSET__assets_help_png);
+		type.set ("assets/help.png", AssetType.IMAGE);
 		
 		
 		if (useManifest) {
@@ -496,9 +496,10 @@ class DefaultAssetLibrary extends AssetLibrary {
 		if (path.exists (id)) {
 			
 			var loader = new URLLoader ();
+			loader.dataFormat = flash.net.URLLoaderDataFormat.BINARY;
 			loader.addEventListener (Event.COMPLETE, function (event:Event) {
 				
-				var bytes = Bytes.ofString (event.currentTarget.data);
+				var bytes = Bytes.ofData (event.currentTarget.data);
 				promise.complete (bytes);
 				
 			});
@@ -732,7 +733,7 @@ class DefaultAssetLibrary extends AssetLibrary {
 #if !display
 #if flash
 
-@:keep @:bind #if display private #end class __ASSET__assets_calculadora extends flash.utils.ByteArray { }
+@:keep @:bind #if display private #end class __ASSET__assets_help_png extends flash.display.BitmapData { public function new () { super (0, 0, true, 0); } }
 
 
 #elseif html5
@@ -747,7 +748,7 @@ class DefaultAssetLibrary extends AssetLibrary {
 #if (windows || mac || linux || cpp)
 
 
-@:file("Assets/calculadora") #if display private #end class __ASSET__assets_calculadora extends lime.utils.Bytes {}
+@:image("Assets/help.png") #if display private #end class __ASSET__assets_help_png extends lime.graphics.Image {}
 
 
 

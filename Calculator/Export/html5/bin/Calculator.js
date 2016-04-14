@@ -47,7 +47,7 @@ ApplicationMain.init = function() {
 	if(total == 0) ApplicationMain.start();
 };
 ApplicationMain.main = function() {
-	ApplicationMain.config = { build : "524", company : "Company Name", file : "Calculator", fps : 60, name : "Calculator", orientation : "", packageName : "com.sample.calculator", version : "1.0.0", windows : [{ antialiasing : 0, background : 3355443, borderless : false, depthBuffer : false, display : 0, fullscreen : false, hardware : false, height : 600, parameters : "{}", resizable : true, stencilBuffer : true, title : "Calculator", vsync : false, width : 800, x : null, y : null}]};
+	ApplicationMain.config = { build : "770", company : "Company Name", file : "Calculator", fps : 60, name : "Calculator", orientation : "", packageName : "com.sample.calculator", version : "1.0.0", windows : [{ antialiasing : 0, background : 3355443, borderless : false, depthBuffer : false, display : 0, fullscreen : false, hardware : false, height : 600, parameters : "{}", resizable : true, stencilBuffer : true, title : "Calculator", vsync : false, width : 800, x : null, y : null}]};
 };
 ApplicationMain.start = function() {
 	var hasMain = false;
@@ -73,7 +73,12 @@ var openfl_events_IEventDispatcher = function() { };
 $hxClasses["openfl.events.IEventDispatcher"] = openfl_events_IEventDispatcher;
 openfl_events_IEventDispatcher.__name__ = ["openfl","events","IEventDispatcher"];
 openfl_events_IEventDispatcher.prototype = {
-	__class__: openfl_events_IEventDispatcher
+	addEventListener: null
+	,dispatchEvent: null
+	,hasEventListener: null
+	,removeEventListener: null
+	,willTrigger: null
+	,__class__: openfl_events_IEventDispatcher
 };
 var openfl_events_EventDispatcher = function(target) {
 	if(target != null) this.__targetDispatcher = target;
@@ -85,7 +90,11 @@ openfl_events_EventDispatcher.__sortByPriority = function(l1,l2) {
 	if(l1.priority == l2.priority) return 0; else if(l1.priority > l2.priority) return -1; else return 1;
 };
 openfl_events_EventDispatcher.prototype = {
-	addEventListener: function(type,listener,useCapture,priority,useWeakReference) {
+	__dispatching: null
+	,__targetDispatcher: null
+	,__eventMap: null
+	,__newEventMap: null
+	,addEventListener: function(type,listener,useCapture,priority,useWeakReference) {
 		if(useWeakReference == null) useWeakReference = false;
 		if(priority == null) priority = 0;
 		if(useCapture == null) useCapture = false;
@@ -208,7 +217,19 @@ var openfl_display_IBitmapDrawable = function() { };
 $hxClasses["openfl.display.IBitmapDrawable"] = openfl_display_IBitmapDrawable;
 openfl_display_IBitmapDrawable.__name__ = ["openfl","display","IBitmapDrawable"];
 openfl_display_IBitmapDrawable.prototype = {
-	__class__: openfl_display_IBitmapDrawable
+	__worldTransform: null
+	,__worldColorTransform: null
+	,__blendMode: null
+	,__cacheAsBitmap: null
+	,__renderCairo: null
+	,__renderCairoMask: null
+	,__renderCanvas: null
+	,__renderCanvasMask: null
+	,__renderGL: null
+	,__updateChildren: null
+	,__updateTransforms: null
+	,__updateMask: null
+	,__class__: openfl_display_IBitmapDrawable
 };
 var openfl_display_DisplayObject = function() {
 	this.__cacheAsBitmapSmooth = true;
@@ -234,7 +255,68 @@ openfl_display_DisplayObject.__name__ = ["openfl","display","DisplayObject"];
 openfl_display_DisplayObject.__interfaces__ = [openfl_display_IBitmapDrawable];
 openfl_display_DisplayObject.__super__ = openfl_events_EventDispatcher;
 openfl_display_DisplayObject.prototype = $extend(openfl_events_EventDispatcher.prototype,{
-	getBounds: function(targetCoordinateSpace) {
+	blendMode: null
+	,cacheAsBitmapBounds: null
+	,loaderInfo: null
+	,mouseX: null
+	,mouseY: null
+	,opaqueBackground: null
+	,parent: null
+	,root: null
+	,scale9Grid: null
+	,shader: null
+	,stage: null
+	,__renderTransform: null
+	,__worldColorTransform: null
+	,__worldOffset: null
+	,__worldTransform: null
+	,__alpha: null
+	,__blendMode: null
+	,__cairo: null
+	,__children: null
+	,__filters: null
+	,__graphics: null
+	,__interactive: null
+	,__isMask: null
+	,__mask: null
+	,__maskGraphics: null
+	,__maskCached: null
+	,__name: null
+	,__objectTransform: null
+	,__offset: null
+	,__renderable: null
+	,__renderDirty: null
+	,__rotation: null
+	,__rotationCosine: null
+	,__rotationSine: null
+	,__scrollRect: null
+	,__shader: null
+	,__transform: null
+	,__transformDirty: null
+	,__visible: null
+	,__worldAlpha: null
+	,__worldAlphaChanged: null
+	,__worldClip: null
+	,__worldClipChanged: null
+	,__worldTransformCache: null
+	,__worldTransformChanged: null
+	,__worldVisible: null
+	,__worldVisibleChanged: null
+	,__worldZ: null
+	,__cacheAsBitmap: null
+	,__cacheAsBitmapMatrix: null
+	,__cacheAsBitmapSmooth: null
+	,__forceCacheAsBitmap: null
+	,__updateCachedBitmap: null
+	,__cachedBitmap: null
+	,__cachedBitmapBounds: null
+	,__cachedFilterBounds: null
+	,__cacheGLMatrix: null
+	,__updateFilters: null
+	,__canvas: null
+	,__context: null
+	,__style: null
+	,getBounds: function(targetCoordinateSpace) {
 		var matrix;
 		if(targetCoordinateSpace != null) {
 			matrix = this.__getWorldTransform().clone();
@@ -415,7 +497,7 @@ openfl_display_DisplayObject.prototype = $extend(openfl_events_EventDispatcher.p
 			h = bmpBounds.height;
 			this.__cacheGLMatrix = this.__cacheAsBitmapMatrix.clone();
 		} else this.__cacheGLMatrix.identity();
-		if(w <= 0 && h <= 0) throw new js__$Boot_HaxeError("Error creating a cached bitmap. The texture size is " + w + "x" + h);
+		if(w <= 0 && h <= 0) return;
 		if(this.__updateCachedBitmap || this.__updateFilters) {
 			if(this.__cachedFilterBounds != null) {
 				w += Math.abs(this.__cachedFilterBounds.x) + Math.abs(this.__cachedFilterBounds.width);
@@ -858,7 +940,14 @@ $hxClasses["openfl.display.InteractiveObject"] = openfl_display_InteractiveObjec
 openfl_display_InteractiveObject.__name__ = ["openfl","display","InteractiveObject"];
 openfl_display_InteractiveObject.__super__ = openfl_display_DisplayObject;
 openfl_display_InteractiveObject.prototype = $extend(openfl_display_DisplayObject.prototype,{
-	requestSoftKeyboard: function() {
+	doubleClickEnabled: null
+	,focusRect: null
+	,mouseEnabled: null
+	,needsSoftKeyboard: null
+	,softKeyboardInputAreaOfInterest: null
+	,tabIndex: null
+	,__tabEnabled: null
+	,requestSoftKeyboard: function() {
 		openfl_Lib.notImplemented("InteractiveObject.requestSoftKeyboard");
 		return false;
 	}
@@ -892,7 +981,11 @@ $hxClasses["openfl.display.DisplayObjectContainer"] = openfl_display_DisplayObje
 openfl_display_DisplayObjectContainer.__name__ = ["openfl","display","DisplayObjectContainer"];
 openfl_display_DisplayObjectContainer.__super__ = openfl_display_InteractiveObject;
 openfl_display_DisplayObjectContainer.prototype = $extend(openfl_display_InteractiveObject.prototype,{
-	addChild: function(child) {
+	mouseChildren: null
+	,numChildren: null
+	,tabChildren: null
+	,__removedChildren: null
+	,addChild: function(child) {
 		if(child != null) {
 			if(child.parent != null) child.parent.removeChild(child);
 			this.__children.push(child);
@@ -1312,7 +1405,11 @@ $hxClasses["openfl.display.Sprite"] = openfl_display_Sprite;
 openfl_display_Sprite.__name__ = ["openfl","display","Sprite"];
 openfl_display_Sprite.__super__ = openfl_display_DisplayObjectContainer;
 openfl_display_Sprite.prototype = $extend(openfl_display_DisplayObjectContainer.prototype,{
-	startDrag: function(lockCenter,bounds) {
+	buttonMode: null
+	,graphics: null
+	,hitArea: null
+	,useHandCursor: null
+	,startDrag: function(lockCenter,bounds) {
 		if(lockCenter == null) lockCenter = false;
 		if(this.stage != null) this.stage.__startDrag(this,lockCenter,bounds);
 	}
@@ -1324,9 +1421,12 @@ openfl_display_Sprite.prototype = $extend(openfl_display_DisplayObjectContainer.
 	}
 	,__hitTest: function(x,y,shapeFlag,stack,interactiveOnly,hitObject) {
 		if(this.hitArea != null) {
-			if(!this.hitArea.mouseEnabled && this.hitArea.__hitTest(x,y,shapeFlag,stack,interactiveOnly,hitObject)) {
-				stack[stack.length - 1] = hitObject;
-				return true;
+			if(!this.hitArea.mouseEnabled) {
+				this.hitArea.mouseEnabled = true;
+				var hitTest = this.hitArea.__hitTest(x,y,shapeFlag,null,true,hitObject);
+				this.hitArea.mouseEnabled = false;
+				if(hitTest) stack[stack.length] = hitObject;
+				return hitTest;
 			}
 		} else {
 			if(!hitObject.get_visible() || this.__isMask || interactiveOnly && !this.mouseEnabled && !this.mouseChildren) return false;
@@ -1378,13 +1478,40 @@ var Main = function() {
 	this.addChild(this.resultBinaryTitle);
 	this.addChild(this.resultHexadecimal);
 	this.addChild(this.resultHexadecimalTitle);
+	this.addChild(this.aTitle);
+	this.addChild(this.aValue);
+	this.addChild(this.bTitle);
+	this.addChild(this.bValue);
+	this.addChild(this.cTitle);
+	this.addChild(this.cValue);
 	this.addChild(sprite);
 };
 $hxClasses["Main"] = Main;
 Main.__name__ = ["Main"];
 Main.__super__ = openfl_display_Sprite;
 Main.prototype = $extend(openfl_display_Sprite.prototype,{
-	onButtonClick: function(e) {
+	operation: null
+	,operations: null
+	,resultDecimal: null
+	,resultBinary: null
+	,resultHexadecimal: null
+	,aValue: null
+	,bValue: null
+	,cValue: null
+	,title: null
+	,operationTitle: null
+	,operationsTitle: null
+	,resultDecimalTitle: null
+	,resultBinaryTitle: null
+	,resultHexadecimalTitle: null
+	,aTitle: null
+	,bTitle: null
+	,cTitle: null
+	,insideText: null
+	,outsideText: null
+	,helpMessage: null
+	,calc: null
+	,onButtonClick: function(e) {
 		this.operations.set_text(this.helpMessage);
 	}
 	,init: function() {
@@ -1399,12 +1526,18 @@ Main.prototype = $extend(openfl_display_Sprite.prototype,{
 		this.resultDecimal = new openfl_text_TextField();
 		this.resultBinary = new openfl_text_TextField();
 		this.resultHexadecimal = new openfl_text_TextField();
+		this.aValue = new openfl_text_TextField();
+		this.bValue = new openfl_text_TextField();
+		this.cValue = new openfl_text_TextField();
 		this.title = new openfl_text_TextField();
 		this.operationTitle = new openfl_text_TextField();
 		this.operationsTitle = new openfl_text_TextField();
 		this.resultDecimalTitle = new openfl_text_TextField();
 		this.resultBinaryTitle = new openfl_text_TextField();
 		this.resultHexadecimalTitle = new openfl_text_TextField();
+		this.aTitle = new openfl_text_TextField();
+		this.bTitle = new openfl_text_TextField();
+		this.cTitle = new openfl_text_TextField();
 		this.resultDecimalTitle.set_x(20.0);
 		this.resultDecimalTitle.set_y(5.0);
 		this.resultDecimalTitle.set_text("Result: ");
@@ -1431,17 +1564,53 @@ Main.prototype = $extend(openfl_display_Sprite.prototype,{
 		this.resultBinary.set_background(true);
 		this.resultBinary.set_backgroundColor(8680821);
 		this.resultHexadecimalTitle.set_x(20.0);
-		this.resultHexadecimalTitle.set_y(180.0);
+		this.resultHexadecimalTitle.set_y(160.0);
 		this.resultHexadecimalTitle.set_text("Hexadecimal: ");
 		this.resultHexadecimalTitle.setTextFormat(this.outsideText);
 		this.resultHexadecimal.set_x(20.0);
-		this.resultHexadecimal.set_y(200.0);
+		this.resultHexadecimal.set_y(180.0);
 		this.resultHexadecimal.set_height(30.0);
 		this.resultHexadecimal.set_width(200.0);
 		this.resultHexadecimal.setTextFormat(this.insideText);
 		this.resultHexadecimal.set_border(true);
 		this.resultHexadecimal.set_background(true);
 		this.resultHexadecimal.set_backgroundColor(8680821);
+		this.aTitle.set_x(22.0);
+		this.aTitle.set_y(255.0);
+		this.aTitle.set_text("A: ");
+		this.aTitle.setTextFormat(this.outsideText);
+		this.aValue.set_x(60.0);
+		this.aValue.set_y(250.0);
+		this.aValue.set_height(30.0);
+		this.aValue.set_width(100.0);
+		this.aValue.setTextFormat(this.insideText);
+		this.aValue.set_border(true);
+		this.aValue.set_background(true);
+		this.aValue.set_backgroundColor(8680821);
+		this.bTitle.set_x(22.0);
+		this.bTitle.set_y(295.0);
+		this.bTitle.set_text("B: ");
+		this.bTitle.setTextFormat(this.outsideText);
+		this.bValue.set_x(60.0);
+		this.bValue.set_y(290.0);
+		this.bValue.set_height(30.0);
+		this.bValue.set_width(100.0);
+		this.bValue.setTextFormat(this.insideText);
+		this.bValue.set_border(true);
+		this.bValue.set_background(true);
+		this.bValue.set_backgroundColor(8680821);
+		this.cTitle.set_x(22.0);
+		this.cTitle.set_y(335.0);
+		this.cTitle.set_text("C: ");
+		this.cTitle.setTextFormat(this.outsideText);
+		this.cValue.set_x(60.0);
+		this.cValue.set_y(330.0);
+		this.cValue.set_height(30.0);
+		this.cValue.set_width(100.0);
+		this.cValue.setTextFormat(this.insideText);
+		this.cValue.set_border(true);
+		this.cValue.set_background(true);
+		this.cValue.set_backgroundColor(8680821);
 		this.operationTitle.set_x(20.0);
 		this.operationTitle.set_y(470.0);
 		this.operationTitle.set_width(250);
@@ -1469,6 +1638,7 @@ Main.prototype = $extend(openfl_display_Sprite.prototype,{
 		this.operations.set_border(true);
 		this.operations.set_multiline(true);
 		this.operations.set_background(true);
+		haxe_Log.trace("Hola crayola",{ fileName : "Main.hx", lineNumber : 224, className : "Main", methodName : "init"});
 		this.helpMessage = "Seccion de Ayuda\n" + "================\n" + "Instrucciones:\n" + "*Dar click en la barra de abajo\n" + "*Insertar la operacion\n" + "*Presionar la tecla enter\n" + "==========================\n" + "Notas Importantes:\n" + "El sistema marcara error por problemas de sintaxis.\n" + "Al marcar un error el cuadro de resultados tendra cero,\n" + "binario y Hexadecimal estaran vaciosy\n" + "y este cuadro tendra el mensaje de error.\n" + "El sistema acepta numeros con signo (-N y +N).\n" + "No se puede utilizar mas de un signo por numero.\n" + "La operacion deben de tener un signo de igualdad al terminar.\n" + "Todo despues era ignorado.\n" + "Solo aceptan numeros enteros y de 12 digitos.\n" + "Numeros mayores seran marcados como overflow\n" + "Division entre cero tambien es error.\n" + "Puedes poner TODOS los espacios que gustes.\n" + "Binario/hexadecimal no sirve en numeros negativos :/\n";
 		this.operations.set_text(this.helpMessage);
 	}
@@ -1483,9 +1653,12 @@ Main.prototype = $extend(openfl_display_Sprite.prototype,{
 				++_g;
 				this.operations.appendText(i + "\n");
 			}
-			this.resultDecimal.set_text(haxe__$Int64_Int64_$Impl_$.toString(this.calc.print()) + "");
+			this.resultDecimal.set_text(this.calc.print() + "");
 			this.resultBinary.set_text(this.calc.printBinary());
 			this.resultHexadecimal.set_text(this.calc.printHexadecimal());
+			this.aValue.set_text(this.calc.printAValue());
+			this.bValue.set_text(this.calc.printBValue());
+			this.cValue.set_text(this.calc.printCValue());
 		}
 	}
 	,__class__: Main
@@ -1502,13 +1675,27 @@ DocumentClass.prototype = $extend(Main.prototype,{
 	__class__: DocumentClass
 });
 var Calculator = function() {
-	this.maxBits = 41;
 	this.originalOperation = "0";
+	this.a = new Number("0");
+	this.a.setNickName("A");
+	this.b = new Number("0");
+	this.b.setNickName("B");
+	this.c = new Number("0");
+	this.c.setNickName("C");
 };
 $hxClasses["Calculator"] = Calculator;
 Calculator.__name__ = ["Calculator"];
 Calculator.prototype = {
-	setOperation: function(newOperation) {
+	originalOperation: null
+	,result: null
+	,a: null
+	,b: null
+	,c: null
+	,resultBinary: null
+	,resultHexadecimal: null
+	,operations: null
+	,quitExecution: null
+	,setOperation: function(newOperation) {
 		this.originalOperation = newOperation;
 		var tokens = newOperation.split("");
 		var realTokens = this.checkIntegrity(tokens);
@@ -1516,9 +1703,11 @@ Calculator.prototype = {
 		if(_g != null) switch(_g) {
 		case "0":
 			this.operations = [];
-			this.result = this.evaluate(realTokens);
+			var assign = realTokens.pop();
+			haxe_Log.trace(realTokens.length,{ fileName : "Calculator.hx", lineNumber : 41, className : "Calculator", methodName : "setOperation"});
+			this.result = this.evaluate(assign,realTokens);
 			if(!this.quitExecution) {
-				this.resultBinary = this.getBinaryValue(this.result);
+				this.resultBinary = this.getBinaryValue(0);
 				this.resultHexadecimal = this.getHexadecimalValue(this.resultBinary);
 			} else {
 				this.resultBinary = "";
@@ -1528,64 +1717,49 @@ Calculator.prototype = {
 			break;
 		case "1":
 			this.operations = ["Token invalid (" + realTokens.pop() + ")"];
-			{
-				var x = new haxe__$Int64__$_$_$Int64(0,0);
-				this.result = x;
-			}
+			this.result = new Number("0");
 			this.resultBinary = "";
 			this.resultHexadecimal = "";
 			break;
 		case "2":
 			this.operations = ["There is a missing operation"];
-			{
-				var x1 = new haxe__$Int64__$_$_$Int64(0,0);
-				this.result = x1;
-			}
+			this.result = new Number("0");
 			this.resultBinary = "";
 			this.resultHexadecimal = "";
 			break;
 		case "3":
 			this.operations = ["Bad combination of signs(" + realTokens[realTokens.length - 2] + realTokens[realTokens.length - 1] + ")"];
-			{
-				var x2 = new haxe__$Int64__$_$_$Int64(0,0);
-				this.result = x2;
-			}
+			this.result = new Number("0");
 			this.resultBinary = "";
 			this.resultHexadecimal = "";
 			break;
 		case "4":
 			this.operations = ["Overflow !!!"];
-			{
-				var x3 = new haxe__$Int64__$_$_$Int64(0,0);
-				this.result = x3;
-			}
+			this.result = new Number("0");
 			this.resultBinary = "";
 			this.resultHexadecimal = "";
 			break;
 		case "5":
 			this.operations = ["Error: Cannot aply an operation to a single number"];
-			{
-				var x4 = new haxe__$Int64__$_$_$Int64(0,0);
-				this.result = x4;
-			}
+			this.result = new Number("0");
 			this.resultBinary = "";
 			this.resultHexadecimal = "";
 			break;
 		case "6":
 			this.operations = ["No = at the end"];
-			{
-				var x5 = new haxe__$Int64__$_$_$Int64(0,0);
-				this.result = x5;
-			}
+			this.result = new Number("0");
 			this.resultBinary = "";
 			this.resultHexadecimal = "";
 			break;
 		case "7":
 			this.operations = ["Empty operation"];
-			{
-				var x6 = new haxe__$Int64__$_$_$Int64(0,0);
-				this.result = x6;
-			}
+			this.result = new Number("0");
+			this.resultBinary = "";
+			this.resultHexadecimal = "";
+			break;
+		case "8":
+			this.operations = ["Invalid Number"];
+			this.result = new Number("0");
 			this.resultBinary = "";
 			this.resultHexadecimal = "";
 			break;
@@ -1594,31 +1768,34 @@ Calculator.prototype = {
 	,checkIntegrity: function(tokens) {
 		var i = 0;
 		var previousSymbol = 0;
-		var operators = ["-","+","*","/"];
+		var operators = ["-","+","*","/","^"];
+		var variables = ["A","B","C"];
 		var values = [];
 		var expressionStillValid = true;
+		var expressionHasReachedEqual = false;
 		var status = 6;
 		if(tokens.length == 0) {
-			haxe_Log.trace("emptyyyyyy",{ fileName : "Calculator.hx", lineNumber : 84, className : "Calculator", methodName : "checkIntegrity"});
+			haxe_Log.trace("emptyyyyyy",{ fileName : "Calculator.hx", lineNumber : 107, className : "Calculator", methodName : "checkIntegrity"});
 			status = 7;
 			expressionStillValid = false;
 		}
 		while(i < tokens.length && expressionStillValid) {
-			haxe_Log.trace(tokens[i],{ fileName : "Calculator.hx", lineNumber : 89, className : "Calculator", methodName : "checkIntegrity"});
+			haxe_Log.trace(tokens[i],{ fileName : "Calculator.hx", lineNumber : 112, className : "Calculator", methodName : "checkIntegrity"});
 			if(tokens[i] == " ") {
 				i++;
 				continue;
 			}
-			if(HxOverrides.indexOf(operators,tokens[i],0) != -1) {
+			if(tokens[i] == "(" || tokens[i] == ")") values.push(tokens[i]); else if(HxOverrides.indexOf(operators,tokens[i],0) != -1) {
+				var lastOp;
 				if(previousSymbol == 0 && (tokens[i] == "+" || tokens[i] == "-")) {
-					haxe_Log.trace("sign star",{ fileName : "Calculator.hx", lineNumber : 96, className : "Calculator", methodName : "checkIntegrity"});
+					haxe_Log.trace("sign star",{ fileName : "Calculator.hx", lineNumber : 123, className : "Calculator", methodName : "checkIntegrity"});
 					values.push(tokens[i]);
 					previousSymbol = 2;
 				} else if(previousSymbol == 0) {
 					status = 5;
 					expressionStillValid = false;
 				} else if(previousSymbol == 1 && (tokens[i] == "+" || tokens[i] == "-")) {
-					haxe_Log.trace("weird sign",{ fileName : "Calculator.hx", lineNumber : 106, className : "Calculator", methodName : "checkIntegrity"});
+					haxe_Log.trace("weird sign",{ fileName : "Calculator.hx", lineNumber : 133, className : "Calculator", methodName : "checkIntegrity"});
 					values.push(tokens[i]);
 					previousSymbol = 2;
 				} else if(previousSymbol == 1) {
@@ -1626,45 +1803,75 @@ Calculator.prototype = {
 					values.push(tokens[i]);
 					expressionStillValid = false;
 				} else if(previousSymbol == 2) {
-					status = 3;
-					values.push(tokens[i]);
-					expressionStillValid = false;
+					if(tokens[i] == "+" || tokens[i] == "-") {
+						haxe_Log.trace("another sign",{ fileName : "Calculator.hx", lineNumber : 144, className : "Calculator", methodName : "checkIntegrity"});
+						lastOp = values.pop();
+						haxe_Log.trace("El simbolo es" + lastOp + "    " + tokens[i],{ fileName : "Calculator.hx", lineNumber : 146, className : "Calculator", methodName : "checkIntegrity"});
+						if(lastOp == "-") {
+							if(tokens[i] == "+") values.push("-"); else values.push("+");
+							haxe_Log.trace("Paso",{ fileName : "Calculator.hx", lineNumber : 152, className : "Calculator", methodName : "checkIntegrity"});
+						} else values.push(tokens[i]);
+					} else {
+						status = 3;
+						values.push(tokens[i]);
+						expressionStillValid = false;
+					}
 				} else if(previousSymbol == 3) {
 					values.push(tokens[i]);
 					previousSymbol = 1;
 				}
-			} else if(tokens[i] >= "0" && tokens[i] <= "9") {
-				haxe_Log.trace(tokens[i] + "Number",{ fileName : "Calculator.hx", lineNumber : 127, className : "Calculator", methodName : "checkIntegrity"});
+			} else if(HxOverrides.indexOf(variables,tokens[i],0) != -1) {
+				values.push(tokens[i]);
+				previousSymbol = 3;
+			} else if(tokens[i] == "." || tokens[i] >= "0" && tokens[i] <= "9") {
+				haxe_Log.trace(tokens[i] + "Number",{ fileName : "Calculator.hx", lineNumber : 172, className : "Calculator", methodName : "checkIntegrity"});
 				var posNumber = "";
 				var realNumber;
-				var numberDiff;
+				var hasPoint = false;
+				var hasNumberAfterPoint = false;
+				var hasE = false;
+				var hasNumberAfterE = false;
+				if(tokens[i] == ".") {
+					hasPoint = true;
+					i++;
+				}
 				if(previousSymbol == 3) {
 					status = 2;
 					expressionStillValid = false;
 				} else {
-					numberDiff = false;
-					while(i < tokens.length && tokens[i] >= "0" && tokens[i] <= "9") {
-						if(numberDiff || tokens[i] != "0") {
-							haxe_Log.trace("hola" + tokens[i],{ fileName : "Calculator.hx", lineNumber : 139, className : "Calculator", methodName : "checkIntegrity"});
-							posNumber += tokens[i];
-							numberDiff = true;
-						}
+					while(i < tokens.length && (tokens[i] == "." || tokens[i] == "E" || tokens[i] >= "0" && tokens[i] <= "9") && expressionStillValid) {
+						haxe_Log.trace("hola" + tokens[i],{ fileName : "Calculator.hx", lineNumber : 189, className : "Calculator", methodName : "checkIntegrity"});
+						posNumber += tokens[i];
+						if(tokens[i] == ".") {
+							if(hasPoint || hasE) {
+								expressionStillValid = false;
+								status = 8;
+							} else hasPoint = true;
+						} else if(!hasE && hasPoint) hasNumberAfterPoint = true; else if(tokens[i] == "E") {
+							if(hasE) {
+								expressionStillValid = false;
+								status = 8;
+							} else hasE = true;
+						} else if(hasE) hasNumberAfterE = true;
 						i++;
 					}
-					haxe_Log.trace(posNumber + "COmpleteNumber",{ fileName : "Calculator.hx", lineNumber : 145, className : "Calculator", methodName : "checkIntegrity"});
-					if(posNumber.length == 0) realNumber = "0"; else realNumber = posNumber;
-					if(realNumber.length <= 12) {
-						if(previousSymbol == 2 && values.pop() == "-" && realNumber != "0") values.push("-" + realNumber); else values.push(realNumber);
-						previousSymbol = 3;
-					} else {
-						status = 4;
+					if(hasE && !hasNumberAfterE || hasPoint && !hasNumberAfterPoint) {
+						status = 8;
 						expressionStillValid = false;
+						haxe_Log.trace(posNumber,{ fileName : "Calculator.hx", lineNumber : 216, className : "Calculator", methodName : "checkIntegrity"});
+						haxe_Log.trace("Evaluating number at the end",{ fileName : "Calculator.hx", lineNumber : 217, className : "Calculator", methodName : "checkIntegrity"});
+					} else if(expressionStillValid) {
+						if(previousSymbol == 2) {
+							if(values.pop() == "-") values.push("-" + posNumber); else values.push(posNumber);
+						} else values.push(posNumber);
+						previousSymbol = 3;
 					}
+					haxe_Log.trace(posNumber + "COmpleteNumber",{ fileName : "Calculator.hx", lineNumber : 229, className : "Calculator", methodName : "checkIntegrity"});
 					i--;
 				}
 			} else if(tokens[i] == "=") {
 				status = 0;
-				expressionStillValid = false;
+				expressionHasReachedEqual = true;
 			} else {
 				status = 1;
 				values.push(tokens[i]);
@@ -1672,18 +1879,21 @@ Calculator.prototype = {
 			}
 			i++;
 		}
-		if(status == 0 && previousSymbol != 3) status = 2;
+		if(status == 0 && previousSymbol != 3) status = 2; else if(status == 0 && HxOverrides.indexOf(variables,tokens[i - 1],0) == -1) {
+			haxe_Log.trace("Normal operation",{ fileName : "Calculator.hx", lineNumber : 249, className : "Calculator", methodName : "checkIntegrity"});
+			values.push("*");
+		}
 		values.push(status + "");
 		var _g = 0;
 		while(_g < values.length) {
 			var c = values[_g];
 			++_g;
-			haxe_Log.trace(c + "Checar todos los digitos",{ fileName : "Calculator.hx", lineNumber : 179, className : "Calculator", methodName : "checkIntegrity"});
+			haxe_Log.trace(c + "Checar todos los digitos",{ fileName : "Calculator.hx", lineNumber : 255, className : "Calculator", methodName : "checkIntegrity"});
 		}
 		return values;
 	}
 	,print: function() {
-		return this.result;
+		return this.result.print();
 	}
 	,printBinary: function() {
 		return this.resultBinary;
@@ -1691,20 +1901,34 @@ Calculator.prototype = {
 	,printHexadecimal: function() {
 		return this.resultHexadecimal;
 	}
+	,printAValue: function() {
+		return this.a.print();
+	}
+	,printBValue: function() {
+		return this.b.print();
+	}
+	,printCValue: function() {
+		return this.c.print();
+	}
 	,printOperations: function() {
 		return this.operations;
 	}
-	,evaluate: function(tokens) {
+	,evaluate: function(letter,tokens) {
 		var length = tokens.length;
 		var i = 0;
 		var values = [];
+		var variables = ["A","B","C"];
 		var ops = [];
 		this.quitExecution = false;
 		while(i < length && !this.quitExecution) {
-			if(tokens[i].length > 1 || tokens[i] >= "0" && tokens[i] <= "9") values.push(thx_Int64s.parse(tokens[i])); else if(tokens[i] == "(") ops.push(tokens[i]); else if(tokens[i] == ")") {
+			if(tokens[i].length > 1 || HxOverrides.indexOf(variables,tokens[i],0) != -1 || tokens[i] >= "0" && tokens[i] <= "9") {
+				haxe_Log.trace("It is a Number " + tokens[i],{ fileName : "Calculator.hx", lineNumber : 309, className : "Calculator", methodName : "evaluate"});
+				if(tokens[i] == "A") values.push(this.a); else if(tokens[i] == "B") values.push(this.b); else if(tokens[i] == "C") values.push(this.c); else values.push(new Number(tokens[i]));
+			} else if(tokens[i] == "(") ops.push(tokens[i]); else if(tokens[i] == ")") {
+				haxe_Log.trace("C",{ fileName : "Calculator.hx", lineNumber : 326, className : "Calculator", methodName : "evaluate"});
 				while(ops[ops.length - 1] != "(") values.push(this.applyOp(ops.pop(),values.pop(),values.pop()));
 				ops.pop();
-			} else if(tokens[i] == "+" || tokens[i] == "-" || tokens[i] == "*" || tokens[i] == "/") {
+			} else if(tokens[i] == "+" || tokens[i] == "-" || tokens[i] == "*" || tokens[i] == "/" || tokens[i] == "^") {
 				while(ops.length != 0 && this.hasPrecedence(tokens[i],ops[ops.length - 1])) values.push(this.applyOp(ops.pop(),values.pop(),values.pop()));
 				ops.push(tokens[i]);
 			}
@@ -1713,274 +1937,62 @@ Calculator.prototype = {
 		while(ops.length != 0 && !this.quitExecution) values.push(this.applyOp(ops.pop(),values.pop(),values.pop()));
 		if(this.operations.length == 0) {
 			var a = values[0];
-			this.operations.push("" + haxe__$Int64_Int64_$Impl_$.toString(a) + " = " + haxe__$Int64_Int64_$Impl_$.toString(a));
+			this.operations.push(a.print() + " = " + a.print());
+		}
+		switch(letter) {
+		case "A":
+			this.a = values.pop();
+			this.a.setNickName("A");
+			return this.a;
+		case "B":
+			this.b = values.pop();
+			this.b.setNickName("B");
+			return this.b;
+		case "C":
+			this.c = values.pop();
+			this.c.setNickName("C");
+			return this.c;
 		}
 		return values.pop();
 	}
 	,hasPrecedence: function(op1,op2) {
-		if(op2 == "(" || op2 == ")") return false;
-		if((op1 == "*" || op1 == "/") && (op2 == "+" || op2 == "-")) return false; else return true;
+		if(op2 == "(" || op2 == ")") return false; else if(op1 == "^") return false; else if((op1 == "*" || op1 == "/") && (op2 == "+" || op2 == "-")) return false; else return true;
 	}
 	,applyOp: function(op,b,a) {
 		var res;
-		{
-			var x = new haxe__$Int64__$_$_$Int64(0,0);
-			res = x;
-		}
-		var dLimit = thx_Int64s.parse("-999999999999");
-		var uLimit = thx_Int64s.parse("999999999999");
 		switch(op) {
 		case "+":
-			var high = a.high + b.high | 0;
-			var low = a.low + b.low | 0;
-			if(haxe__$Int32_Int32_$Impl_$.ucompare(low,a.low) < 0) {
-				var ret = high++;
-				high = high | 0;
-				ret;
-			}
-			var x1 = new haxe__$Int64__$_$_$Int64(high,low);
-			res = x1;
-			if((function($this) {
-				var $r;
-				var v = res.high - uLimit.high | 0;
-				if(v != 0) v = v; else v = haxe__$Int32_Int32_$Impl_$.ucompare(res.low,uLimit.low);
-				$r = res.high < 0?uLimit.high < 0?v:-1:uLimit.high >= 0?v:1;
-				return $r;
-			}(this)) <= 0 && (function($this) {
-				var $r;
-				var v1 = res.high - dLimit.high | 0;
-				if(v1 != 0) v1 = v1; else v1 = haxe__$Int32_Int32_$Impl_$.ucompare(res.low,dLimit.low);
-				$r = res.high < 0?dLimit.high < 0?v1:-1:dLimit.high >= 0?v1:1;
-				return $r;
-			}(this)) >= 0) {
-				this.operations.push("" + haxe__$Int64_Int64_$Impl_$.toString(a) + " + " + haxe__$Int64_Int64_$Impl_$.toString(b) + " = " + haxe__$Int64_Int64_$Impl_$.toString(res));
-				return res;
-			} else {
-				this.operations.push("" + haxe__$Int64_Int64_$Impl_$.toString(a) + " + " + haxe__$Int64_Int64_$Impl_$.toString(b) + " = Overflow!!");
-				this.quitExecution = true;
-				{
-					var x2 = new haxe__$Int64__$_$_$Int64(0,0);
-					return x2;
-				}
-			}
-			break;
+			res = Number.sum(a,b);
+			this.operations.push(a.print() + " + " + b.print() + " = " + res.print());
+			return res;
 		case "-":
-			var high1 = a.high - b.high | 0;
-			var low1 = a.low - b.low | 0;
-			if(haxe__$Int32_Int32_$Impl_$.ucompare(a.low,b.low) < 0) {
-				var ret1 = high1--;
-				high1 = high1 | 0;
-				ret1;
-			}
-			var x3 = new haxe__$Int64__$_$_$Int64(high1,low1);
-			res = x3;
-			if((function($this) {
-				var $r;
-				var v2 = res.high - uLimit.high | 0;
-				if(v2 != 0) v2 = v2; else v2 = haxe__$Int32_Int32_$Impl_$.ucompare(res.low,uLimit.low);
-				$r = res.high < 0?uLimit.high < 0?v2:-1:uLimit.high >= 0?v2:1;
-				return $r;
-			}(this)) <= 0 && (function($this) {
-				var $r;
-				var v3 = res.high - dLimit.high | 0;
-				if(v3 != 0) v3 = v3; else v3 = haxe__$Int32_Int32_$Impl_$.ucompare(res.low,dLimit.low);
-				$r = res.high < 0?dLimit.high < 0?v3:-1:dLimit.high >= 0?v3:1;
-				return $r;
-			}(this)) >= 0) {
-				this.operations.push("" + haxe__$Int64_Int64_$Impl_$.toString(a) + " - " + haxe__$Int64_Int64_$Impl_$.toString(b) + " = " + haxe__$Int64_Int64_$Impl_$.toString(res));
-				return res;
-			} else {
-				this.operations.push("" + haxe__$Int64_Int64_$Impl_$.toString(a) + " - " + haxe__$Int64_Int64_$Impl_$.toString(b) + " = Overflow");
-				this.quitExecution = true;
-				{
-					var x4 = new haxe__$Int64__$_$_$Int64(0,0);
-					return x4;
-				}
-			}
-			break;
+			res = Number.sub(a,b);
+			this.operations.push(a.print() + " - " + b.print() + " = " + res.print());
+			return res;
 		case "*":
-			if(this.checksMultiplicability(a,b)) {
-				var mask = 65535;
-				var al = a.low & mask;
-				var ah = a.low >>> 16;
-				var bl = b.low & mask;
-				var bh = b.low >>> 16;
-				var p00 = haxe__$Int32_Int32_$Impl_$.mul(al,bl);
-				var p10 = haxe__$Int32_Int32_$Impl_$.mul(ah,bl);
-				var p01 = haxe__$Int32_Int32_$Impl_$.mul(al,bh);
-				var p11 = haxe__$Int32_Int32_$Impl_$.mul(ah,bh);
-				var low2 = p00;
-				var high2 = (p11 + (p01 >>> 16) | 0) + (p10 >>> 16) | 0;
-				p01 = p01 << 16;
-				low2 = low2 + p01 | 0;
-				if(haxe__$Int32_Int32_$Impl_$.ucompare(low2,p01) < 0) {
-					var ret2 = high2++;
-					high2 = high2 | 0;
-					ret2;
-				}
-				p10 = p10 << 16;
-				low2 = low2 + p10 | 0;
-				if(haxe__$Int32_Int32_$Impl_$.ucompare(low2,p10) < 0) {
-					var ret3 = high2++;
-					high2 = high2 | 0;
-					ret3;
-				}
-				var b1;
-				var a1 = haxe__$Int32_Int32_$Impl_$.mul(a.low,b.high);
-				var b2 = haxe__$Int32_Int32_$Impl_$.mul(a.high,b.low);
-				b1 = a1 + b2 | 0;
-				high2 = high2 + b1 | 0;
-				var x5 = new haxe__$Int64__$_$_$Int64(high2,low2);
-				res = x5;
-				if((function($this) {
-					var $r;
-					var v4 = res.high - uLimit.high | 0;
-					if(v4 != 0) v4 = v4; else v4 = haxe__$Int32_Int32_$Impl_$.ucompare(res.low,uLimit.low);
-					$r = res.high < 0?uLimit.high < 0?v4:-1:uLimit.high >= 0?v4:1;
-					return $r;
-				}(this)) <= 0 && (function($this) {
-					var $r;
-					var v5 = res.high - dLimit.high | 0;
-					if(v5 != 0) v5 = v5; else v5 = haxe__$Int32_Int32_$Impl_$.ucompare(res.low,dLimit.low);
-					$r = res.high < 0?dLimit.high < 0?v5:-1:dLimit.high >= 0?v5:1;
-					return $r;
-				}(this)) >= 0) {
-					this.operations.push("" + haxe__$Int64_Int64_$Impl_$.toString(a) + " * " + haxe__$Int64_Int64_$Impl_$.toString(b) + " = " + haxe__$Int64_Int64_$Impl_$.toString(res));
-					var mask1 = 65535;
-					var al1 = a.low & mask1;
-					var ah1 = a.low >>> 16;
-					var bl1 = b.low & mask1;
-					var bh1 = b.low >>> 16;
-					var p001 = haxe__$Int32_Int32_$Impl_$.mul(al1,bl1);
-					var p101 = haxe__$Int32_Int32_$Impl_$.mul(ah1,bl1);
-					var p011 = haxe__$Int32_Int32_$Impl_$.mul(al1,bh1);
-					var p111 = haxe__$Int32_Int32_$Impl_$.mul(ah1,bh1);
-					var low3 = p001;
-					var high3 = (p111 + (p011 >>> 16) | 0) + (p101 >>> 16) | 0;
-					p011 = p011 << 16;
-					low3 = low3 + p011 | 0;
-					if(haxe__$Int32_Int32_$Impl_$.ucompare(low3,p011) < 0) {
-						var ret4 = high3++;
-						high3 = high3 | 0;
-						ret4;
-					}
-					p101 = p101 << 16;
-					low3 = low3 + p101 | 0;
-					if(haxe__$Int32_Int32_$Impl_$.ucompare(low3,p101) < 0) {
-						var ret5 = high3++;
-						high3 = high3 | 0;
-						ret5;
-					}
-					var b3;
-					var a2 = haxe__$Int32_Int32_$Impl_$.mul(a.low,b.high);
-					var b4 = haxe__$Int32_Int32_$Impl_$.mul(a.high,b.low);
-					b3 = a2 + b4 | 0;
-					high3 = high3 + b3 | 0;
-					var x6 = new haxe__$Int64__$_$_$Int64(high3,low3);
-					return x6;
-				} else {
-					this.operations.push("" + haxe__$Int64_Int64_$Impl_$.toString(a) + " * " + haxe__$Int64_Int64_$Impl_$.toString(b) + " = Overflow");
-					this.quitExecution = true;
-					{
-						var x7 = new haxe__$Int64__$_$_$Int64(0,0);
-						return x7;
-					}
-				}
-			} else {
-				this.operations.push("" + haxe__$Int64_Int64_$Impl_$.toString(a) + " * " + haxe__$Int64_Int64_$Impl_$.toString(b) + " = Overflow");
-				this.quitExecution = true;
-				{
-					var x8 = new haxe__$Int64__$_$_$Int64(0,0);
-					return x8;
-				}
-			}
-			break;
+			res = Number.mul(a,b);
+			this.operations.push(a.print() + " * " + b.print() + " = " + res.print());
+			return res;
 		case "/":
-			if((function($this) {
-				var $r;
-				var b5;
-				{
-					var x9 = new haxe__$Int64__$_$_$Int64(0,0);
-					b5 = x9;
-				}
-				$r = b.high != b5.high || b.low != b5.low;
-				return $r;
-			}(this))) {
-				res = haxe__$Int64_Int64_$Impl_$.divMod(a,b).quotient;
-				this.operations.push("" + haxe__$Int64_Int64_$Impl_$.toString(a) + " / " + haxe__$Int64_Int64_$Impl_$.toString(b) + " = " + haxe__$Int64_Int64_$Impl_$.toString(res));
-				return res;
-			}
-			this.operations.push("" + haxe__$Int64_Int64_$Impl_$.toString(a) + " / " + haxe__$Int64_Int64_$Impl_$.toString(b) + " = Arith. Error");
-			this.quitExecution = true;
-			{
-				var x10 = new haxe__$Int64__$_$_$Int64(0,0);
-				return x10;
-			}
-			break;
+			res = Number.div(a,b);
+			this.operations.push(a.print() + " / " + b.print() + " = " + res.print());
+			return res;
+		case "^":
+			res = Number.pow(a,b);
+			this.operations.push(a.print() + " ^ " + b.print() + " = " + res.print());
+			return res;
 		}
-		{
-			var x11 = new haxe__$Int64__$_$_$Int64(0,0);
-			return x11;
-		}
-	}
-	,checksMultiplicability: function(a,b) {
-		var aLength;
-		var bLength;
-		if(a.high < 0) aLength = haxe__$Int64_Int64_$Impl_$.toString(a).length - 1; else aLength = haxe__$Int64_Int64_$Impl_$.toString(a).length;
-		if(b.high < 0) bLength = haxe__$Int64_Int64_$Impl_$.toString(b).length - 1; else bLength = haxe__$Int64_Int64_$Impl_$.toString(a).length;
-		return aLength + bLength <= 14;
+		return new Number("0");
 	}
 	,getBinaryValue: function(x) {
 		var f1 = "";
 		var f2 = "";
-		if((function($this) {
-			var $r;
-			var b;
-			{
-				var x1 = new haxe__$Int64__$_$_$Int64(0,0);
-				b = x1;
-			}
-			$r = (function($this) {
-				var $r;
-				var v = x.high - b.high | 0;
-				if(v != 0) v = v; else v = haxe__$Int32_Int32_$Impl_$.ucompare(x.low,b.low);
-				$r = x.high < 0?b.high < 0?v:-1:b.high >= 0?v:1;
-				return $r;
-			}($this)) <= 0;
-			return $r;
-		}(this))) f2 = "0"; else f2 = this.recursiveBinarySolution(x);
+		if(x <= 0) f2 = "0"; else f2 = this.recursiveBinarySolution(x);
 		return f2;
 	}
 	,recursiveBinarySolution: function(x) {
-		if((function($this) {
-			var $r;
-			var b;
-			{
-				var x1 = new haxe__$Int64__$_$_$Int64(0,0);
-				b = x1;
-			}
-			$r = x.high == b.high && x.low == b.low;
-			return $r;
-		}(this))) return "";
-		return this.recursiveBinarySolution((function($this) {
-			var $r;
-			var b1;
-			{
-				var x2 = new haxe__$Int64__$_$_$Int64(0,2);
-				b1 = x2;
-			}
-			$r = haxe__$Int64_Int64_$Impl_$.divMod(x,b1).quotient;
-			return $r;
-		}(this))) + "" + haxe__$Int64_Int64_$Impl_$.toString((function($this) {
-			var $r;
-			var b2;
-			{
-				var x3 = new haxe__$Int64__$_$_$Int64(0,2);
-				b2 = x3;
-			}
-			$r = haxe__$Int64_Int64_$Impl_$.divMod(x,b2).modulus;
-			return $r;
-		}(this)));
+		if(x == 0) return "";
+		return "";
 	}
 	,getHexadecimalValue: function(x) {
 		var f = this.recursiveHexadecimalSolution(x);
@@ -2045,13 +2057,24 @@ Calculator.prototype = {
 	}
 	,__class__: Calculator
 };
+var DateTools = function() { };
+$hxClasses["DateTools"] = DateTools;
+DateTools.__name__ = ["DateTools"];
+DateTools.getMonthDays = function(d) {
+	var month = d.getMonth();
+	var year = d.getFullYear();
+	if(month != 1) return DateTools.DAYS_OF_MONTH[month];
+	var isB = year % 4 == 0 && year % 100 != 0 || year % 400 == 0;
+	if(isB) return 29; else return 28;
+};
 var lime_AssetLibrary = function() {
 	this.onChange = new lime_app_Event_$Void_$Void();
 };
 $hxClasses["lime.AssetLibrary"] = lime_AssetLibrary;
 lime_AssetLibrary.__name__ = ["lime","AssetLibrary"];
 lime_AssetLibrary.prototype = {
-	exists: function(id,type) {
+	onChange: null
+	,exists: function(id,type) {
 		return false;
 	}
 	,getAudioBuffer: function(id) {
@@ -2144,7 +2167,12 @@ $hxClasses["DefaultAssetLibrary"] = DefaultAssetLibrary;
 DefaultAssetLibrary.__name__ = ["DefaultAssetLibrary"];
 DefaultAssetLibrary.__super__ = lime_AssetLibrary;
 DefaultAssetLibrary.prototype = $extend(lime_AssetLibrary.prototype,{
-	exists: function(id,type) {
+	className: null
+	,path: null
+	,type: null
+	,lastModified: null
+	,timer: null
+	,exists: function(id,type) {
 		var requestedType;
 		if(type != null) requestedType = js_Boot.__cast(type , String); else requestedType = null;
 		var assetType = this.type.get(id);
@@ -2257,7 +2285,8 @@ var EReg = function(r,opt) {
 $hxClasses["EReg"] = EReg;
 EReg.__name__ = ["EReg"];
 EReg.prototype = {
-	match: function(s) {
+	r: null
+	,match: function(s) {
 		if(this.r.global) this.r.lastIndex = 0;
 		this.r.m = this.r.exec(s);
 		this.r.s = s;
@@ -2266,14 +2295,89 @@ EReg.prototype = {
 	,matched: function(n) {
 		if(this.r.m != null && n >= 0 && n < this.r.m.length) return this.r.m[n]; else throw new js__$Boot_HaxeError("EReg::matched");
 	}
+	,matchedPos: function() {
+		if(this.r.m == null) throw new js__$Boot_HaxeError("No string matched");
+		return { pos : this.r.m.index, len : this.r.m[0].length};
+	}
+	,matchSub: function(s,pos,len) {
+		if(len == null) len = -1;
+		if(this.r.global) {
+			this.r.lastIndex = pos;
+			this.r.m = this.r.exec(len < 0?s:HxOverrides.substr(s,0,pos + len));
+			var b = this.r.m != null;
+			if(b) this.r.s = s;
+			return b;
+		} else {
+			var b1 = this.match(len < 0?HxOverrides.substr(s,pos,null):HxOverrides.substr(s,pos,len));
+			if(b1) {
+				this.r.s = s;
+				this.r.m.index += pos;
+			}
+			return b1;
+		}
+	}
+	,split: function(s) {
+		var d = "#__delim__#";
+		return s.replace(this.r,d).split(d);
+	}
 	,replace: function(s,by) {
 		return s.replace(this.r,by);
+	}
+	,map: function(s,f) {
+		var offset = 0;
+		var buf = new StringBuf();
+		do {
+			if(offset >= s.length) break; else if(!this.matchSub(s,offset)) {
+				buf.add(HxOverrides.substr(s,offset,null));
+				break;
+			}
+			var p = this.matchedPos();
+			buf.add(HxOverrides.substr(s,offset,p.pos - offset));
+			buf.add(f(this));
+			if(p.len == 0) {
+				buf.add(HxOverrides.substr(s,p.pos,1));
+				offset = p.pos + 1;
+			} else offset = p.pos + p.len;
+		} while(this.r.global);
+		if(!this.r.global && offset > 0 && offset < s.length) buf.add(HxOverrides.substr(s,offset,null));
+		return buf.b;
 	}
 	,__class__: EReg
 };
 var HxOverrides = function() { };
 $hxClasses["HxOverrides"] = HxOverrides;
 HxOverrides.__name__ = ["HxOverrides"];
+HxOverrides.dateStr = function(date) {
+	var m = date.getMonth() + 1;
+	var d = date.getDate();
+	var h = date.getHours();
+	var mi = date.getMinutes();
+	var s = date.getSeconds();
+	return date.getFullYear() + "-" + (m < 10?"0" + m:"" + m) + "-" + (d < 10?"0" + d:"" + d) + " " + (h < 10?"0" + h:"" + h) + ":" + (mi < 10?"0" + mi:"" + mi) + ":" + (s < 10?"0" + s:"" + s);
+};
+HxOverrides.strDate = function(s) {
+	var _g = s.length;
+	switch(_g) {
+	case 8:
+		var k = s.split(":");
+		var d = new Date();
+		d.setTime(0);
+		d.setUTCHours(k[0]);
+		d.setUTCMinutes(k[1]);
+		d.setUTCSeconds(k[2]);
+		return d;
+	case 10:
+		var k1 = s.split("-");
+		return new Date(k1[0],k1[1] - 1,k1[2],0,0,0);
+	case 19:
+		var k2 = s.split(" ");
+		var y = k2[0].split("-");
+		var t = k2[1].split(":");
+		return new Date(y[0],y[1] - 1,y[2],t[0],t[1],t[2]);
+	default:
+		throw new js__$Boot_HaxeError("Invalid date format : " + s);
+	}
+};
 HxOverrides.cca = function(s,index) {
 	var x = s.charCodeAt(index);
 	if(x != x) return undefined;
@@ -2313,13 +2417,27 @@ HxOverrides.iter = function(a) {
 		return this.arr[this.cur++];
 	}};
 };
+var Lambda = function() { };
+$hxClasses["Lambda"] = Lambda;
+Lambda.__name__ = ["Lambda"];
+Lambda.has = function(it,elt) {
+	var $it0 = $iterator(it)();
+	while( $it0.hasNext() ) {
+		var x = $it0.next();
+		if(x == elt) return true;
+	}
+	return false;
+};
 var List = function() {
 	this.length = 0;
 };
 $hxClasses["List"] = List;
 List.__name__ = ["List"];
 List.prototype = {
-	add: function(item) {
+	h: null
+	,q: null
+	,length: null
+	,add: function(item) {
 		var x = [item];
 		if(this.h == null) this.h = x; else this.q[1] = x;
 		this.q = x;
@@ -2368,7 +2486,9 @@ $hxClasses["NMEPreloader"] = NMEPreloader;
 NMEPreloader.__name__ = ["NMEPreloader"];
 NMEPreloader.__super__ = openfl_display_Sprite;
 NMEPreloader.prototype = $extend(openfl_display_Sprite.prototype,{
-	getBackgroundColor: function() {
+	outline: null
+	,progress: null
+	,getBackgroundColor: function() {
 		return 3355443;
 	}
 	,getHeight: function() {
@@ -2391,6 +2511,83 @@ NMEPreloader.prototype = $extend(openfl_display_Sprite.prototype,{
 	}
 	,__class__: NMEPreloader
 });
+var Number = function(num) {
+	var exponentComponent;
+	var valueComponent;
+	var hasE = num.indexOf("E");
+	this.nickName = "";
+	if(hasE != -1) {
+		valueComponent = HxOverrides.substr(num,0,hasE);
+		exponentComponent = HxOverrides.substr(num,hasE + 1,null);
+		this.value = thx_bigint_Decimals.parse(valueComponent);
+		this.exponent = Std.parseInt(exponentComponent);
+	} else {
+		this.value = thx_bigint_Decimals.parse(num);
+		this.exponent = 0;
+	}
+	haxe_Log.trace(this.value.toString(),{ fileName : "Number.hx", lineNumber : 32, className : "Number", methodName : "new"});
+};
+$hxClasses["Number"] = Number;
+Number.__name__ = ["Number"];
+Number.sum = function(x,y) {
+	var rNumber;
+	rNumber = new Number(Std.string(x.getValue().add(y.getValue())) + "");
+	return rNumber;
+};
+Number.sub = function(x,y) {
+	var rNumber;
+	var rNumber1 = new Number(Std.string(x.value.subtract(y.getValue())) + "");
+	return rNumber1;
+};
+Number.mul = function(x,y) {
+	var rNumber;
+	rNumber = new Number(Std.string(x.getValue().multiply(y.getValue())) + "");
+	return rNumber;
+};
+Number.div = function(x,y) {
+	var rNumber;
+	rNumber = new Number(Std.string(x.getValue().divideWithScale(y.getValue(),7)) + "");
+	return rNumber;
+};
+Number.pow = function(x,y) {
+	var rNumber;
+	rNumber = new Number(Std.string(x.getValue().pow(0)) + "");
+	return rNumber;
+};
+Number.copy = function(x) {
+};
+Number.prototype = {
+	value: null
+	,exponent: null
+	,nickName: null
+	,error: null
+	,setNickName: function(name) {
+		this.nickName = name;
+	}
+	,print: function() {
+		var name;
+		var expComponent = "";
+		var valueComponent = this.value.toString();
+		if(this.nickName == "") {
+			if(this.exponent < -7 || this.exponent > 7) expComponent = "E" + this.exponent; else expComponent = "E" + this.exponent;
+			name = valueComponent + expComponent;
+		} else name = this.nickName;
+		return name;
+	}
+	,isOverflowed: function() {
+		return true;
+	}
+	,getValue: function() {
+		return this.value;
+	}
+	,getExponent: function() {
+		return this.exponent;
+	}
+	,hasError: function() {
+		this.error = true;
+	}
+	,__class__: Number
+};
 var Reflect = function() { };
 $hxClasses["Reflect"] = Reflect;
 Reflect.__name__ = ["Reflect"];
@@ -2434,6 +2631,11 @@ Reflect.compareMethods = function(f1,f2) {
 	if(!Reflect.isFunction(f1) || !Reflect.isFunction(f2)) return false;
 	return f1.scope == f2.scope && f1.method == f2.method && f1.method != null;
 };
+Reflect.isObject = function(v) {
+	if(v == null) return false;
+	var t = typeof(v);
+	return t == "string" || t == "object" && v.__enum__ == null || t == "function" && (v.__name__ || v.__ename__) != null;
+};
 Reflect.deleteField = function(o,field) {
 	if(!Object.prototype.hasOwnProperty.call(o,field)) return false;
 	delete(o[field]);
@@ -2451,6 +2653,9 @@ Std.__name__ = ["Std"];
 Std["is"] = function(v,t) {
 	return js_Boot.__instanceof(v,t);
 };
+Std.instance = function(value,c) {
+	if((value instanceof c)) return value; else return null;
+};
 Std.string = function(s) {
 	return js_Boot.__string_rec(s,"");
 };
@@ -2463,13 +2668,23 @@ Std.parseInt = function(x) {
 	if(isNaN(v)) return null;
 	return v;
 };
+Std.parseFloat = function(x) {
+	return parseFloat(x);
+};
+Std.random = function(x) {
+	if(x <= 0) return 0; else return Math.floor(Math.random() * x);
+};
 var StringBuf = function() {
 	this.b = "";
 };
 $hxClasses["StringBuf"] = StringBuf;
 StringBuf.__name__ = ["StringBuf"];
 StringBuf.prototype = {
-	__class__: StringBuf
+	b: null
+	,add: function(x) {
+		this.b += Std.string(x);
+	}
+	,__class__: StringBuf
 };
 var StringTools = function() { };
 $hxClasses["StringTools"] = StringTools;
@@ -2482,6 +2697,11 @@ StringTools.urlDecode = function(s) {
 };
 StringTools.startsWith = function(s,start) {
 	return s.length >= start.length && HxOverrides.substr(s,0,start.length) == start;
+};
+StringTools.endsWith = function(s,end) {
+	var elen = end.length;
+	var slen = s.length;
+	return slen >= elen && HxOverrides.substr(s,slen - elen,elen) == end;
 };
 StringTools.isSpace = function(s,pos) {
 	var c = HxOverrides.cca(s,pos);
@@ -2502,6 +2722,16 @@ StringTools.rtrim = function(s) {
 StringTools.trim = function(s) {
 	return StringTools.ltrim(StringTools.rtrim(s));
 };
+StringTools.lpad = function(s,c,l) {
+	if(c.length <= 0) return s;
+	while(s.length < l) s = c + s;
+	return s;
+};
+StringTools.rpad = function(s,c,l) {
+	if(c.length <= 0) return s;
+	while(s.length < l) s = s + c;
+	return s;
+};
 StringTools.replace = function(s,sub,by) {
 	return s.split(sub).join(by);
 };
@@ -2518,15 +2748,50 @@ StringTools.hex = function(n,digits) {
 StringTools.fastCodeAt = function(s,index) {
 	return s.charCodeAt(index);
 };
+var ValueType = $hxClasses["ValueType"] = { __ename__ : ["ValueType"], __constructs__ : ["TNull","TInt","TFloat","TBool","TObject","TFunction","TClass","TEnum","TUnknown"] };
+ValueType.TNull = ["TNull",0];
+ValueType.TNull.toString = $estr;
+ValueType.TNull.__enum__ = ValueType;
+ValueType.TInt = ["TInt",1];
+ValueType.TInt.toString = $estr;
+ValueType.TInt.__enum__ = ValueType;
+ValueType.TFloat = ["TFloat",2];
+ValueType.TFloat.toString = $estr;
+ValueType.TFloat.__enum__ = ValueType;
+ValueType.TBool = ["TBool",3];
+ValueType.TBool.toString = $estr;
+ValueType.TBool.__enum__ = ValueType;
+ValueType.TObject = ["TObject",4];
+ValueType.TObject.toString = $estr;
+ValueType.TObject.__enum__ = ValueType;
+ValueType.TFunction = ["TFunction",5];
+ValueType.TFunction.toString = $estr;
+ValueType.TFunction.__enum__ = ValueType;
+ValueType.TClass = function(c) { var $x = ["TClass",6,c]; $x.__enum__ = ValueType; $x.toString = $estr; return $x; };
+ValueType.TEnum = function(e) { var $x = ["TEnum",7,e]; $x.__enum__ = ValueType; $x.toString = $estr; return $x; };
+ValueType.TUnknown = ["TUnknown",8];
+ValueType.TUnknown.toString = $estr;
+ValueType.TUnknown.__enum__ = ValueType;
 var Type = function() { };
 $hxClasses["Type"] = Type;
 Type.__name__ = ["Type"];
+Type.getClass = function(o) {
+	if(o == null) return null; else return js_Boot.getClass(o);
+};
+Type.getEnum = function(o) {
+	if(o == null) return null;
+	return o.__enum__;
+};
 Type.getSuperClass = function(c) {
 	return c.__super__;
 };
 Type.getClassName = function(c) {
 	var a = c.__name__;
 	if(a == null) return null;
+	return a.join(".");
+};
+Type.getEnumName = function(e) {
+	var a = e.__ename__;
 	return a.join(".");
 };
 Type.resolveClass = function(name) {
@@ -2565,6 +2830,17 @@ Type.createInstance = function(cl,args) {
 	}
 	return null;
 };
+Type.createEmptyInstance = function(cl) {
+	function empty() {}; empty.prototype = cl.prototype;
+	return new empty();
+};
+Type.getInstanceFields = function(c) {
+	var a = [];
+	for(var i in c.prototype) a.push(i);
+	HxOverrides.remove(a,"__class__");
+	HxOverrides.remove(a,"__properties__");
+	return a;
+};
 Type.getClassFields = function(c) {
 	var a = Reflect.fields(c);
 	HxOverrides.remove(a,"__name__");
@@ -2574,6 +2850,32 @@ Type.getClassFields = function(c) {
 	HxOverrides.remove(a,"__meta__");
 	HxOverrides.remove(a,"prototype");
 	return a;
+};
+Type["typeof"] = function(v) {
+	var _g = typeof(v);
+	switch(_g) {
+	case "boolean":
+		return ValueType.TBool;
+	case "string":
+		return ValueType.TClass(String);
+	case "number":
+		if(Math.ceil(v) == v % 2147483648.0) return ValueType.TInt;
+		return ValueType.TFloat;
+	case "object":
+		if(v == null) return ValueType.TNull;
+		var e = v.__enum__;
+		if(e != null) return ValueType.TEnum(e);
+		var c = js_Boot.getClass(v);
+		if(c != null) return ValueType.TClass(c);
+		return ValueType.TObject;
+	case "function":
+		if(v.__name__ || v.__ename__) return ValueType.TObject;
+		return ValueType.TFunction;
+	case "undefined":
+		return ValueType.TNull;
+	default:
+		return ValueType.TUnknown;
+	}
 };
 Type.enumEq = function(a,b) {
 	if(a == b) return true;
@@ -2594,6 +2896,15 @@ Type.enumEq = function(a,b) {
 	}
 	return true;
 };
+Type.enumConstructor = function(e) {
+	return e[0];
+};
+Type.enumParameters = function(e) {
+	return e.slice(2);
+};
+Type.enumIndex = function(e) {
+	return e[1];
+};
 var _$UInt_UInt_$Impl_$ = {};
 $hxClasses["_UInt.UInt_Impl_"] = _$UInt_UInt_$Impl_$;
 _$UInt_UInt_$Impl_$.__name__ = ["_UInt","UInt_Impl_"];
@@ -2606,7 +2917,7 @@ _$UInt_UInt_$Impl_$.toFloat = function(this1) {
 	var $int = this1;
 	if($int < 0) return 4294967296.0 + $int; else return $int + 0.0;
 };
-var haxe_StackItem = $hxClasses["haxe.StackItem"] = { __ename__ : true, __constructs__ : ["CFunction","Module","FilePos","Method","LocalFunction"] };
+var haxe_StackItem = $hxClasses["haxe.StackItem"] = { __ename__ : ["haxe","StackItem"], __constructs__ : ["CFunction","Module","FilePos","Method","LocalFunction"] };
 haxe_StackItem.CFunction = ["CFunction",0];
 haxe_StackItem.CFunction.toString = $estr;
 haxe_StackItem.CFunction.__enum__ = haxe_StackItem;
@@ -2733,6 +3044,13 @@ haxe_CallStack.makeStack = function(s) {
 var haxe_IMap = function() { };
 $hxClasses["haxe.IMap"] = haxe_IMap;
 haxe_IMap.__name__ = ["haxe","IMap"];
+haxe_IMap.prototype = {
+	get: null
+	,set: null
+	,exists: null
+	,keys: null
+	,__class__: haxe_IMap
+};
 var haxe__$Int32_Int32_$Impl_$ = {};
 $hxClasses["haxe._Int32.Int32_Impl_"] = haxe__$Int32_Int32_$Impl_$;
 haxe__$Int32_Int32_$Impl_$.__name__ = ["haxe","_Int32","Int32_Impl_"];
@@ -2966,7 +3284,9 @@ var haxe__$Int64__$_$_$Int64 = function(high,low) {
 $hxClasses["haxe._Int64.___Int64"] = haxe__$Int64__$_$_$Int64;
 haxe__$Int64__$_$_$Int64.__name__ = ["haxe","_Int64","___Int64"];
 haxe__$Int64__$_$_$Int64.prototype = {
-	__class__: haxe__$Int64__$_$_$Int64
+	high: null
+	,low: null
+	,__class__: haxe__$Int64__$_$_$Int64
 };
 var haxe_Log = function() { };
 $hxClasses["haxe.Log"] = haxe_Log;
@@ -3000,7 +3320,8 @@ haxe_Timer.stamp = function() {
 	return new Date().getTime() / 1000;
 };
 haxe_Timer.prototype = {
-	stop: function() {
+	id: null
+	,stop: function() {
 		if(this.id == null) return;
 		clearInterval(this.id);
 		this.id = null;
@@ -3009,6 +3330,125 @@ haxe_Timer.prototype = {
 	}
 	,__class__: haxe_Timer
 };
+var haxe_Utf8 = function() { };
+$hxClasses["haxe.Utf8"] = haxe_Utf8;
+haxe_Utf8.__name__ = ["haxe","Utf8"];
+haxe_Utf8.compare = function(a,b) {
+	if(a > b) return 1; else if(a == b) return 0; else return -1;
+};
+haxe_Utf8.sub = function(s,pos,len) {
+	return HxOverrides.substr(s,pos,len);
+};
+var haxe_io_Bytes = function(data) {
+	this.length = data.byteLength;
+	this.b = new Uint8Array(data);
+	this.b.bufferValue = data;
+	data.hxBytes = this;
+	data.bytes = this.b;
+};
+$hxClasses["haxe.io.Bytes"] = haxe_io_Bytes;
+haxe_io_Bytes.__name__ = ["haxe","io","Bytes"];
+haxe_io_Bytes.alloc = function(length) {
+	return new haxe_io_Bytes(new ArrayBuffer(length));
+};
+haxe_io_Bytes.ofString = function(s) {
+	var a = [];
+	var i = 0;
+	while(i < s.length) {
+		var c = StringTools.fastCodeAt(s,i++);
+		if(55296 <= c && c <= 56319) c = c - 55232 << 10 | StringTools.fastCodeAt(s,i++) & 1023;
+		if(c <= 127) a.push(c); else if(c <= 2047) {
+			a.push(192 | c >> 6);
+			a.push(128 | c & 63);
+		} else if(c <= 65535) {
+			a.push(224 | c >> 12);
+			a.push(128 | c >> 6 & 63);
+			a.push(128 | c & 63);
+		} else {
+			a.push(240 | c >> 18);
+			a.push(128 | c >> 12 & 63);
+			a.push(128 | c >> 6 & 63);
+			a.push(128 | c & 63);
+		}
+	}
+	return new haxe_io_Bytes(new Uint8Array(a).buffer);
+};
+haxe_io_Bytes.ofData = function(b) {
+	var hb = b.hxBytes;
+	if(hb != null) return hb;
+	return new haxe_io_Bytes(b);
+};
+haxe_io_Bytes.prototype = {
+	length: null
+	,b: null
+	,data: null
+	,get: function(pos) {
+		return this.b[pos];
+	}
+	,set: function(pos,v) {
+		this.b[pos] = v & 255;
+	}
+	,blit: function(pos,src,srcpos,len) {
+		if(pos < 0 || srcpos < 0 || len < 0 || pos + len > this.length || srcpos + len > src.length) throw new js__$Boot_HaxeError(haxe_io_Error.OutsideBounds);
+		if(srcpos == 0 && len == src.length) this.b.set(src.b,pos); else this.b.set(src.b.subarray(srcpos,srcpos + len),pos);
+	}
+	,getDouble: function(pos) {
+		if(this.data == null) this.data = new DataView(this.b.buffer,this.b.byteOffset,this.b.byteLength);
+		return this.data.getFloat64(pos,true);
+	}
+	,getFloat: function(pos) {
+		if(this.data == null) this.data = new DataView(this.b.buffer,this.b.byteOffset,this.b.byteLength);
+		return this.data.getFloat32(pos,true);
+	}
+	,setDouble: function(pos,v) {
+		if(this.data == null) this.data = new DataView(this.b.buffer,this.b.byteOffset,this.b.byteLength);
+		this.data.setFloat64(pos,v,true);
+	}
+	,setFloat: function(pos,v) {
+		if(this.data == null) this.data = new DataView(this.b.buffer,this.b.byteOffset,this.b.byteLength);
+		this.data.setFloat32(pos,v,true);
+	}
+	,setUInt16: function(pos,v) {
+		if(this.data == null) this.data = new DataView(this.b.buffer,this.b.byteOffset,this.b.byteLength);
+		this.data.setUint16(pos,v,true);
+	}
+	,setInt32: function(pos,v) {
+		if(this.data == null) this.data = new DataView(this.b.buffer,this.b.byteOffset,this.b.byteLength);
+		this.data.setInt32(pos,v,true);
+	}
+	,getString: function(pos,len) {
+		if(pos < 0 || len < 0 || pos + len > this.length) throw new js__$Boot_HaxeError(haxe_io_Error.OutsideBounds);
+		var s = "";
+		var b = this.b;
+		var fcc = String.fromCharCode;
+		var i = pos;
+		var max = pos + len;
+		while(i < max) {
+			var c = b[i++];
+			if(c < 128) {
+				if(c == 0) break;
+				s += fcc(c);
+			} else if(c < 224) s += fcc((c & 63) << 6 | b[i++] & 127); else if(c < 240) {
+				var c2 = b[i++];
+				s += fcc((c & 31) << 12 | (c2 & 127) << 6 | b[i++] & 127);
+			} else {
+				var c21 = b[i++];
+				var c3 = b[i++];
+				var u = (c & 15) << 18 | (c21 & 127) << 12 | (c3 & 127) << 6 | b[i++] & 127;
+				s += fcc((u >> 10) + 55232);
+				s += fcc(u & 1023 | 56320);
+			}
+		}
+		return s;
+	}
+	,toString: function() {
+		return this.getString(0,this.length);
+	}
+	,__class__: haxe_io_Bytes
+};
+var haxe_crypto_Base64 = function() { };
+$hxClasses["haxe.crypto.Base64"] = haxe_crypto_Base64;
+haxe_crypto_Base64.__name__ = ["haxe","crypto","Base64"];
 var haxe_crypto_BaseCode = function(base) {
 	var len = base.length;
 	var nbits = 1;
@@ -3020,7 +3460,9 @@ var haxe_crypto_BaseCode = function(base) {
 $hxClasses["haxe.crypto.BaseCode"] = haxe_crypto_BaseCode;
 haxe_crypto_BaseCode.__name__ = ["haxe","crypto","BaseCode"];
 haxe_crypto_BaseCode.prototype = {
-	encodeBytes: function(b) {
+	base: null
+	,nbits: null
+	,encodeBytes: function(b) {
 		var nbits = this.nbits;
 		var base = this.base;
 		var size = b.length * 8 / nbits | 0;
@@ -3224,10 +3666,27 @@ $hxClasses["haxe.ds.IntMap"] = haxe_ds_IntMap;
 haxe_ds_IntMap.__name__ = ["haxe","ds","IntMap"];
 haxe_ds_IntMap.__interfaces__ = [haxe_IMap];
 haxe_ds_IntMap.prototype = {
-	remove: function(key) {
+	h: null
+	,set: function(key,value) {
+		this.h[key] = value;
+	}
+	,get: function(key) {
+		return this.h[key];
+	}
+	,exists: function(key) {
+		return this.h.hasOwnProperty(key);
+	}
+	,remove: function(key) {
 		if(!this.h.hasOwnProperty(key)) return false;
 		delete(this.h[key]);
 		return true;
+	}
+	,keys: function() {
+		var a = [];
+		for( var key in this.h ) {
+		if(this.h.hasOwnProperty(key)) a.push(key | 0);
+		}
+		return HxOverrides.iter(a);
 	}
 	,__class__: haxe_ds_IntMap
 };
@@ -3239,10 +3698,17 @@ $hxClasses["haxe.ds.ObjectMap"] = haxe_ds_ObjectMap;
 haxe_ds_ObjectMap.__name__ = ["haxe","ds","ObjectMap"];
 haxe_ds_ObjectMap.__interfaces__ = [haxe_IMap];
 haxe_ds_ObjectMap.prototype = {
-	set: function(key,value) {
+	h: null
+	,set: function(key,value) {
 		var id = key.__id__ || (key.__id__ = ++haxe_ds_ObjectMap.count);
 		this.h[id] = value;
 		this.h.__keys__[id] = key;
+	}
+	,get: function(key) {
+		return this.h[key.__id__];
+	}
+	,exists: function(key) {
+		return this.h.__keys__[key.__id__] != null;
 	}
 	,remove: function(key) {
 		var id = key.__id__;
@@ -3251,8 +3717,20 @@ haxe_ds_ObjectMap.prototype = {
 		delete(this.h.__keys__[id]);
 		return true;
 	}
+	,keys: function() {
+		var a = [];
+		for( var key in this.h.__keys__ ) {
+		if(this.h.hasOwnProperty(key)) a.push(this.h.__keys__[key]);
+		}
+		return HxOverrides.iter(a);
+	}
 	,__class__: haxe_ds_ObjectMap
 };
+var haxe_ds_Option = $hxClasses["haxe.ds.Option"] = { __ename__ : ["haxe","ds","Option"], __constructs__ : ["Some","None"] };
+haxe_ds_Option.Some = function(v) { var $x = ["Some",0,v]; $x.__enum__ = haxe_ds_Option; $x.toString = $estr; return $x; };
+haxe_ds_Option.None = ["None",1];
+haxe_ds_Option.None.toString = $estr;
+haxe_ds_Option.None.__enum__ = haxe_ds_Option;
 var haxe_ds__$StringMap_StringMapIterator = function(map,keys) {
 	this.map = map;
 	this.keys = keys;
@@ -3262,7 +3740,11 @@ var haxe_ds__$StringMap_StringMapIterator = function(map,keys) {
 $hxClasses["haxe.ds._StringMap.StringMapIterator"] = haxe_ds__$StringMap_StringMapIterator;
 haxe_ds__$StringMap_StringMapIterator.__name__ = ["haxe","ds","_StringMap","StringMapIterator"];
 haxe_ds__$StringMap_StringMapIterator.prototype = {
-	hasNext: function() {
+	map: null
+	,keys: null
+	,index: null
+	,count: null
+	,hasNext: function() {
 		return this.index < this.count;
 	}
 	,next: function() {
@@ -3277,7 +3759,9 @@ $hxClasses["haxe.ds.StringMap"] = haxe_ds_StringMap;
 haxe_ds_StringMap.__name__ = ["haxe","ds","StringMap"];
 haxe_ds_StringMap.__interfaces__ = [haxe_IMap];
 haxe_ds_StringMap.prototype = {
-	set: function(key,value) {
+	h: null
+	,rh: null
+	,set: function(key,value) {
 		if(__map_reserved[key] != null) this.setReserved(key,value); else this.h[key] = value;
 	}
 	,get: function(key) {
@@ -3352,110 +3836,6 @@ haxe_ds__$Vector_Vector_$Impl_$.toArray = function(this1) {
 	}
 	return a;
 };
-var haxe_io_Bytes = function(data) {
-	this.length = data.byteLength;
-	this.b = new Uint8Array(data);
-	this.b.bufferValue = data;
-	data.hxBytes = this;
-	data.bytes = this.b;
-};
-$hxClasses["haxe.io.Bytes"] = haxe_io_Bytes;
-haxe_io_Bytes.__name__ = ["haxe","io","Bytes"];
-haxe_io_Bytes.alloc = function(length) {
-	return new haxe_io_Bytes(new ArrayBuffer(length));
-};
-haxe_io_Bytes.ofString = function(s) {
-	var a = [];
-	var i = 0;
-	while(i < s.length) {
-		var c = StringTools.fastCodeAt(s,i++);
-		if(55296 <= c && c <= 56319) c = c - 55232 << 10 | StringTools.fastCodeAt(s,i++) & 1023;
-		if(c <= 127) a.push(c); else if(c <= 2047) {
-			a.push(192 | c >> 6);
-			a.push(128 | c & 63);
-		} else if(c <= 65535) {
-			a.push(224 | c >> 12);
-			a.push(128 | c >> 6 & 63);
-			a.push(128 | c & 63);
-		} else {
-			a.push(240 | c >> 18);
-			a.push(128 | c >> 12 & 63);
-			a.push(128 | c >> 6 & 63);
-			a.push(128 | c & 63);
-		}
-	}
-	return new haxe_io_Bytes(new Uint8Array(a).buffer);
-};
-haxe_io_Bytes.ofData = function(b) {
-	var hb = b.hxBytes;
-	if(hb != null) return hb;
-	return new haxe_io_Bytes(b);
-};
-haxe_io_Bytes.prototype = {
-	get: function(pos) {
-		return this.b[pos];
-	}
-	,set: function(pos,v) {
-		this.b[pos] = v & 255;
-	}
-	,blit: function(pos,src,srcpos,len) {
-		if(pos < 0 || srcpos < 0 || len < 0 || pos + len > this.length || srcpos + len > src.length) throw new js__$Boot_HaxeError(haxe_io_Error.OutsideBounds);
-		if(srcpos == 0 && len == src.length) this.b.set(src.b,pos); else this.b.set(src.b.subarray(srcpos,srcpos + len),pos);
-	}
-	,getDouble: function(pos) {
-		if(this.data == null) this.data = new DataView(this.b.buffer,this.b.byteOffset,this.b.byteLength);
-		return this.data.getFloat64(pos,true);
-	}
-	,getFloat: function(pos) {
-		if(this.data == null) this.data = new DataView(this.b.buffer,this.b.byteOffset,this.b.byteLength);
-		return this.data.getFloat32(pos,true);
-	}
-	,setDouble: function(pos,v) {
-		if(this.data == null) this.data = new DataView(this.b.buffer,this.b.byteOffset,this.b.byteLength);
-		this.data.setFloat64(pos,v,true);
-	}
-	,setFloat: function(pos,v) {
-		if(this.data == null) this.data = new DataView(this.b.buffer,this.b.byteOffset,this.b.byteLength);
-		this.data.setFloat32(pos,v,true);
-	}
-	,setUInt16: function(pos,v) {
-		if(this.data == null) this.data = new DataView(this.b.buffer,this.b.byteOffset,this.b.byteLength);
-		this.data.setUint16(pos,v,true);
-	}
-	,setInt32: function(pos,v) {
-		if(this.data == null) this.data = new DataView(this.b.buffer,this.b.byteOffset,this.b.byteLength);
-		this.data.setInt32(pos,v,true);
-	}
-	,getString: function(pos,len) {
-		if(pos < 0 || len < 0 || pos + len > this.length) throw new js__$Boot_HaxeError(haxe_io_Error.OutsideBounds);
-		var s = "";
-		var b = this.b;
-		var fcc = String.fromCharCode;
-		var i = pos;
-		var max = pos + len;
-		while(i < max) {
-			var c = b[i++];
-			if(c < 128) {
-				if(c == 0) break;
-				s += fcc(c);
-			} else if(c < 224) s += fcc((c & 63) << 6 | b[i++] & 127); else if(c < 240) {
-				var c2 = b[i++];
-				s += fcc((c & 31) << 12 | (c2 & 127) << 6 | b[i++] & 127);
-			} else {
-				var c21 = b[i++];
-				var c3 = b[i++];
-				var u = (c & 15) << 18 | (c21 & 127) << 12 | (c3 & 127) << 6 | b[i++] & 127;
-				s += fcc((u >> 10) + 55232);
-				s += fcc(u & 1023 | 56320);
-			}
-		}
-		return s;
-	}
-	,toString: function() {
-		return this.getString(0,this.length);
-	}
-	,__class__: haxe_io_Bytes
-};
 var haxe_io_Eof = function() { };
 $hxClasses["haxe.io.Eof"] = haxe_io_Eof;
 haxe_io_Eof.__name__ = ["haxe","io","Eof"];
@@ -3465,7 +3845,7 @@ haxe_io_Eof.prototype = {
 	}
 	,__class__: haxe_io_Eof
 };
-var haxe_io_Error = $hxClasses["haxe.io.Error"] = { __ename__ : true, __constructs__ : ["Blocked","Overflow","OutsideBounds","Custom"] };
+var haxe_io_Error = $hxClasses["haxe.io.Error"] = { __ename__ : ["haxe","io","Error"], __constructs__ : ["Blocked","Overflow","OutsideBounds","Custom"] };
 haxe_io_Error.Blocked = ["Blocked",0];
 haxe_io_Error.Blocked.toString = $estr;
 haxe_io_Error.Blocked.__enum__ = haxe_io_Error;
@@ -3555,7 +3935,11 @@ haxe_io_Path.withoutExtension = function(path) {
 	return s.toString();
 };
 haxe_io_Path.prototype = {
-	toString: function() {
+	dir: null
+	,file: null
+	,ext: null
+	,backslash: null
+	,toString: function() {
 		return (this.dir == null?"":this.dir + (this.backslash?"\\":"/")) + this.file + (this.ext == null?"":"." + this.ext);
 	}
 	,__class__: haxe_io_Path
@@ -3570,7 +3954,8 @@ $hxClasses["js._Boot.HaxeError"] = js__$Boot_HaxeError;
 js__$Boot_HaxeError.__name__ = ["js","_Boot","HaxeError"];
 js__$Boot_HaxeError.__super__ = Error;
 js__$Boot_HaxeError.prototype = $extend(Error.prototype,{
-	__class__: js__$Boot_HaxeError
+	val: null
+	,__class__: js__$Boot_HaxeError
 });
 var js_Boot = function() { };
 $hxClasses["js.Boot"] = js_Boot;
@@ -3761,7 +4146,9 @@ js_html_compat_ArrayBuffer.sliceImpl = function(begin,end) {
 	return result;
 };
 js_html_compat_ArrayBuffer.prototype = {
-	slice: function(begin,end) {
+	byteLength: null
+	,a: null
+	,slice: function(begin,end) {
 		return new js_html_compat_ArrayBuffer(this.a.slice(begin,end));
 	}
 	,__class__: js_html_compat_ArrayBuffer
@@ -3775,7 +4162,10 @@ var js_html_compat_DataView = function(buffer,byteOffset,byteLength) {
 $hxClasses["js.html.compat.DataView"] = js_html_compat_DataView;
 js_html_compat_DataView.__name__ = ["js","html","compat","DataView"];
 js_html_compat_DataView.prototype = {
-	getInt8: function(byteOffset) {
+	buf: null
+	,offset: null
+	,length: null
+	,getInt8: function(byteOffset) {
 		var v = this.buf.a[this.offset + byteOffset];
 		if(v >= 128) return v - 256; else return v;
 	}
@@ -3931,7 +4321,12 @@ var lime_AssetCache = function() {
 $hxClasses["lime.AssetCache"] = lime_AssetCache;
 lime_AssetCache.__name__ = ["lime","AssetCache"];
 lime_AssetCache.prototype = {
-	clear: function(prefix) {
+	audio: null
+	,enabled: null
+	,image: null
+	,font: null
+	,version: null
+	,clear: function(prefix) {
 		if(prefix == null) {
 			this.audio = new haxe_ds_StringMap();
 			this.font = new haxe_ds_StringMap();
@@ -3965,7 +4360,10 @@ var lime_app_Event_$Void_$Void = function() {
 $hxClasses["lime.app.Event_Void_Void"] = lime_app_Event_$Void_$Void;
 lime_app_Event_$Void_$Void.__name__ = ["lime","app","Event_Void_Void"];
 lime_app_Event_$Void_$Void.prototype = {
-	add: function(listener,once,priority) {
+	canceled: null
+	,__repeat: null
+	,__priorities: null
+	,add: function(listener,once,priority) {
 		if(priority == null) priority = 0;
 		if(once == null) once = false;
 		var _g1 = 0;
@@ -4004,6 +4402,7 @@ lime_app_Event_$Void_$Void.prototype = {
 			this.__repeat.splice(i,1);
 		}
 	}
+	,__listeners: null
 	,dispatch: function() {
 		this.canceled = false;
 		var listeners = this.__listeners;
@@ -4325,7 +4724,14 @@ var lime__$backend_html5_HTML5Application = function(parent) {
 $hxClasses["lime._backend.html5.HTML5Application"] = lime__$backend_html5_HTML5Application;
 lime__$backend_html5_HTML5Application.__name__ = ["lime","_backend","html5","HTML5Application"];
 lime__$backend_html5_HTML5Application.prototype = {
-	convertKeyCode: function(keyCode) {
+	gameDeviceCache: null
+	,currentUpdate: null
+	,deltaTime: null
+	,framePeriod: null
+	,lastUpdate: null
+	,nextUpdate: null
+	,parent: null
+	,convertKeyCode: function(keyCode) {
 		if(keyCode >= 65 && keyCode <= 90) return keyCode + 32;
 		switch(keyCode) {
 		case 16:
@@ -4423,6 +4829,12 @@ lime__$backend_html5_HTML5Application.prototype = {
 		window.addEventListener("resize",$bind(this,this.handleWindowEvent),false);
 		window.addEventListener("beforeunload",$bind(this,this.handleWindowEvent),false);
 		
+			if (!CanvasRenderingContext2D.prototype.isPointInStroke) {
+				CanvasRenderingContext2D.prototype.isPointInStroke = function (path, x, y) {
+					return false;
+				};
+			}
+			
 			var lastTime = 0;
 			var vendors = ['ms', 'moz', 'webkit', 'o'];
 			for (var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
@@ -4657,7 +5069,12 @@ var lime__$backend_html5_GameDeviceData = function() {
 $hxClasses["lime._backend.html5.GameDeviceData"] = lime__$backend_html5_GameDeviceData;
 lime__$backend_html5_GameDeviceData.__name__ = ["lime","_backend","html5","GameDeviceData"];
 lime__$backend_html5_GameDeviceData.prototype = {
-	__class__: lime__$backend_html5_GameDeviceData
+	connected: null
+	,id: null
+	,isGamepad: null
+	,buttons: null
+	,axes: null
+	,__class__: lime__$backend_html5_GameDeviceData
 };
 var lime__$backend_html5_HTML5Mouse = function() { };
 $hxClasses["lime._backend.html5.HTML5Mouse"] = lime__$backend_html5_HTML5Mouse;
@@ -4753,7 +5170,8 @@ var lime__$backend_html5_HTML5Renderer = function(parent) {
 $hxClasses["lime._backend.html5.HTML5Renderer"] = lime__$backend_html5_HTML5Renderer;
 lime__$backend_html5_HTML5Renderer.__name__ = ["lime","_backend","html5","HTML5Renderer"];
 lime__$backend_html5_HTML5Renderer.prototype = {
-	create: function() {
+	parent: null
+	,create: function() {
 		this.createContext();
 		{
 			var _g = this.parent.context;
@@ -4827,7 +5245,17 @@ $hxClasses["lime._backend.html5.HTML5Window"] = lime__$backend_html5_HTML5Window
 lime__$backend_html5_HTML5Window.__name__ = ["lime","_backend","html5","HTML5Window"];
 lime__$backend_html5_HTML5Window.textInput = null;
 lime__$backend_html5_HTML5Window.prototype = {
-	alert: function(message,title) {
+	canvas: null
+	,div: null
+	,element: null
+	,currentTouches: null
+	,enableTextEvents: null
+	,parent: null
+	,primaryTouch: null
+	,setHeight: null
+	,setWidth: null
+	,unusedTouchesPool: null
+	,alert: function(message,title) {
 		if(message != null) js_Browser.alert(message);
 	}
 	,close: function() {
@@ -5146,6 +5574,9 @@ lime__$backend_html5_HTML5Window.prototype = {
 	}
 	,setIcon: function(image) {
 	}
+	,setMaximized: function(value) {
+		return false;
+	}
 	,setMinimized: function(value) {
 		return false;
 	}
@@ -5161,7 +5592,52 @@ var lime_app_IModule = function() { };
 $hxClasses["lime.app.IModule"] = lime_app_IModule;
 lime_app_IModule.__name__ = ["lime","app","IModule"];
 lime_app_IModule.prototype = {
-	__class__: lime_app_IModule
+	onGamepadAxisMove: null
+	,onGamepadButtonDown: null
+	,onGamepadButtonUp: null
+	,onGamepadConnect: null
+	,onGamepadDisconnect: null
+	,onJoystickAxisMove: null
+	,onJoystickButtonDown: null
+	,onJoystickButtonUp: null
+	,onJoystickConnect: null
+	,onJoystickDisconnect: null
+	,onJoystickHatMove: null
+	,onJoystickTrackballMove: null
+	,onKeyDown: null
+	,onKeyUp: null
+	,onModuleExit: null
+	,onMouseDown: null
+	,onMouseMove: null
+	,onMouseMoveRelative: null
+	,onMouseUp: null
+	,onMouseWheel: null
+	,onPreloadComplete: null
+	,onPreloadProgress: null
+	,onRenderContextLost: null
+	,onRenderContextRestored: null
+	,onTextEdit: null
+	,onTextInput: null
+	,onTouchEnd: null
+	,onTouchMove: null
+	,onTouchStart: null
+	,onWindowActivate: null
+	,onWindowClose: null
+	,onWindowCreate: null
+	,onWindowDeactivate: null
+	,onWindowDropFile: null
+	,onWindowEnter: null
+	,onWindowFocusIn: null
+	,onWindowFocusOut: null
+	,onWindowFullscreen: null
+	,onWindowLeave: null
+	,onWindowMove: null
+	,onWindowMinimize: null
+	,onWindowResize: null
+	,onWindowRestore: null
+	,render: null
+	,update: null
+	,__class__: lime_app_IModule
 };
 var lime_app_Module = function() {
 	this.onExit = new lime_app_Event_$Int_$Void();
@@ -5170,7 +5646,8 @@ $hxClasses["lime.app.Module"] = lime_app_Module;
 lime_app_Module.__name__ = ["lime","app","Module"];
 lime_app_Module.__interfaces__ = [lime_app_IModule];
 lime_app_Module.prototype = {
-	onGamepadAxisMove: function(gamepad,axis,value) {
+	onExit: null
+	,onGamepadAxisMove: function(gamepad,axis,value) {
 	}
 	,onGamepadButtonDown: function(gamepad,button) {
 	}
@@ -5237,6 +5714,8 @@ lime_app_Module.prototype = {
 	}
 	,onWindowDeactivate: function(window) {
 	}
+	,onWindowDropFile: function(window,file) {
+	}
 	,onWindowEnter: function(window) {
 	}
 	,onWindowFocusIn: function(window) {
@@ -5283,7 +5762,17 @@ lime_app_Application.__name__ = ["lime","app","Application"];
 lime_app_Application.current = null;
 lime_app_Application.__super__ = lime_app_Module;
 lime_app_Application.prototype = $extend(lime_app_Module.prototype,{
-	addModule: function(module) {
+	config: null
+	,modules: null
+	,preloader: null
+	,onUpdate: null
+	,renderer: null
+	,renderers: null
+	,window: null
+	,windows: null
+	,backend: null
+	,windowByID: null
+	,addModule: function(module) {
 		this.modules.push(module);
 		if(this.windows.length > 0) {
 			var _g = 0;
@@ -5354,94 +5843,99 @@ lime_app_Application.prototype = $extend(lime_app_Module.prototype,{
 				f3(a13);
 			};
 		})($bind(this,this.onWindowDeactivate),window));
-		window.onEnter.add((function(f4,a14) {
-			return function() {
-				f4(a14);
+		window.onDropFile.add((function(f4,a14) {
+			return function(a2) {
+				f4(a14,a2);
 			};
-		})($bind(this,this.onWindowEnter),window));
-		window.onFocusIn.add((function(f5,a15) {
+		})($bind(this,this.onWindowDropFile),window));
+		window.onEnter.add((function(f5,a15) {
 			return function() {
 				f5(a15);
 			};
-		})($bind(this,this.onWindowFocusIn),window));
-		window.onFocusOut.add((function(f6,a16) {
+		})($bind(this,this.onWindowEnter),window));
+		window.onFocusIn.add((function(f6,a16) {
 			return function() {
 				f6(a16);
 			};
-		})($bind(this,this.onWindowFocusOut),window));
-		window.onFullscreen.add((function(f7,a17) {
+		})($bind(this,this.onWindowFocusIn),window));
+		window.onFocusOut.add((function(f7,a17) {
 			return function() {
 				f7(a17);
 			};
+		})($bind(this,this.onWindowFocusOut),window));
+		window.onFullscreen.add((function(f8,a18) {
+			return function() {
+				f8(a18);
+			};
 		})($bind(this,this.onWindowFullscreen),window));
-		window.onKeyDown.add((function(f8,a18) {
-			return function(a2,a3) {
-				f8(a18,a2,a3);
+		window.onKeyDown.add((function(f9,a19) {
+			return function(a21,a3) {
+				f9(a19,a21,a3);
 			};
 		})($bind(this,this.onKeyDown),window));
-		window.onKeyUp.add((function(f9,a19) {
-			return function(a21,a31) {
-				f9(a19,a21,a31);
+		window.onKeyUp.add((function(f10,a110) {
+			return function(a22,a31) {
+				f10(a110,a22,a31);
 			};
 		})($bind(this,this.onKeyUp),window));
-		window.onLeave.add((function(f10,a110) {
-			return function() {
-				f10(a110);
-			};
-		})($bind(this,this.onWindowLeave),window));
-		window.onMinimize.add((function(f11,a111) {
+		window.onLeave.add((function(f11,a111) {
 			return function() {
 				f11(a111);
 			};
+		})($bind(this,this.onWindowLeave),window));
+		window.onMinimize.add((function(f12,a112) {
+			return function() {
+				f12(a112);
+			};
 		})($bind(this,this.onWindowMinimize),window));
-		window.onMouseDown.add((function(f12,a112) {
-			return function(x,y,a22) {
-				f12(a112,x,y,a22);
+		window.onMouseDown.add((function(f13,a113) {
+			return function(x,y,a23) {
+				f13(a113,x,y,a23);
 			};
 		})($bind(this,this.onMouseDown),window));
-		window.onMouseMove.add((function(f13,a113) {
+		window.onMouseMove.add((function(f14,a114) {
 			return function(x1,y1) {
-				f13(a113,x1,y1);
+				f14(a114,x1,y1);
 			};
 		})($bind(this,this.onMouseMove),window));
-		window.onMouseMoveRelative.add((function(f14,a114) {
+		window.onMouseMoveRelative.add((function(f15,a115) {
 			return function(x2,y2) {
-				f14(a114,x2,y2);
+				f15(a115,x2,y2);
 			};
 		})($bind(this,this.onMouseMoveRelative),window));
-		window.onMouseUp.add((function(f15,a115) {
-			return function(x3,y3,a23) {
-				f15(a115,x3,y3,a23);
+		window.onMouseUp.add((function(f16,a116) {
+			return function(x3,y3,a24) {
+				f16(a116,x3,y3,a24);
 			};
 		})($bind(this,this.onMouseUp),window));
-		window.onMouseWheel.add((function(f16,a116) {
-			return function(a24,a32) {
-				f16(a116,a24,a32);
+		window.onMouseWheel.add((function(f17,a117) {
+			return function(a25,a32) {
+				f17(a117,a25,a32);
 			};
 		})($bind(this,this.onMouseWheel),window));
-		window.onMove.add((function(f17,a117) {
+		window.onMove.add((function(f18,a118) {
 			return function(x4,y4) {
-				f17(a117,x4,y4);
+				f18(a118,x4,y4);
 			};
 		})($bind(this,this.onWindowMove),window));
-		window.onResize.add((function(f18,a118) {
-			return function(a25,a33) {
-				f18(a118,a25,a33);
+		window.onResize.add((function(f19,a119) {
+			return function(a26,a33) {
+				f19(a119,a26,a33);
 			};
 		})($bind(this,this.onWindowResize),window));
-		window.onRestore.add((function(f19,a119) {
+		window.onRestore.add((function(f20,a120) {
 			return function() {
-				f19(a119);
+				f20(a120);
 			};
 		})($bind(this,this.onWindowRestore),window));
-		window.onTextEdit.add((function(f20,a120) {
-			return function(a26,a34,a4) {
-				f20(a120,a26,a34,a4);
+		window.onTextEdit.add((function(f21,a121) {
+			return function(a27,a34,a4) {
+				f21(a121,a27,a34,a4);
 			};
 		})($bind(this,this.onTextEdit),window));
-		window.onTextInput.add((function(f21,a121) {
-			return function(a27) {
-				f21(a121,a27);
+		window.onTextInput.add((function(f22,a122) {
+			return function(a28) {
+				f22(a122,a28);
 			};
 		})($bind(this,this.onTextInput),window));
 		if(window.renderer == null) {
@@ -5756,6 +6250,15 @@ lime_app_Application.prototype = $extend(lime_app_Module.prototype,{
 			module.onWindowDeactivate(window);
 		}
 	}
+	,onWindowDropFile: function(window,file) {
+		var _g = 0;
+		var _g1 = this.modules;
+		while(_g < _g1.length) {
+			var module = _g1[_g];
+			++_g;
+			module.onWindowDropFile(window,file);
+		}
+	}
 	,onWindowEnter: function(window) {
 		var _g = 0;
 		var _g1 = this.modules;
@@ -5963,7 +6466,11 @@ var lime_app_Event = function() {
 $hxClasses["lime.app.Event"] = lime_app_Event;
 lime_app_Event.__name__ = ["lime","app","Event"];
 lime_app_Event.prototype = {
-	add: function(listener,once,priority) {
+	canceled: null
+	,__listeners: null
+	,__repeat: null
+	,__priorities: null
+	,add: function(listener,once,priority) {
 		if(priority == null) priority = 0;
 		if(once == null) once = false;
 		var _g1 = 0;
@@ -5984,6 +6491,7 @@ lime_app_Event.prototype = {
 	,cancel: function() {
 		this.canceled = true;
 	}
+	,dispatch: null
 	,has: function(listener) {
 		var _g = 0;
 		var _g1 = this.__listeners;
@@ -6013,7 +6521,10 @@ var lime_app_Event_$Dynamic_$Void = function() {
 $hxClasses["lime.app.Event_Dynamic_Void"] = lime_app_Event_$Dynamic_$Void;
 lime_app_Event_$Dynamic_$Void.__name__ = ["lime","app","Event_Dynamic_Void"];
 lime_app_Event_$Dynamic_$Void.prototype = {
-	add: function(listener,once,priority) {
+	canceled: null
+	,__repeat: null
+	,__priorities: null
+	,add: function(listener,once,priority) {
 		if(priority == null) priority = 0;
 		if(once == null) once = false;
 		var _g1 = 0;
@@ -6052,6 +6563,7 @@ lime_app_Event_$Dynamic_$Void.prototype = {
 			this.__repeat.splice(i,1);
 		}
 	}
+	,__listeners: null
 	,dispatch: function(a) {
 		this.canceled = false;
 		var listeners = this.__listeners;
@@ -6074,7 +6586,10 @@ var lime_app_Event_$Float_$Float_$Int_$Void = function() {
 $hxClasses["lime.app.Event_Float_Float_Int_Void"] = lime_app_Event_$Float_$Float_$Int_$Void;
 lime_app_Event_$Float_$Float_$Int_$Void.__name__ = ["lime","app","Event_Float_Float_Int_Void"];
 lime_app_Event_$Float_$Float_$Int_$Void.prototype = {
-	add: function(listener,once,priority) {
+	canceled: null
+	,__repeat: null
+	,__priorities: null
+	,add: function(listener,once,priority) {
 		if(priority == null) priority = 0;
 		if(once == null) once = false;
 		var _g1 = 0;
@@ -6113,6 +6628,7 @@ lime_app_Event_$Float_$Float_$Int_$Void.prototype = {
 			this.__repeat.splice(i,1);
 		}
 	}
+	,__listeners: null
 	,dispatch: function(a,a1,a2) {
 		this.canceled = false;
 		var listeners = this.__listeners;
@@ -6135,7 +6651,10 @@ var lime_app_Event_$Float_$Float_$Void = function() {
 $hxClasses["lime.app.Event_Float_Float_Void"] = lime_app_Event_$Float_$Float_$Void;
 lime_app_Event_$Float_$Float_$Void.__name__ = ["lime","app","Event_Float_Float_Void"];
 lime_app_Event_$Float_$Float_$Void.prototype = {
-	add: function(listener,once,priority) {
+	canceled: null
+	,__repeat: null
+	,__priorities: null
+	,add: function(listener,once,priority) {
 		if(priority == null) priority = 0;
 		if(once == null) once = false;
 		var _g1 = 0;
@@ -6174,6 +6693,7 @@ lime_app_Event_$Float_$Float_$Void.prototype = {
 			this.__repeat.splice(i,1);
 		}
 	}
+	,__listeners: null
 	,dispatch: function(a,a1) {
 		this.canceled = false;
 		var listeners = this.__listeners;
@@ -6196,7 +6716,10 @@ var lime_app_Event_$Int_$Float_$Void = function() {
 $hxClasses["lime.app.Event_Int_Float_Void"] = lime_app_Event_$Int_$Float_$Void;
 lime_app_Event_$Int_$Float_$Void.__name__ = ["lime","app","Event_Int_Float_Void"];
 lime_app_Event_$Int_$Float_$Void.prototype = {
-	add: function(listener,once,priority) {
+	canceled: null
+	,__repeat: null
+	,__priorities: null
+	,add: function(listener,once,priority) {
 		if(priority == null) priority = 0;
 		if(once == null) once = false;
 		var _g1 = 0;
@@ -6235,6 +6758,7 @@ lime_app_Event_$Int_$Float_$Void.prototype = {
 			this.__repeat.splice(i,1);
 		}
 	}
+	,__listeners: null
 	,dispatch: function(a,a1) {
 		this.canceled = false;
 		var listeners = this.__listeners;
@@ -6257,7 +6781,10 @@ var lime_app_Event_$Int_$Int_$Void = function() {
 $hxClasses["lime.app.Event_Int_Int_Void"] = lime_app_Event_$Int_$Int_$Void;
 lime_app_Event_$Int_$Int_$Void.__name__ = ["lime","app","Event_Int_Int_Void"];
 lime_app_Event_$Int_$Int_$Void.prototype = {
-	add: function(listener,once,priority) {
+	canceled: null
+	,__repeat: null
+	,__priorities: null
+	,add: function(listener,once,priority) {
 		if(priority == null) priority = 0;
 		if(once == null) once = false;
 		var _g1 = 0;
@@ -6296,6 +6823,7 @@ lime_app_Event_$Int_$Int_$Void.prototype = {
 			this.__repeat.splice(i,1);
 		}
 	}
+	,__listeners: null
 	,dispatch: function(a,a1) {
 		this.canceled = false;
 		var listeners = this.__listeners;
@@ -6318,7 +6846,10 @@ var lime_app_Event_$Int_$Void = function() {
 $hxClasses["lime.app.Event_Int_Void"] = lime_app_Event_$Int_$Void;
 lime_app_Event_$Int_$Void.__name__ = ["lime","app","Event_Int_Void"];
 lime_app_Event_$Int_$Void.prototype = {
-	add: function(listener,once,priority) {
+	canceled: null
+	,__repeat: null
+	,__priorities: null
+	,add: function(listener,once,priority) {
 		if(priority == null) priority = 0;
 		if(once == null) once = false;
 		var _g1 = 0;
@@ -6357,6 +6888,7 @@ lime_app_Event_$Int_$Void.prototype = {
 			this.__repeat.splice(i,1);
 		}
 	}
+	,__listeners: null
 	,dispatch: function(a) {
 		this.canceled = false;
 		var listeners = this.__listeners;
@@ -6379,7 +6911,10 @@ var lime_app_Event_$Int_$lime_$ui_$JoystickHatPosition_$Void = function() {
 $hxClasses["lime.app.Event_Int_lime_ui_JoystickHatPosition_Void"] = lime_app_Event_$Int_$lime_$ui_$JoystickHatPosition_$Void;
 lime_app_Event_$Int_$lime_$ui_$JoystickHatPosition_$Void.__name__ = ["lime","app","Event_Int_lime_ui_JoystickHatPosition_Void"];
 lime_app_Event_$Int_$lime_$ui_$JoystickHatPosition_$Void.prototype = {
-	add: function(listener,once,priority) {
+	canceled: null
+	,__repeat: null
+	,__priorities: null
+	,add: function(listener,once,priority) {
 		if(priority == null) priority = 0;
 		if(once == null) once = false;
 		var _g1 = 0;
@@ -6418,6 +6953,7 @@ lime_app_Event_$Int_$lime_$ui_$JoystickHatPosition_$Void.prototype = {
 			this.__repeat.splice(i,1);
 		}
 	}
+	,__listeners: null
 	,dispatch: function(a,a1) {
 		this.canceled = false;
 		var listeners = this.__listeners;
@@ -6440,7 +6976,10 @@ var lime_app_Event_$String_$Int_$Int_$Void = function() {
 $hxClasses["lime.app.Event_String_Int_Int_Void"] = lime_app_Event_$String_$Int_$Int_$Void;
 lime_app_Event_$String_$Int_$Int_$Void.__name__ = ["lime","app","Event_String_Int_Int_Void"];
 lime_app_Event_$String_$Int_$Int_$Void.prototype = {
-	add: function(listener,once,priority) {
+	canceled: null
+	,__repeat: null
+	,__priorities: null
+	,add: function(listener,once,priority) {
 		if(priority == null) priority = 0;
 		if(once == null) once = false;
 		var _g1 = 0;
@@ -6479,6 +7018,7 @@ lime_app_Event_$String_$Int_$Int_$Void.prototype = {
 			this.__repeat.splice(i,1);
 		}
 	}
+	,__listeners: null
 	,dispatch: function(a,a1,a2) {
 		this.canceled = false;
 		var listeners = this.__listeners;
@@ -6501,7 +7041,10 @@ var lime_app_Event_$String_$Void = function() {
 $hxClasses["lime.app.Event_String_Void"] = lime_app_Event_$String_$Void;
 lime_app_Event_$String_$Void.__name__ = ["lime","app","Event_String_Void"];
 lime_app_Event_$String_$Void.prototype = {
-	add: function(listener,once,priority) {
+	canceled: null
+	,__repeat: null
+	,__priorities: null
+	,add: function(listener,once,priority) {
 		if(priority == null) priority = 0;
 		if(once == null) once = false;
 		var _g1 = 0;
@@ -6540,6 +7083,7 @@ lime_app_Event_$String_$Void.prototype = {
 			this.__repeat.splice(i,1);
 		}
 	}
+	,__listeners: null
 	,dispatch: function(a) {
 		this.canceled = false;
 		var listeners = this.__listeners;
@@ -6562,7 +7106,10 @@ var lime_app_Event_$lime_$graphics_$RenderContext_$Void = function() {
 $hxClasses["lime.app.Event_lime_graphics_RenderContext_Void"] = lime_app_Event_$lime_$graphics_$RenderContext_$Void;
 lime_app_Event_$lime_$graphics_$RenderContext_$Void.__name__ = ["lime","app","Event_lime_graphics_RenderContext_Void"];
 lime_app_Event_$lime_$graphics_$RenderContext_$Void.prototype = {
-	add: function(listener,once,priority) {
+	canceled: null
+	,__repeat: null
+	,__priorities: null
+	,add: function(listener,once,priority) {
 		if(priority == null) priority = 0;
 		if(once == null) once = false;
 		var _g1 = 0;
@@ -6601,6 +7148,7 @@ lime_app_Event_$lime_$graphics_$RenderContext_$Void.prototype = {
 			this.__repeat.splice(i,1);
 		}
 	}
+	,__listeners: null
 	,dispatch: function(a) {
 		this.canceled = false;
 		var listeners = this.__listeners;
@@ -6623,7 +7171,10 @@ var lime_app_Event_$lime_$ui_$GamepadAxis_$Float_$Void = function() {
 $hxClasses["lime.app.Event_lime_ui_GamepadAxis_Float_Void"] = lime_app_Event_$lime_$ui_$GamepadAxis_$Float_$Void;
 lime_app_Event_$lime_$ui_$GamepadAxis_$Float_$Void.__name__ = ["lime","app","Event_lime_ui_GamepadAxis_Float_Void"];
 lime_app_Event_$lime_$ui_$GamepadAxis_$Float_$Void.prototype = {
-	add: function(listener,once,priority) {
+	canceled: null
+	,__repeat: null
+	,__priorities: null
+	,add: function(listener,once,priority) {
 		if(priority == null) priority = 0;
 		if(once == null) once = false;
 		var _g1 = 0;
@@ -6662,6 +7213,7 @@ lime_app_Event_$lime_$ui_$GamepadAxis_$Float_$Void.prototype = {
 			this.__repeat.splice(i,1);
 		}
 	}
+	,__listeners: null
 	,dispatch: function(a,a1) {
 		this.canceled = false;
 		var listeners = this.__listeners;
@@ -6684,7 +7236,10 @@ var lime_app_Event_$lime_$ui_$GamepadButton_$Void = function() {
 $hxClasses["lime.app.Event_lime_ui_GamepadButton_Void"] = lime_app_Event_$lime_$ui_$GamepadButton_$Void;
 lime_app_Event_$lime_$ui_$GamepadButton_$Void.__name__ = ["lime","app","Event_lime_ui_GamepadButton_Void"];
 lime_app_Event_$lime_$ui_$GamepadButton_$Void.prototype = {
-	add: function(listener,once,priority) {
+	canceled: null
+	,__repeat: null
+	,__priorities: null
+	,add: function(listener,once,priority) {
 		if(priority == null) priority = 0;
 		if(once == null) once = false;
 		var _g1 = 0;
@@ -6723,6 +7278,7 @@ lime_app_Event_$lime_$ui_$GamepadButton_$Void.prototype = {
 			this.__repeat.splice(i,1);
 		}
 	}
+	,__listeners: null
 	,dispatch: function(a) {
 		this.canceled = false;
 		var listeners = this.__listeners;
@@ -6745,7 +7301,10 @@ var lime_app_Event_$lime_$ui_$Gamepad_$Void = function() {
 $hxClasses["lime.app.Event_lime_ui_Gamepad_Void"] = lime_app_Event_$lime_$ui_$Gamepad_$Void;
 lime_app_Event_$lime_$ui_$Gamepad_$Void.__name__ = ["lime","app","Event_lime_ui_Gamepad_Void"];
 lime_app_Event_$lime_$ui_$Gamepad_$Void.prototype = {
-	add: function(listener,once,priority) {
+	canceled: null
+	,__repeat: null
+	,__priorities: null
+	,add: function(listener,once,priority) {
 		if(priority == null) priority = 0;
 		if(once == null) once = false;
 		var _g1 = 0;
@@ -6784,6 +7343,7 @@ lime_app_Event_$lime_$ui_$Gamepad_$Void.prototype = {
 			this.__repeat.splice(i,1);
 		}
 	}
+	,__listeners: null
 	,dispatch: function(a) {
 		this.canceled = false;
 		var listeners = this.__listeners;
@@ -6806,7 +7366,10 @@ var lime_app_Event_$lime_$ui_$Joystick_$Void = function() {
 $hxClasses["lime.app.Event_lime_ui_Joystick_Void"] = lime_app_Event_$lime_$ui_$Joystick_$Void;
 lime_app_Event_$lime_$ui_$Joystick_$Void.__name__ = ["lime","app","Event_lime_ui_Joystick_Void"];
 lime_app_Event_$lime_$ui_$Joystick_$Void.prototype = {
-	add: function(listener,once,priority) {
+	canceled: null
+	,__repeat: null
+	,__priorities: null
+	,add: function(listener,once,priority) {
 		if(priority == null) priority = 0;
 		if(once == null) once = false;
 		var _g1 = 0;
@@ -6845,6 +7408,7 @@ lime_app_Event_$lime_$ui_$Joystick_$Void.prototype = {
 			this.__repeat.splice(i,1);
 		}
 	}
+	,__listeners: null
 	,dispatch: function(a) {
 		this.canceled = false;
 		var listeners = this.__listeners;
@@ -6867,7 +7431,10 @@ var lime_app_Event_$lime_$ui_$KeyCode_$lime_$ui_$KeyModifier_$Void = function() 
 $hxClasses["lime.app.Event_lime_ui_KeyCode_lime_ui_KeyModifier_Void"] = lime_app_Event_$lime_$ui_$KeyCode_$lime_$ui_$KeyModifier_$Void;
 lime_app_Event_$lime_$ui_$KeyCode_$lime_$ui_$KeyModifier_$Void.__name__ = ["lime","app","Event_lime_ui_KeyCode_lime_ui_KeyModifier_Void"];
 lime_app_Event_$lime_$ui_$KeyCode_$lime_$ui_$KeyModifier_$Void.prototype = {
-	add: function(listener,once,priority) {
+	canceled: null
+	,__repeat: null
+	,__priorities: null
+	,add: function(listener,once,priority) {
 		if(priority == null) priority = 0;
 		if(once == null) once = false;
 		var _g1 = 0;
@@ -6906,6 +7473,7 @@ lime_app_Event_$lime_$ui_$KeyCode_$lime_$ui_$KeyModifier_$Void.prototype = {
 			this.__repeat.splice(i,1);
 		}
 	}
+	,__listeners: null
 	,dispatch: function(a,a1) {
 		this.canceled = false;
 		var listeners = this.__listeners;
@@ -6928,7 +7496,10 @@ var lime_app_Event_$lime_$ui_$Touch_$Void = function() {
 $hxClasses["lime.app.Event_lime_ui_Touch_Void"] = lime_app_Event_$lime_$ui_$Touch_$Void;
 lime_app_Event_$lime_$ui_$Touch_$Void.__name__ = ["lime","app","Event_lime_ui_Touch_Void"];
 lime_app_Event_$lime_$ui_$Touch_$Void.prototype = {
-	add: function(listener,once,priority) {
+	canceled: null
+	,__repeat: null
+	,__priorities: null
+	,add: function(listener,once,priority) {
 		if(priority == null) priority = 0;
 		if(once == null) once = false;
 		var _g1 = 0;
@@ -6967,6 +7538,7 @@ lime_app_Event_$lime_$ui_$Touch_$Void.prototype = {
 			this.__repeat.splice(i,1);
 		}
 	}
+	,__listeners: null
 	,dispatch: function(a) {
 		this.canceled = false;
 		var listeners = this.__listeners;
@@ -7013,7 +7585,15 @@ lime_app_Future.threadPool_onError = function(state) {
 	state.promise.error(state.error);
 };
 lime_app_Future.prototype = {
-	onComplete: function(listener) {
+	isCompleted: null
+	,value: null
+	,__completed: null
+	,__completeListeners: null
+	,__errored: null
+	,__errorListeners: null
+	,__errorMessage: null
+	,__progressListeners: null
+	,onComplete: function(listener) {
 		if(listener != null) {
 			if(this.__completed) listener(this.value); else if(!this.__errored) {
 				if(this.__completeListeners == null) this.__completeListeners = [];
@@ -7071,7 +7651,12 @@ var lime_app_Preloader = function() {
 $hxClasses["lime.app.Preloader"] = lime_app_Preloader;
 lime_app_Preloader.__name__ = ["lime","app","Preloader"];
 lime_app_Preloader.prototype = {
-	create: function(config) {
+	complete: null
+	,onComplete: null
+	,onProgress: null
+	,loaded: null
+	,total: null
+	,create: function(config) {
 	}
 	,load: function(urls,types) {
 		var url = null;
@@ -7189,7 +7774,9 @@ var lime_app_Promise = function() {
 $hxClasses["lime.app.Promise"] = lime_app_Promise;
 lime_app_Promise.__name__ = ["lime","app","Promise"];
 lime_app_Promise.prototype = {
-	complete: function(data) {
+	future: null
+	,isCompleted: null
+	,complete: function(data) {
 		if(!this.future.__errored) {
 			this.future.__completed = true;
 			this.future.value = data;
@@ -7316,7 +7903,69 @@ var lime_audio_ALAudioContext = function() {
 $hxClasses["lime.audio.ALAudioContext"] = lime_audio_ALAudioContext;
 lime_audio_ALAudioContext.__name__ = ["lime","audio","ALAudioContext"];
 lime_audio_ALAudioContext.prototype = {
-	bufferData: function(buffer,format,data,size,freq) {
+	NONE: null
+	,FALSE: null
+	,TRUE: null
+	,SOURCE_RELATIVE: null
+	,CONE_INNER_ANGLE: null
+	,CONE_OUTER_ANGLE: null
+	,PITCH: null
+	,POSITION: null
+	,DIRECTION: null
+	,VELOCITY: null
+	,LOOPING: null
+	,BUFFER: null
+	,GAIN: null
+	,MIN_GAIN: null
+	,MAX_GAIN: null
+	,ORIENTATION: null
+	,SOURCE_STATE: null
+	,INITIAL: null
+	,PLAYING: null
+	,PAUSED: null
+	,STOPPED: null
+	,BUFFERS_QUEUED: null
+	,BUFFERS_PROCESSED: null
+	,REFERENCE_DISTANCE: null
+	,ROLLOFF_FACTOR: null
+	,CONE_OUTER_GAIN: null
+	,MAX_DISTANCE: null
+	,SEC_OFFSET: null
+	,SAMPLE_OFFSET: null
+	,BYTE_OFFSET: null
+	,SOURCE_TYPE: null
+	,STATIC: null
+	,STREAMING: null
+	,UNDETERMINED: null
+	,FORMAT_MONO8: null
+	,FORMAT_MONO16: null
+	,FORMAT_STEREO8: null
+	,FORMAT_STEREO16: null
+	,FREQUENCY: null
+	,BITS: null
+	,CHANNELS: null
+	,SIZE: null
+	,NO_ERROR: null
+	,INVALID_NAME: null
+	,INVALID_ENUM: null
+	,INVALID_VALUE: null
+	,INVALID_OPERATION: null
+	,OUT_OF_MEMORY: null
+	,VENDOR: null
+	,VERSION: null
+	,RENDERER: null
+	,EXTENSIONS: null
+	,DOPPLER_FACTOR: null
+	,SPEED_OF_SOUND: null
+	,DOPPLER_VELOCITY: null
+	,DISTANCE_MODEL: null
+	,INVERSE_DISTANCE: null
+	,INVERSE_DISTANCE_CLAMPED: null
+	,LINEAR_DISTANCE: null
+	,LINEAR_DISTANCE_CLAMPED: null
+	,EXPONENT_DISTANCE: null
+	,EXPONENT_DISTANCE_CLAMPED: null
+	,bufferData: function(buffer,format,data,size,freq) {
 		lime_audio_openal_AL.bufferData(buffer,format,data,size,freq);
 	}
 	,buffer3f: function(buffer,param,value1,value2,value3) {
@@ -7594,7 +8243,28 @@ var lime_audio_ALCAudioContext = function() {
 $hxClasses["lime.audio.ALCAudioContext"] = lime_audio_ALCAudioContext;
 lime_audio_ALCAudioContext.__name__ = ["lime","audio","ALCAudioContext"];
 lime_audio_ALCAudioContext.prototype = {
-	closeDevice: function(device) {
+	FALSE: null
+	,TRUE: null
+	,FREQUENCY: null
+	,REFRESH: null
+	,SYNC: null
+	,MONO_SOURCES: null
+	,STEREO_SOURCES: null
+	,NO_ERROR: null
+	,INVALID_DEVICE: null
+	,INVALID_CONTEXT: null
+	,INVALID_ENUM: null
+	,INVALID_VALUE: null
+	,OUT_OF_MEMORY: null
+	,ATTRIBUTES_SIZE: null
+	,ALL_ATTRIBUTES: null
+	,DEFAULT_DEVICE_SPECIFIER: null
+	,DEVICE_SPECIFIER: null
+	,EXTENSIONS: null
+	,ENUMERATE_ALL_EXT: null
+	,DEFAULT_ALL_DEVICES_SPECIFIER: null
+	,ALL_DEVICES_SPECIFIER: null
+	,closeDevice: function(device) {
 		return lime_audio_openal_ALC.closeDevice(device);
 	}
 	,createContext: function(device,attrlist) {
@@ -7652,11 +8322,17 @@ lime_audio_AudioBuffer.fromURL = function(url,handler) {
 	}
 };
 lime_audio_AudioBuffer.prototype = {
-	dispose: function() {
+	bitsPerSample: null
+	,channels: null
+	,data: null
+	,id: null
+	,sampleRate: null
+	,src: null
+	,dispose: function() {
 	}
 	,__class__: lime_audio_AudioBuffer
 };
-var lime_audio_AudioContext = $hxClasses["lime.audio.AudioContext"] = { __ename__ : true, __constructs__ : ["OPENAL","HTML5","WEB","FLASH","CUSTOM"] };
+var lime_audio_AudioContext = $hxClasses["lime.audio.AudioContext"] = { __ename__ : ["lime","audio","AudioContext"], __constructs__ : ["OPENAL","HTML5","WEB","FLASH","CUSTOM"] };
 lime_audio_AudioContext.OPENAL = function(alc,al) { var $x = ["OPENAL",0,alc,al]; $x.__enum__ = lime_audio_AudioContext; $x.toString = $estr; return $x; };
 lime_audio_AudioContext.HTML5 = function(context) { var $x = ["HTML5",1,context]; $x.__enum__ = lime_audio_AudioContext; $x.toString = $estr; return $x; };
 lime_audio_AudioContext.WEB = function(context) { var $x = ["WEB",2,context]; $x.__enum__ = lime_audio_AudioContext; $x.toString = $estr; return $x; };
@@ -7737,7 +8413,15 @@ var lime_audio_AudioSource = function(buffer,offset,length,loops) {
 $hxClasses["lime.audio.AudioSource"] = lime_audio_AudioSource;
 lime_audio_AudioSource.__name__ = ["lime","audio","AudioSource"];
 lime_audio_AudioSource.prototype = {
-	dispose: function() {
+	onComplete: null
+	,buffer: null
+	,offset: null
+	,id: null
+	,playing: null
+	,pauseTime: null
+	,__length: null
+	,__loops: null
+	,dispose: function() {
 		{
 			var _g = lime_audio_AudioManager.context;
 			switch(_g[1]) {
@@ -7874,7 +8558,16 @@ var lime_audio_HTML5AudioContext = function() {
 $hxClasses["lime.audio.HTML5AudioContext"] = lime_audio_HTML5AudioContext;
 lime_audio_HTML5AudioContext.__name__ = ["lime","audio","HTML5AudioContext"];
 lime_audio_HTML5AudioContext.prototype = {
-	canPlayType: function(buffer,type) {
+	HAVE_CURRENT_DATA: null
+	,HAVE_ENOUGH_DATA: null
+	,HAVE_FUTURE_DATA: null
+	,HAVE_METADATA: null
+	,HAVE_NOTHING: null
+	,NETWORK_EMPTY: null
+	,NETWORK_IDLE: null
+	,NETWORK_LOADING: null
+	,NETWORK_NO_SOURCE: null
+	,canPlayType: function(buffer,type) {
 		if(buffer.src != null) return buffer.src.canPlayType(type);
 		return null;
 	}
@@ -8347,7 +9040,57 @@ var lime_graphics_FlashRenderContext = function() {
 $hxClasses["lime.graphics.FlashRenderContext"] = lime_graphics_FlashRenderContext;
 lime_graphics_FlashRenderContext.__name__ = ["lime","graphics","FlashRenderContext"];
 lime_graphics_FlashRenderContext.prototype = {
-	addChild: function(child) {
+	accessibilityImplementation: null
+	,accessibilityProperties: null
+	,alpha: null
+	,blendMode: null
+	,blendShader: null
+	,buttonMode: null
+	,cacheAsBitmap: null
+	,contextMenu: null
+	,doubleClickEnabled: null
+	,dropTarget: null
+	,filters: null
+	,focusRect: null
+	,graphics: null
+	,height: null
+	,hitArea: null
+	,loaderInfo: null
+	,mask: null
+	,mouseChildren: null
+	,mouseEnabled: null
+	,mouseX: null
+	,mouseY: null
+	,name: null
+	,needsSoftKeyboard: null
+	,numChildren: null
+	,opaqueBackground: null
+	,parent: null
+	,root: null
+	,rotation: null
+	,rotationX: null
+	,rotationY: null
+	,rotationZ: null
+	,scale9Grid: null
+	,scaleX: null
+	,scaleY: null
+	,scaleZ: null
+	,scrollRect: null
+	,softKeyboardInputAreaOfInterest: null
+	,soundTransform: null
+	,stage: null
+	,tabChildren: null
+	,tabEnabled: null
+	,tabIndex: null
+	,textSnapshot: null
+	,transform: null
+	,useHandCursor: null
+	,visible: null
+	,width: null
+	,x: null
+	,y: null
+	,z: null
+	,addChild: function(child) {
 		return null;
 	}
 	,addChildAt: function(child,index) {
@@ -8566,7 +9309,17 @@ lime_graphics_Image.__isGIF = function(bytes) {
 	return false;
 };
 lime_graphics_Image.prototype = {
-	clone: function() {
+	buffer: null
+	,dirty: null
+	,height: null
+	,offsetX: null
+	,offsetY: null
+	,rect: null
+	,type: null
+	,width: null
+	,x: null
+	,y: null
+	,clone: function() {
 		if(this.buffer != null) {
 			if(this.type == lime_graphics_ImageType.CANVAS && this.buffer.__srcImage == null) {
 				lime_graphics_utils_ImageCanvasUtil.convertToCanvas(this);
@@ -9327,7 +10080,20 @@ var lime_graphics_ImageBuffer = function(data,width,height,bitsPerPixel,format) 
 $hxClasses["lime.graphics.ImageBuffer"] = lime_graphics_ImageBuffer;
 lime_graphics_ImageBuffer.__name__ = ["lime","graphics","ImageBuffer"];
 lime_graphics_ImageBuffer.prototype = {
-	clone: function() {
+	bitsPerPixel: null
+	,data: null
+	,format: null
+	,height: null
+	,premultiplied: null
+	,transparent: null
+	,width: null
+	,__srcBitmapData: null
+	,__srcCanvas: null
+	,__srcContext: null
+	,__srcCustom: null
+	,__srcImage: null
+	,__srcImageData: null
+	,clone: function() {
 		var buffer = new lime_graphics_ImageBuffer(this.data,this.width,this.height,this.bitsPerPixel);
 		if(this.data != null) {
 			var elements = this.data.byteLength;
@@ -9378,7 +10144,7 @@ lime_graphics_ImageBuffer.prototype = {
 	,__class__: lime_graphics_ImageBuffer
 	,__properties__: {get_stride:"get_stride",set_src:"set_src",get_src:"get_src"}
 };
-var lime_graphics_ImageChannel = $hxClasses["lime.graphics.ImageChannel"] = { __ename__ : true, __constructs__ : ["RED","GREEN","BLUE","ALPHA"] };
+var lime_graphics_ImageChannel = $hxClasses["lime.graphics.ImageChannel"] = { __ename__ : ["lime","graphics","ImageChannel"], __constructs__ : ["RED","GREEN","BLUE","ALPHA"] };
 lime_graphics_ImageChannel.RED = ["RED",0];
 lime_graphics_ImageChannel.RED.toString = $estr;
 lime_graphics_ImageChannel.RED.__enum__ = lime_graphics_ImageChannel;
@@ -9391,7 +10157,7 @@ lime_graphics_ImageChannel.BLUE.__enum__ = lime_graphics_ImageChannel;
 lime_graphics_ImageChannel.ALPHA = ["ALPHA",3];
 lime_graphics_ImageChannel.ALPHA.toString = $estr;
 lime_graphics_ImageChannel.ALPHA.__enum__ = lime_graphics_ImageChannel;
-var lime_graphics_ImageType = $hxClasses["lime.graphics.ImageType"] = { __ename__ : true, __constructs__ : ["CANVAS","DATA","FLASH","CUSTOM"] };
+var lime_graphics_ImageType = $hxClasses["lime.graphics.ImageType"] = { __ename__ : ["lime","graphics","ImageType"], __constructs__ : ["CANVAS","DATA","FLASH","CUSTOM"] };
 lime_graphics_ImageType.CANVAS = ["CANVAS",0];
 lime_graphics_ImageType.CANVAS.toString = $estr;
 lime_graphics_ImageType.CANVAS.__enum__ = lime_graphics_ImageType;
@@ -9404,7 +10170,7 @@ lime_graphics_ImageType.FLASH.__enum__ = lime_graphics_ImageType;
 lime_graphics_ImageType.CUSTOM = ["CUSTOM",3];
 lime_graphics_ImageType.CUSTOM.toString = $estr;
 lime_graphics_ImageType.CUSTOM.__enum__ = lime_graphics_ImageType;
-var lime_graphics_RenderContext = $hxClasses["lime.graphics.RenderContext"] = { __ename__ : true, __constructs__ : ["OPENGL","CANVAS","DOM","FLASH","CAIRO","CONSOLE","CUSTOM","NONE"] };
+var lime_graphics_RenderContext = $hxClasses["lime.graphics.RenderContext"] = { __ename__ : ["lime","graphics","RenderContext"], __constructs__ : ["OPENGL","CANVAS","DOM","FLASH","CAIRO","CONSOLE","CUSTOM","NONE"] };
 lime_graphics_RenderContext.OPENGL = function(gl) { var $x = ["OPENGL",0,gl]; $x.__enum__ = lime_graphics_RenderContext; $x.toString = $estr; return $x; };
 lime_graphics_RenderContext.CANVAS = function(context) { var $x = ["CANVAS",1,context]; $x.__enum__ = lime_graphics_RenderContext; $x.toString = $estr; return $x; };
 lime_graphics_RenderContext.DOM = function(element) { var $x = ["DOM",2,element]; $x.__enum__ = lime_graphics_RenderContext; $x.toString = $estr; return $x; };
@@ -9426,7 +10192,14 @@ var lime_graphics_Renderer = function(window) {
 $hxClasses["lime.graphics.Renderer"] = lime_graphics_Renderer;
 lime_graphics_Renderer.__name__ = ["lime","graphics","Renderer"];
 lime_graphics_Renderer.prototype = {
-	create: function() {
+	context: null
+	,onContextLost: null
+	,onContextRestored: null
+	,onRender: null
+	,type: null
+	,window: null
+	,backend: null
+	,create: function() {
 		this.backend.create();
 	}
 	,flip: function() {
@@ -9440,7 +10213,7 @@ lime_graphics_Renderer.prototype = {
 	}
 	,__class__: lime_graphics_Renderer
 };
-var lime_graphics_RendererType = $hxClasses["lime.graphics.RendererType"] = { __ename__ : true, __constructs__ : ["OPENGL","CANVAS","DOM","FLASH","CAIRO","CONSOLE","CUSTOM"] };
+var lime_graphics_RendererType = $hxClasses["lime.graphics.RendererType"] = { __ename__ : ["lime","graphics","RendererType"], __constructs__ : ["OPENGL","CANVAS","DOM","FLASH","CAIRO","CONSOLE","CUSTOM"] };
 lime_graphics_RendererType.OPENGL = ["OPENGL",0];
 lime_graphics_RendererType.OPENGL.toString = $estr;
 lime_graphics_RendererType.OPENGL.__enum__ = lime_graphics_RendererType;
@@ -9478,7 +10251,10 @@ lime_graphics_cairo_Cairo.get_versionString = function() {
 	return "";
 };
 lime_graphics_cairo_Cairo.prototype = {
-	arc: function(xc,yc,radius,angle1,angle2) {
+	target: null
+	,userData: null
+	,handle: null
+	,arc: function(xc,yc,radius,angle1,angle2) {
 	}
 	,arcNegative: function(xc,yc,radius,angle1,angle2) {
 	}
@@ -9811,7 +10587,7 @@ lime_graphics_console_IndexBuffer.__name__ = ["lime","graphics","console","Index
 lime_graphics_console_IndexBuffer.prototype = {
 	__class__: lime_graphics_console_IndexBuffer
 };
-var lime_graphics_console_Primitive = $hxClasses["lime.graphics.console.Primitive"] = { __ename__ : true, __constructs__ : ["Point","Line","LineStrip","Triangle","TriangleStrip"] };
+var lime_graphics_console_Primitive = $hxClasses["lime.graphics.console.Primitive"] = { __ename__ : ["lime","graphics","console","Primitive"], __constructs__ : ["Point","Line","LineStrip","Triangle","TriangleStrip"] };
 lime_graphics_console_Primitive.Point = ["Point",0];
 lime_graphics_console_Primitive.Point.toString = $estr;
 lime_graphics_console_Primitive.Point.__enum__ = lime_graphics_console_Primitive;
@@ -10025,7 +10801,7 @@ lime_graphics_format_BMP.encode = function(image,type) {
 	}
 	return data;
 };
-var lime_graphics_format_BMPType = $hxClasses["lime.graphics.format.BMPType"] = { __ename__ : true, __constructs__ : ["RGB","BITFIELD","ICO"] };
+var lime_graphics_format_BMPType = $hxClasses["lime.graphics.format.BMPType"] = { __ename__ : ["lime","graphics","format","BMPType"], __constructs__ : ["RGB","BITFIELD","ICO"] };
 lime_graphics_format_BMPType.RGB = ["RGB",0];
 lime_graphics_format_BMPType.RGB.toString = $estr;
 lime_graphics_format_BMPType.RGB.__enum__ = lime_graphics_format_BMPType;
@@ -12710,7 +13486,15 @@ var lime_graphics_utils__$ImageDataUtil_ImageDataView = function(image,rect) {
 $hxClasses["lime.graphics.utils._ImageDataUtil.ImageDataView"] = lime_graphics_utils__$ImageDataUtil_ImageDataView;
 lime_graphics_utils__$ImageDataUtil_ImageDataView.__name__ = ["lime","graphics","utils","_ImageDataUtil","ImageDataView"];
 lime_graphics_utils__$ImageDataUtil_ImageDataView.prototype = {
-	clip: function(x,y,width,height) {
+	x: null
+	,y: null
+	,height: null
+	,width: null
+	,image: null
+	,offset: null
+	,rect: null
+	,stride: null
+	,clip: function(x,y,width,height) {
 		this.rect.__contract(x,y,width,height);
 		this.x = Math.ceil(this.rect.x);
 		this.y = Math.ceil(this.rect.y);
@@ -12939,7 +13723,13 @@ var lime_math_Matrix3 = function(a,b,c,d,tx,ty) {
 $hxClasses["lime.math.Matrix3"] = lime_math_Matrix3;
 lime_math_Matrix3.__name__ = ["lime","math","Matrix3"];
 lime_math_Matrix3.prototype = {
-	clone: function() {
+	a: null
+	,b: null
+	,c: null
+	,d: null
+	,tx: null
+	,ty: null
+	,clone: function() {
 		return new lime_math_Matrix3(this.a,this.b,this.c,this.d,this.tx,this.ty);
 	}
 	,concat: function(m) {
@@ -13717,7 +14507,11 @@ var lime_math_Rectangle = function(x,y,width,height) {
 $hxClasses["lime.math.Rectangle"] = lime_math_Rectangle;
 lime_math_Rectangle.__name__ = ["lime","math","Rectangle"];
 lime_math_Rectangle.prototype = {
-	clone: function() {
+	height: null
+	,width: null
+	,x: null
+	,y: null
+	,clone: function() {
 		return new lime_math_Rectangle(this.x,this.y,this.width,this.height);
 	}
 	,contains: function(x,y) {
@@ -13931,7 +14725,10 @@ lime_math_Vector2.polar = function(len,angle) {
 	return new lime_math_Vector2(len * Math.cos(angle),len * Math.sin(angle));
 };
 lime_math_Vector2.prototype = {
-	add: function(v) {
+	length: null
+	,x: null
+	,y: null
+	,add: function(v) {
 		return new lime_math_Vector2(v.x + this.x,v.y + this.y);
 	}
 	,clone: function() {
@@ -14006,7 +14803,13 @@ lime_math_Vector4.get_Z_AXIS = function() {
 	return new lime_math_Vector4(0,0,1);
 };
 lime_math_Vector4.prototype = {
-	add: function(a) {
+	length: null
+	,lengthSquared: null
+	,w: null
+	,x: null
+	,y: null
+	,z: null
+	,add: function(a) {
 		return new lime_math_Vector4(this.x + a.x,this.y + a.y,this.z + a.z);
 	}
 	,clone: function() {
@@ -14508,7 +15311,11 @@ var lime_net_HTTPRequest = function() {
 $hxClasses["lime.net.HTTPRequest"] = lime_net_HTTPRequest;
 lime_net_HTTPRequest.__name__ = ["lime","net","HTTPRequest"];
 lime_net_HTTPRequest.prototype = {
-	load: function(url) {
+	bytes: null
+	,bytesLoaded: null
+	,bytesTotal: null
+	,promise: null
+	,load: function(url) {
 		var _g = this;
 		this.bytesLoaded = 0;
 		this.bytesTotal = 0;
@@ -14614,7 +15421,13 @@ var lime_system_BackgroundWorker = function() {
 $hxClasses["lime.system.BackgroundWorker"] = lime_system_BackgroundWorker;
 lime_system_BackgroundWorker.__name__ = ["lime","system","BackgroundWorker"];
 lime_system_BackgroundWorker.prototype = {
-	cancel: function() {
+	canceled: null
+	,doWork: null
+	,onComplete: null
+	,onError: null
+	,onProgress: null
+	,__runMessage: null
+	,cancel: function() {
 		this.canceled = true;
 	}
 	,run: function(message) {
@@ -14731,7 +15544,13 @@ var lime_system_Display = function() {
 $hxClasses["lime.system.Display"] = lime_system_Display;
 lime_system_Display.__name__ = ["lime","system","Display"];
 lime_system_Display.prototype = {
-	__class__: lime_system_Display
+	bounds: null
+	,currentMode: null
+	,id: null
+	,dpi: null
+	,name: null
+	,supportedModes: null
+	,__class__: lime_system_Display
 };
 var lime_system_DisplayMode = function(width,height,refreshRate,pixelFormat) {
 	this.width = width;
@@ -14742,9 +15561,13 @@ var lime_system_DisplayMode = function(width,height,refreshRate,pixelFormat) {
 $hxClasses["lime.system.DisplayMode"] = lime_system_DisplayMode;
 lime_system_DisplayMode.__name__ = ["lime","system","DisplayMode"];
 lime_system_DisplayMode.prototype = {
-	__class__: lime_system_DisplayMode
+	height: null
+	,pixelFormat: null
+	,refreshRate: null
+	,width: null
+	,__class__: lime_system_DisplayMode
 };
-var lime_system_Endian = $hxClasses["lime.system.Endian"] = { __ename__ : true, __constructs__ : ["LITTLE_ENDIAN","BIG_ENDIAN"] };
+var lime_system_Endian = $hxClasses["lime.system.Endian"] = { __ename__ : ["lime","system","Endian"], __constructs__ : ["LITTLE_ENDIAN","BIG_ENDIAN"] };
 lime_system_Endian.LITTLE_ENDIAN = ["LITTLE_ENDIAN",0];
 lime_system_Endian.LITTLE_ENDIAN.toString = $estr;
 lime_system_Endian.LITTLE_ENDIAN.__enum__ = lime_system_Endian;
@@ -14854,7 +15677,14 @@ var lime_system_ThreadPool = function(minThreads,maxThreads) {
 $hxClasses["lime.system.ThreadPool"] = lime_system_ThreadPool;
 lime_system_ThreadPool.__name__ = ["lime","system","ThreadPool"];
 lime_system_ThreadPool.prototype = {
-	queue: function(state) {
+	currentThreads: null
+	,doWork: null
+	,maxThreads: null
+	,minThreads: null
+	,onComplete: null
+	,onError: null
+	,onProgress: null
+	,queue: function(state) {
 		this.doWork.dispatch(state);
 	}
 	,sendComplete: function(state) {
@@ -14868,7 +15698,7 @@ lime_system_ThreadPool.prototype = {
 	}
 	,__class__: lime_system_ThreadPool
 };
-var lime_system__$ThreadPool_ThreadPoolMessageType = $hxClasses["lime.system._ThreadPool.ThreadPoolMessageType"] = { __ename__ : true, __constructs__ : ["COMPLETE","ERROR","EXIT","PROGRESS","WORK"] };
+var lime_system__$ThreadPool_ThreadPoolMessageType = $hxClasses["lime.system._ThreadPool.ThreadPoolMessageType"] = { __ename__ : ["lime","system","_ThreadPool","ThreadPoolMessageType"], __constructs__ : ["COMPLETE","ERROR","EXIT","PROGRESS","WORK"] };
 lime_system__$ThreadPool_ThreadPoolMessageType.COMPLETE = ["COMPLETE",0];
 lime_system__$ThreadPool_ThreadPoolMessageType.COMPLETE.toString = $estr;
 lime_system__$ThreadPool_ThreadPoolMessageType.COMPLETE.__enum__ = lime_system__$ThreadPool_ThreadPoolMessageType;
@@ -14891,7 +15721,9 @@ var lime_system__$ThreadPool_ThreadPoolMessage = function(type,state) {
 $hxClasses["lime.system._ThreadPool.ThreadPoolMessage"] = lime_system__$ThreadPool_ThreadPoolMessage;
 lime_system__$ThreadPool_ThreadPoolMessage.__name__ = ["lime","system","_ThreadPool","ThreadPoolMessage"];
 lime_system__$ThreadPool_ThreadPoolMessage.prototype = {
-	__class__: lime_system__$ThreadPool_ThreadPoolMessage
+	state: null
+	,type: null
+	,__class__: lime_system__$ThreadPool_ThreadPoolMessage
 };
 var lime_text_Font = function(name) {
 	if(name != null) this.name = name;
@@ -14910,7 +15742,17 @@ lime_text_Font.fromFile = function(path) {
 	return font;
 };
 lime_text_Font.prototype = {
-	decompose: function() {
+	ascender: null
+	,descender: null
+	,height: null
+	,name: null
+	,numGlyphs: null
+	,src: null
+	,underlinePosition: null
+	,underlineThickness: null
+	,unitsPerEM: null
+	,__fontPath: null
+	,decompose: function() {
 		return null;
 	}
 	,getGlyph: function(character) {
@@ -14934,6 +15776,8 @@ lime_text_Font.prototype = {
 	}
 	,__fromFile: function(path) {
 		this.__fontPath = path;
+	}
+	,__setSize: function(size) {
 	}
 	,get_ascender: function() {
 		return 0;
@@ -14970,7 +15814,11 @@ var lime_text_GlyphMetrics = function() {
 $hxClasses["lime.text.GlyphMetrics"] = lime_text_GlyphMetrics;
 lime_text_GlyphMetrics.__name__ = ["lime","text","GlyphMetrics"];
 lime_text_GlyphMetrics.prototype = {
-	__class__: lime_text_GlyphMetrics
+	advance: null
+	,height: null
+	,horizontalBearing: null
+	,verticalBearing: null
+	,__class__: lime_text_GlyphMetrics
 };
 var lime_text_GlyphPosition = function(glyph,advance,offset) {
 	this.glyph = glyph;
@@ -14980,7 +15828,10 @@ var lime_text_GlyphPosition = function(glyph,advance,offset) {
 $hxClasses["lime.text.GlyphPosition"] = lime_text_GlyphPosition;
 lime_text_GlyphPosition.__name__ = ["lime","text","GlyphPosition"];
 lime_text_GlyphPosition.prototype = {
-	__class__: lime_text_GlyphPosition
+	advance: null
+	,glyph: null
+	,offset: null
+	,__class__: lime_text_GlyphPosition
 };
 var lime_text__$TextDirection_TextDirection_$Impl_$ = {};
 $hxClasses["lime.text._TextDirection.TextDirection_Impl_"] = lime_text__$TextDirection_TextDirection_$Impl_$;
@@ -15033,7 +15884,18 @@ var lime_text_TextLayout = function(text,font,size,direction,script,language) {
 $hxClasses["lime.text.TextLayout"] = lime_text_TextLayout;
 lime_text_TextLayout.__name__ = ["lime","text","TextLayout"];
 lime_text_TextLayout.prototype = {
-	__position: function() {
+	font: null
+	,glyphs: null
+	,positions: null
+	,size: null
+	,text: null
+	,__dirty: null
+	,__buffer: null
+	,__direction: null
+	,__handle: null
+	,__language: null
+	,__script: null
+	,__position: function() {
 		this.positions = [];
 	}
 	,get_positions: function() {
@@ -15140,7 +16002,13 @@ lime_ui_Gamepad.__disconnect = function(id) {
 	if(gamepad != null) gamepad.onDisconnect.dispatch();
 };
 lime_ui_Gamepad.prototype = {
-	get_guid: function() {
+	connected: null
+	,id: null
+	,onAxisMove: null
+	,onButtonDown: null
+	,onButtonUp: null
+	,onDisconnect: null
+	,get_guid: function() {
 		var devices = lime_ui_Joystick.__getDeviceData();
 		return devices[this.id].id;
 	}
@@ -15240,7 +16108,15 @@ lime_ui_Joystick.__getDeviceData = function() {
 	if(navigator.getGamepads) return navigator.getGamepads(); else if(navigator.webkitGetGamepads) return navigator.webkitGetGamepads(); else return null;
 };
 lime_ui_Joystick.prototype = {
-	get_guid: function() {
+	connected: null
+	,id: null
+	,onAxisMove: null
+	,onButtonDown: null
+	,onButtonUp: null
+	,onDisconnect: null
+	,onHatMove: null
+	,onTrackballMove: null
+	,get_guid: function() {
 		var devices = lime_ui_Joystick.__getDeviceData();
 		return devices[this.id].id;
 	}
@@ -15396,7 +16272,7 @@ lime_ui_Mouse.get_lock = function() {
 lime_ui_Mouse.set_lock = function(value) {
 	return lime__$backend_html5_HTML5Mouse.set_lock(value);
 };
-var lime_ui_MouseCursor = $hxClasses["lime.ui.MouseCursor"] = { __ename__ : true, __constructs__ : ["ARROW","CROSSHAIR","DEFAULT","MOVE","POINTER","RESIZE_NESW","RESIZE_NS","RESIZE_NWSE","RESIZE_WE","TEXT","WAIT","WAIT_ARROW","CUSTOM"] };
+var lime_ui_MouseCursor = $hxClasses["lime.ui.MouseCursor"] = { __ename__ : ["lime","ui","MouseCursor"], __constructs__ : ["ARROW","CROSSHAIR","DEFAULT","MOVE","POINTER","RESIZE_NESW","RESIZE_NS","RESIZE_NWSE","RESIZE_WE","TEXT","WAIT","WAIT_ARROW","CUSTOM"] };
 lime_ui_MouseCursor.ARROW = ["ARROW",0];
 lime_ui_MouseCursor.ARROW.toString = $estr;
 lime_ui_MouseCursor.ARROW.__enum__ = lime_ui_MouseCursor;
@@ -15448,7 +16324,14 @@ var lime_ui_Touch = function(x,y,id,dx,dy,pressure,device) {
 $hxClasses["lime.ui.Touch"] = lime_ui_Touch;
 lime_ui_Touch.__name__ = ["lime","ui","Touch"];
 lime_ui_Touch.prototype = {
-	__class__: lime_ui_Touch
+	device: null
+	,dx: null
+	,dy: null
+	,id: null
+	,pressure: null
+	,x: null
+	,y: null
+	,__class__: lime_ui_Touch
 };
 var lime_ui_Window = function(config) {
 	this.onTextInput = new lime_app_Event_$String_$Void();
@@ -15469,6 +16352,7 @@ var lime_ui_Window = function(config) {
 	this.onFocusOut = new lime_app_Event_$Void_$Void();
 	this.onFocusIn = new lime_app_Event_$Void_$Void();
 	this.onEnter = new lime_app_Event_$Void_$Void();
+	this.onDropFile = new lime_app_Event_$String_$Void();
 	this.onDeactivate = new lime_app_Event_$Void_$Void();
 	this.onCreate = new lime_app_Event_$Void_$Void();
 	this.onClose = new lime_app_Event_$Void_$Void();
@@ -15497,7 +16381,49 @@ var lime_ui_Window = function(config) {
 $hxClasses["lime.ui.Window"] = lime_ui_Window;
 lime_ui_Window.__name__ = ["lime","ui","Window"];
 lime_ui_Window.prototype = {
-	alert: function(message,title) {
+	application: null
+	,config: null
+	,display: null
+	,id: null
+	,onActivate: null
+	,onClose: null
+	,onCreate: null
+	,onDeactivate: null
+	,onDropFile: null
+	,onEnter: null
+	,onFocusIn: null
+	,onFocusOut: null
+	,onFullscreen: null
+	,onKeyDown: null
+	,onKeyUp: null
+	,onLeave: null
+	,onMinimize: null
+	,onMouseDown: null
+	,onMouseMove: null
+	,onMouseMoveRelative: null
+	,onMouseUp: null
+	,onMouseWheel: null
+	,onMove: null
+	,onResize: null
+	,onRestore: null
+	,onTextEdit: null
+	,onTextInput: null
+	,renderer: null
+	,scale: null
+	,stage: null
+	,backend: null
+	,__borderless: null
+	,__fullscreen: null
+	,__height: null
+	,__maximized: null
+	,__minimized: null
+	,__resizable: null
+	,__scale: null
+	,__title: null
+	,__width: null
+	,__x: null
+	,__y: null
+	,alert: function(message,title) {
 		this.backend.alert(message,title);
 	}
 	,close: function() {
@@ -15556,10 +16482,18 @@ lime_ui_Window.prototype = {
 		this.resize(this.__width,value);
 		return this.__height;
 	}
+	,get_maximized: function() {
+		return this.__maximized;
+	}
+	,set_maximized: function(value) {
+		this.__minimized = false;
+		return this.__maximized = this.backend.setMaximized(value);
+	}
 	,get_minimized: function() {
 		return this.__minimized;
 	}
 	,set_minimized: function(value) {
+		this.__maximized = false;
 		return this.__minimized = this.backend.setMinimized(value);
 	}
 	,get_resizable: function() {
@@ -15600,9 +16534,9 @@ lime_ui_Window.prototype = {
 		return this.__y;
 	}
 	,__class__: lime_ui_Window
-	,__properties__: {set_y:"set_y",get_y:"get_y",set_x:"set_x",get_x:"get_x",set_width:"set_width",get_width:"get_width",set_title:"set_title",get_title:"get_title",get_scale:"get_scale",set_resizable:"set_resizable",get_resizable:"get_resizable",set_minimized:"set_minimized",get_minimized:"get_minimized",set_height:"set_height",get_height:"get_height",set_fullscreen:"set_fullscreen",get_fullscreen:"get_fullscreen",set_enableTextEvents:"set_enableTextEvents",get_enableTextEvents:"get_enableTextEvents",get_display:"get_display",set_borderless:"set_borderless",get_borderless:"get_borderless"}
+	,__properties__: {set_y:"set_y",get_y:"get_y",set_x:"set_x",get_x:"get_x",set_width:"set_width",get_width:"get_width",set_title:"set_title",get_title:"get_title",get_scale:"get_scale",set_resizable:"set_resizable",get_resizable:"get_resizable",set_minimized:"set_minimized",get_minimized:"get_minimized",set_maximized:"set_maximized",get_maximized:"get_maximized",set_height:"set_height",get_height:"get_height",set_fullscreen:"set_fullscreen",get_fullscreen:"get_fullscreen",set_enableTextEvents:"set_enableTextEvents",get_enableTextEvents:"get_enableTextEvents",get_display:"get_display",set_borderless:"set_borderless",get_borderless:"get_borderless"}
 };
-var lime_utils_TAError = $hxClasses["lime.utils.TAError"] = { __ename__ : true, __constructs__ : ["RangeError"] };
+var lime_utils_TAError = $hxClasses["lime.utils.TAError"] = { __ename__ : ["lime","utils","TAError"], __constructs__ : ["RangeError"] };
 lime_utils_TAError.RangeError = ["RangeError",0];
 lime_utils_TAError.RangeError.toString = $estr;
 lime_utils_TAError.RangeError.__enum__ = lime_utils_TAError;
@@ -15809,7 +16743,22 @@ var openfl_IAssetCache = function() { };
 $hxClasses["openfl.IAssetCache"] = openfl_IAssetCache;
 openfl_IAssetCache.__name__ = ["openfl","IAssetCache"];
 openfl_IAssetCache.prototype = {
-	__class__: openfl_IAssetCache
+	get_enabled: null
+	,set_enabled: null
+	,clear: null
+	,getBitmapData: null
+	,getFont: null
+	,getSound: null
+	,hasBitmapData: null
+	,hasFont: null
+	,hasSound: null
+	,removeBitmapData: null
+	,removeFont: null
+	,removeSound: null
+	,setBitmapData: null
+	,setFont: null
+	,setSound: null
+	,__class__: openfl_IAssetCache
 	,__properties__: {set_enabled:"set_enabled",get_enabled:"get_enabled"}
 };
 var openfl_AssetCache = function() {
@@ -15822,7 +16771,11 @@ $hxClasses["openfl.AssetCache"] = openfl_AssetCache;
 openfl_AssetCache.__name__ = ["openfl","AssetCache"];
 openfl_AssetCache.__interfaces__ = [openfl_IAssetCache];
 openfl_AssetCache.prototype = {
-	clear: function(prefix) {
+	bitmapData: null
+	,font: null
+	,sound: null
+	,__enabled: null
+	,clear: function(prefix) {
 		if(prefix == null) {
 			this.bitmapData = new haxe_ds_StringMap();
 			this.font = new haxe_ds_StringMap();
@@ -16173,11 +17126,23 @@ $hxClasses["openfl.display.MovieClip"] = openfl_display_MovieClip;
 openfl_display_MovieClip.__name__ = ["openfl","display","MovieClip"];
 openfl_display_MovieClip.__super__ = openfl_display_Sprite;
 openfl_display_MovieClip.prototype = $extend(openfl_display_Sprite.prototype,{
-	addFrameScript: function(index,method) {
+	currentFrame: null
+	,currentFrameLabel: null
+	,currentLabel: null
+	,currentLabels: null
+	,enabled: null
+	,framesLoaded: null
+	,totalFrames: null
+	,__currentFrame: null
+	,__currentFrameLabel: null
+	,__currentLabel: null
+	,__currentLabels: null
+	,__frameScripts: null
+	,__totalFrames: null
+	,addFrameScript: function(index,method) {
 		if(method != null) {
 			if(this.__frameScripts == null) this.__frameScripts = new haxe_ds_IntMap();
 			this.__frameScripts.h[index] = method;
-			haxe_Log.trace("added script index " + index,{ fileName : "MovieClip.hx", lineNumber : 47, className : "openfl.display.MovieClip", methodName : "addFrameScript"});
 		} else if(this.__frameScripts != null) this.__frameScripts.remove(index);
 	}
 	,gotoAndPlay: function(frame,scene) {
@@ -16231,7 +17196,25 @@ openfl_display_LoaderInfo.create = function(loader) {
 };
 openfl_display_LoaderInfo.__super__ = openfl_events_EventDispatcher;
 openfl_display_LoaderInfo.prototype = $extend(openfl_events_EventDispatcher.prototype,{
-	__class__: openfl_display_LoaderInfo
+	applicationDomain: null
+	,bytes: null
+	,bytesLoaded: null
+	,bytesTotal: null
+	,childAllowsParent: null
+	,content: null
+	,contentType: null
+	,frameRate: null
+	,height: null
+	,loader: null
+	,loaderURL: null
+	,parameters: null
+	,parentAllowsChild: null
+	,sameDomain: null
+	,sharedEvents: null
+	,uncaughtErrorEvents: null
+	,url: null
+	,width: null
+	,__class__: openfl_display_LoaderInfo
 });
 var openfl_system_ApplicationDomain = function(parentDomain) {
 	if(parentDomain != null) this.parentDomain = parentDomain; else this.parentDomain = openfl_system_ApplicationDomain.currentDomain;
@@ -16239,7 +17222,8 @@ var openfl_system_ApplicationDomain = function(parentDomain) {
 $hxClasses["openfl.system.ApplicationDomain"] = openfl_system_ApplicationDomain;
 openfl_system_ApplicationDomain.__name__ = ["openfl","system","ApplicationDomain"];
 openfl_system_ApplicationDomain.prototype = {
-	getDefinition: function(name) {
+	parentDomain: null
+	,getDefinition: function(name) {
 		return Type.resolveClass(name);
 	}
 	,hasDefinition: function(name) {
@@ -16273,7 +17257,14 @@ var openfl_geom_Matrix = function(a,b,c,d,tx,ty) {
 $hxClasses["openfl.geom.Matrix"] = openfl_geom_Matrix;
 openfl_geom_Matrix.__name__ = ["openfl","geom","Matrix"];
 openfl_geom_Matrix.prototype = {
-	clone: function() {
+	a: null
+	,b: null
+	,c: null
+	,d: null
+	,tx: null
+	,ty: null
+	,__array: null
+	,clone: function() {
 		return new openfl_geom_Matrix(this.a,this.b,this.c,this.d,this.tx,this.ty);
 	}
 	,concat: function(m) {
@@ -16569,7 +17560,10 @@ openfl_geom_Point.polar = function(len,angle) {
 	return new openfl_geom_Point(len * Math.cos(angle),len * Math.sin(angle));
 };
 openfl_geom_Point.prototype = {
-	add: function(v) {
+	length: null
+	,x: null
+	,y: null
+	,add: function(v) {
 		return new openfl_geom_Point(v.x + this.x,v.y + this.y);
 	}
 	,clone: function() {
@@ -16633,7 +17627,15 @@ var openfl_geom_ColorTransform = function(redMultiplier,greenMultiplier,blueMult
 $hxClasses["openfl.geom.ColorTransform"] = openfl_geom_ColorTransform;
 openfl_geom_ColorTransform.__name__ = ["openfl","geom","ColorTransform"];
 openfl_geom_ColorTransform.prototype = {
-	concat: function(second) {
+	alphaMultiplier: null
+	,alphaOffset: null
+	,blueMultiplier: null
+	,blueOffset: null
+	,greenMultiplier: null
+	,greenOffset: null
+	,redMultiplier: null
+	,redOffset: null
+	,concat: function(second) {
 		this.redMultiplier *= second.redMultiplier;
 		this.greenMultiplier *= second.greenMultiplier;
 		this.blueMultiplier *= second.blueMultiplier;
@@ -17025,7 +18027,10 @@ var openfl_VectorData = function() {
 $hxClasses["openfl.VectorData"] = openfl_VectorData;
 openfl_VectorData.__name__ = ["openfl","VectorData"];
 openfl_VectorData.prototype = {
-	__class__: openfl_VectorData
+	data: null
+	,fixed: null
+	,length: null
+	,__class__: openfl_VectorData
 };
 var openfl_VectorDataIterator = function(data) {
 	this.index = 0;
@@ -17034,7 +18039,9 @@ var openfl_VectorDataIterator = function(data) {
 $hxClasses["openfl.VectorDataIterator"] = openfl_VectorDataIterator;
 openfl_VectorDataIterator.__name__ = ["openfl","VectorDataIterator"];
 openfl_VectorDataIterator.prototype = {
-	hasNext: function() {
+	index: null
+	,vectorData: null
+	,hasNext: function() {
 		return this.index < this.vectorData.length;
 	}
 	,next: function() {
@@ -17049,7 +18056,8 @@ var openfl__$internal_renderer_AbstractMaskManager = function(renderSession) {
 $hxClasses["openfl._internal.renderer.AbstractMaskManager"] = openfl__$internal_renderer_AbstractMaskManager;
 openfl__$internal_renderer_AbstractMaskManager.__name__ = ["openfl","_internal","renderer","AbstractMaskManager"];
 openfl__$internal_renderer_AbstractMaskManager.prototype = {
-	pushMask: function(mask) {
+	renderSession: null
+	,pushMask: function(mask) {
 	}
 	,pushRect: function(rect,transform) {
 	}
@@ -17070,7 +18078,12 @@ var openfl__$internal_renderer_AbstractRenderer = function(width,height) {
 $hxClasses["openfl._internal.renderer.AbstractRenderer"] = openfl__$internal_renderer_AbstractRenderer;
 openfl__$internal_renderer_AbstractRenderer.__name__ = ["openfl","_internal","renderer","AbstractRenderer"];
 openfl__$internal_renderer_AbstractRenderer.prototype = {
-	render: function(stage) {
+	height: null
+	,width: null
+	,transparent: null
+	,viewport: null
+	,renderSession: null
+	,render: function(stage) {
 	}
 	,renderShape: function(shape) {
 	}
@@ -17093,7 +18106,15 @@ var openfl__$internal_renderer_DrawCommandBuffer = function() {
 $hxClasses["openfl._internal.renderer.DrawCommandBuffer"] = openfl__$internal_renderer_DrawCommandBuffer;
 openfl__$internal_renderer_DrawCommandBuffer.__name__ = ["openfl","_internal","renderer","DrawCommandBuffer"];
 openfl__$internal_renderer_DrawCommandBuffer.prototype = {
-	append: function(other) {
+	types: null
+	,b: null
+	,f: null
+	,ff: null
+	,i: null
+	,ii: null
+	,o: null
+	,ts: null
+	,append: function(other) {
 		var data = new openfl__$internal_renderer_DrawCommandReader(other);
 		var _g = 0;
 		var _g1 = other.types;
@@ -17102,137 +18123,80 @@ openfl__$internal_renderer_DrawCommandBuffer.prototype = {
 			++_g;
 			switch(type[1]) {
 			case 0:
-				var c;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.BEGIN_BITMAP_FILL;
-				c = data;
-				this.beginBitmapFill(c.buffer.o[c.oPos],c.buffer.o[c.oPos + 1],c.buffer.b[c.bPos],c.buffer.b[c.bPos + 1]);
+				var c = data.readBeginBitmapFill();
+				this.beginBitmapFill(openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_bitmap(c),openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_matrix(c),openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_repeat(c),openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_smooth(c));
 				break;
 			case 1:
-				var c1;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.BEGIN_FILL;
-				c1 = data;
-				this.beginFill(c1.buffer.i[c1.iPos],c1.buffer.f[c1.fPos]);
+				var c1 = data.readBeginFill();
+				this.beginFill(openfl__$internal_renderer__$DrawCommandReader_BeginFillView_$Impl_$.get_color(c1),openfl__$internal_renderer__$DrawCommandReader_BeginFillView_$Impl_$.get_alpha(c1));
 				break;
 			case 2:
-				var c2;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.BEGIN_GRADIENT_FILL;
-				c2 = data;
-				this.beginGradientFill(c2.buffer.o[c2.oPos],c2.buffer.ii[c2.iiPos],c2.buffer.ff[c2.ffPos],c2.buffer.ii[c2.iiPos + 1],c2.buffer.o[c2.oPos + 1],c2.buffer.o[c2.oPos + 2],c2.buffer.o[c2.oPos + 3],c2.buffer.f[c2.fPos]);
+				var c2 = data.readBeginGradientFill();
+				this.beginGradientFill(openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_type(c2),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_colors(c2),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_alphas(c2),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_ratios(c2),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_matrix(c2),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_spreadMethod(c2),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_interpolationMethod(c2),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_focalPointRatio(c2));
 				break;
 			case 3:
-				var c3;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.CUBIC_CURVE_TO;
-				c3 = data;
-				this.cubicCurveTo(c3.buffer.f[c3.fPos],c3.buffer.f[c3.fPos + 1],c3.buffer.f[c3.fPos + 2],c3.buffer.f[c3.fPos + 3],c3.buffer.f[c3.fPos + 4],c3.buffer.f[c3.fPos + 5]);
+				var c3 = data.readCubicCurveTo();
+				this.cubicCurveTo(openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlX1(c3),openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlY1(c3),openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlX2(c3),openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlY2(c3),openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_anchorX(c3),openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_anchorY(c3));
 				break;
 			case 4:
-				var c4;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.CURVE_TO;
-				c4 = data;
-				this.curveTo(c4.buffer.f[c4.fPos],c4.buffer.f[c4.fPos + 1],c4.buffer.f[c4.fPos + 2],c4.buffer.f[c4.fPos + 3]);
+				var c4 = data.readCurveTo();
+				this.curveTo(openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_controlX(c4),openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_controlY(c4),openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_anchorX(c4),openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_anchorY(c4));
 				break;
 			case 5:
-				var c5;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_CIRCLE;
-				c5 = data;
-				this.drawCircle(c5.buffer.f[c5.fPos],c5.buffer.f[c5.fPos + 1],c5.buffer.f[c5.fPos + 2]);
+				var c5 = data.readDrawCircle();
+				this.drawCircle(openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_x(c5),openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_y(c5),openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_radius(c5));
 				break;
 			case 6:
-				var c6;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_ELLIPSE;
-				c6 = data;
-				this.drawEllipse(c6.buffer.f[c6.fPos],c6.buffer.f[c6.fPos + 1],c6.buffer.f[c6.fPos + 2],c6.buffer.f[c6.fPos + 3]);
+				var c6 = data.readDrawEllipse();
+				this.drawEllipse(openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_x(c6),openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_y(c6),openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_width(c6),openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_height(c6));
 				break;
 			case 7:
-				var c7;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_PATH;
-				c7 = data;
-				this.drawPath(c7.buffer.o[c7.oPos],c7.buffer.o[c7.oPos + 1],c7.buffer.o[c7.oPos + 2]);
+				var c7 = data.readDrawPath();
+				this.drawPath(openfl__$internal_renderer__$DrawCommandReader_DrawPathView_$Impl_$.get_commands(c7),openfl__$internal_renderer__$DrawCommandReader_DrawPathView_$Impl_$.get_data(c7),openfl__$internal_renderer__$DrawCommandReader_DrawPathView_$Impl_$.get_winding(c7));
 				break;
 			case 8:
-				var c8;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_RECT;
-				c8 = data;
-				this.drawRect(c8.buffer.f[c8.fPos],c8.buffer.f[c8.fPos + 1],c8.buffer.f[c8.fPos + 2],c8.buffer.f[c8.fPos + 3]);
+				var c8 = data.readDrawRect();
+				this.drawRect(openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_x(c8),openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_y(c8),openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_width(c8),openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_height(c8));
 				break;
 			case 9:
-				var c9;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_ROUND_RECT;
-				c9 = data;
-				this.drawRoundRect(c9.buffer.f[c9.fPos],c9.buffer.f[c9.fPos + 1],c9.buffer.f[c9.fPos + 2],c9.buffer.f[c9.fPos + 3],c9.buffer.f[c9.fPos + 4],c9.buffer.o[c9.oPos]);
+				var c9 = data.readDrawRoundRect();
+				this.drawRoundRect(openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_x(c9),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_y(c9),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_width(c9),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_height(c9),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_ellipseWidth(c9),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_ellipseHeight(c9));
 				break;
 			case 10:
-				var c10;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_TILES;
-				c10 = data;
-				this.drawTiles(c10.buffer.ts[c10.tsPos],c10.buffer.ff[c10.ffPos],c10.buffer.b[c10.bPos],c10.buffer.i[c10.iPos],c10.buffer.o[c10.oPos],c10.buffer.i[c10.iPos + 1]);
+				var c10 = data.readDrawTiles();
+				this.drawTiles(openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_sheet(c10),openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData(c10),openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_smooth(c10),openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_flags(c10),openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_shader(c10),openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_count(c10));
 				break;
 			case 11:
-				var c11;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_TRIANGLES;
-				c11 = data;
-				this.drawTriangles(c11.buffer.o[c11.oPos],c11.buffer.o[c11.oPos + 1],c11.buffer.o[c11.oPos + 2],c11.buffer.o[c11.oPos + 3]);
+				var c11 = data.readDrawTriangles();
+				this.drawTriangles(openfl__$internal_renderer__$DrawCommandReader_DrawTrianglesView_$Impl_$.get_vertices(c11),openfl__$internal_renderer__$DrawCommandReader_DrawTrianglesView_$Impl_$.get_indices(c11),openfl__$internal_renderer__$DrawCommandReader_DrawTrianglesView_$Impl_$.get_uvtData(c11),openfl__$internal_renderer__$DrawCommandReader_DrawTrianglesView_$Impl_$.get_culling(c11));
 				break;
 			case 12:
-				var c12;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.END_FILL;
-				c12 = data;
+				var c12 = data.readEndFill();
 				this.endFill();
 				break;
 			case 13:
-				var c13;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.LINE_BITMAP_STYLE;
-				c13 = data;
-				this.lineBitmapStyle(c13.buffer.o[c13.oPos],c13.buffer.o[c13.oPos + 1],c13.buffer.b[c13.bPos],c13.buffer.b[c13.bPos + 1]);
+				var c13 = data.readLineBitmapStyle();
+				this.lineBitmapStyle(openfl__$internal_renderer__$DrawCommandReader_LineBitmapStyleView_$Impl_$.get_bitmap(c13),openfl__$internal_renderer__$DrawCommandReader_LineBitmapStyleView_$Impl_$.get_matrix(c13),openfl__$internal_renderer__$DrawCommandReader_LineBitmapStyleView_$Impl_$.get_repeat(c13),openfl__$internal_renderer__$DrawCommandReader_LineBitmapStyleView_$Impl_$.get_smooth(c13));
 				break;
 			case 14:
-				var c14;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.LINE_GRADIENT_STYLE;
-				c14 = data;
-				this.lineGradientStyle(c14.buffer.o[c14.oPos],c14.buffer.ii[c14.iiPos],c14.buffer.ff[c14.ffPos],c14.buffer.ii[c14.iiPos + 1],c14.buffer.o[c14.oPos + 1],c14.buffer.o[c14.oPos + 2],c14.buffer.o[c14.oPos + 3],c14.buffer.f[c14.fPos]);
+				var c14 = data.readLineGradientStyle();
+				this.lineGradientStyle(openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_type(c14),openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_colors(c14),openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_alphas(c14),openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_ratios(c14),openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_matrix(c14),openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_spreadMethod(c14),openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_interpolationMethod(c14),openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_focalPointRatio(c14));
 				break;
 			case 15:
-				var c15;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.LINE_STYLE;
-				c15 = data;
-				this.lineStyle(c15.buffer.o[c15.oPos],c15.buffer.i[c15.iPos],c15.buffer.f[c15.fPos],c15.buffer.b[c15.bPos],c15.buffer.o[c15.oPos + 1],c15.buffer.o[c15.oPos + 2],c15.buffer.o[c15.oPos + 3],c15.buffer.f[c15.fPos + 1]);
+				var c15 = data.readLineStyle();
+				this.lineStyle(openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_thickness(c15),openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_color(c15),openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_alpha(c15),openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_pixelHinting(c15),openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_scaleMode(c15),openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_caps(c15),openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_joints(c15),openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_miterLimit(c15));
 				break;
 			case 16:
-				var c16;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.LINE_TO;
-				c16 = data;
-				this.lineTo(c16.buffer.f[c16.fPos],c16.buffer.f[c16.fPos + 1]);
+				var c16 = data.readLineTo();
+				this.lineTo(openfl__$internal_renderer__$DrawCommandReader_LineToView_$Impl_$.get_x(c16),openfl__$internal_renderer__$DrawCommandReader_LineToView_$Impl_$.get_y(c16));
 				break;
 			case 17:
-				var c17;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.MOVE_TO;
-				c17 = data;
-				this.moveTo(c17.buffer.f[c17.fPos],c17.buffer.f[c17.fPos + 1]);
+				var c17 = data.readMoveTo();
+				this.moveTo(openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$.get_x(c17),openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$.get_y(c17));
 				break;
 			case 18:
-				var c18;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.OVERRIDE_MATRIX;
-				c18 = data;
-				this.overrideMatrix(c18.buffer.o[c18.oPos]);
+				var c18 = data.readOverrideMatrix();
+				this.overrideMatrix(openfl__$internal_renderer__$DrawCommandReader_OverrideMatrixView_$Impl_$.get_matrix(c18));
 				break;
 			default:
 			}
@@ -17416,7 +18380,16 @@ var openfl__$internal_renderer_DrawCommandReader = function(buffer) {
 $hxClasses["openfl._internal.renderer.DrawCommandReader"] = openfl__$internal_renderer_DrawCommandReader;
 openfl__$internal_renderer_DrawCommandReader.__name__ = ["openfl","_internal","renderer","DrawCommandReader"];
 openfl__$internal_renderer_DrawCommandReader.prototype = {
-	advance: function() {
+	buffer: null
+	,bPos: null
+	,iiPos: null
+	,iPos: null
+	,ffPos: null
+	,fPos: null
+	,oPos: null
+	,prev: null
+	,tsPos: null
+	,advance: function() {
 		var _g = this.prev;
 		switch(_g[1]) {
 		case 0:
@@ -17520,97 +18493,97 @@ openfl__$internal_renderer_DrawCommandReader.prototype = {
 	,readBeginBitmapFill: function() {
 		this.advance();
 		this.prev = openfl__$internal_renderer_DrawCommandType.BEGIN_BITMAP_FILL;
-		return this;
+		return openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$._new(this);
 	}
 	,readBeginFill: function() {
 		this.advance();
 		this.prev = openfl__$internal_renderer_DrawCommandType.BEGIN_FILL;
-		return this;
+		return openfl__$internal_renderer__$DrawCommandReader_BeginFillView_$Impl_$._new(this);
 	}
 	,readBeginGradientFill: function() {
 		this.advance();
 		this.prev = openfl__$internal_renderer_DrawCommandType.BEGIN_GRADIENT_FILL;
-		return this;
+		return openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$._new(this);
 	}
 	,readCubicCurveTo: function() {
 		this.advance();
 		this.prev = openfl__$internal_renderer_DrawCommandType.CUBIC_CURVE_TO;
-		return this;
+		return openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$._new(this);
 	}
 	,readCurveTo: function() {
 		this.advance();
 		this.prev = openfl__$internal_renderer_DrawCommandType.CURVE_TO;
-		return this;
+		return openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$._new(this);
 	}
 	,readDrawCircle: function() {
 		this.advance();
 		this.prev = openfl__$internal_renderer_DrawCommandType.DRAW_CIRCLE;
-		return this;
+		return openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$._new(this);
 	}
 	,readDrawEllipse: function() {
 		this.advance();
 		this.prev = openfl__$internal_renderer_DrawCommandType.DRAW_ELLIPSE;
-		return this;
+		return openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$._new(this);
 	}
 	,readDrawPath: function() {
 		this.advance();
 		this.prev = openfl__$internal_renderer_DrawCommandType.DRAW_PATH;
-		return this;
+		return openfl__$internal_renderer__$DrawCommandReader_DrawPathView_$Impl_$._new(this);
 	}
 	,readDrawRect: function() {
 		this.advance();
 		this.prev = openfl__$internal_renderer_DrawCommandType.DRAW_RECT;
-		return this;
+		return openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$._new(this);
 	}
 	,readDrawRoundRect: function() {
 		this.advance();
 		this.prev = openfl__$internal_renderer_DrawCommandType.DRAW_ROUND_RECT;
-		return this;
+		return openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$._new(this);
 	}
 	,readDrawTiles: function() {
 		this.advance();
 		this.prev = openfl__$internal_renderer_DrawCommandType.DRAW_TILES;
-		return this;
+		return openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$._new(this);
 	}
 	,readDrawTriangles: function() {
 		this.advance();
 		this.prev = openfl__$internal_renderer_DrawCommandType.DRAW_TRIANGLES;
-		return this;
+		return openfl__$internal_renderer__$DrawCommandReader_DrawTrianglesView_$Impl_$._new(this);
 	}
 	,readEndFill: function() {
 		this.advance();
 		this.prev = openfl__$internal_renderer_DrawCommandType.END_FILL;
-		return this;
+		return openfl__$internal_renderer__$DrawCommandReader_EndFillView_$Impl_$._new(this);
 	}
 	,readLineBitmapStyle: function() {
 		this.advance();
 		this.prev = openfl__$internal_renderer_DrawCommandType.LINE_BITMAP_STYLE;
-		return this;
+		return openfl__$internal_renderer__$DrawCommandReader_LineBitmapStyleView_$Impl_$._new(this);
 	}
 	,readLineGradientStyle: function() {
 		this.advance();
 		this.prev = openfl__$internal_renderer_DrawCommandType.LINE_GRADIENT_STYLE;
-		return this;
+		return openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$._new(this);
 	}
 	,readLineStyle: function() {
 		this.advance();
 		this.prev = openfl__$internal_renderer_DrawCommandType.LINE_STYLE;
-		return this;
+		return openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$._new(this);
 	}
 	,readLineTo: function() {
 		this.advance();
 		this.prev = openfl__$internal_renderer_DrawCommandType.LINE_TO;
-		return this;
+		return openfl__$internal_renderer__$DrawCommandReader_LineToView_$Impl_$._new(this);
 	}
 	,readMoveTo: function() {
 		this.advance();
 		this.prev = openfl__$internal_renderer_DrawCommandType.MOVE_TO;
-		return this;
+		return openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$._new(this);
 	}
 	,readOverrideMatrix: function() {
 		this.advance();
 		this.prev = openfl__$internal_renderer_DrawCommandType.OVERRIDE_MATRIX;
-		return this;
+		return openfl__$internal_renderer__$DrawCommandReader_OverrideMatrixView_$Impl_$._new(this);
 	}
 	,reset: function() {
 		this.bPos = this.iPos = this.fPos = this.oPos = this.ffPos = this.iiPos = this.tsPos = 0;
@@ -17632,16 +18605,16 @@ openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$._new 
 	return d;
 };
 openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_bitmap = function(this1) {
-	return this1.buffer.o[this1.oPos];
+	return this1.obj(0);
 };
 openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_matrix = function(this1) {
-	return this1.buffer.o[this1.oPos + 1];
+	return this1.obj(1);
 };
 openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_repeat = function(this1) {
-	return this1.buffer.b[this1.bPos];
+	return this1.bool(0);
 };
 openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_smooth = function(this1) {
-	return this1.buffer.b[this1.bPos + 1];
+	return this1.bool(1);
 };
 var openfl__$internal_renderer__$DrawCommandReader_BeginFillView_$Impl_$ = {};
 $hxClasses["openfl._internal.renderer._DrawCommandReader.BeginFillView_Impl_"] = openfl__$internal_renderer__$DrawCommandReader_BeginFillView_$Impl_$;
@@ -17651,10 +18624,10 @@ openfl__$internal_renderer__$DrawCommandReader_BeginFillView_$Impl_$._new = func
 	return d;
 };
 openfl__$internal_renderer__$DrawCommandReader_BeginFillView_$Impl_$.get_color = function(this1) {
-	return this1.buffer.i[this1.iPos];
+	return this1["int"](0);
 };
 openfl__$internal_renderer__$DrawCommandReader_BeginFillView_$Impl_$.get_alpha = function(this1) {
-	return this1.buffer.f[this1.fPos];
+	return this1["float"](0);
 };
 var openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$ = {};
 $hxClasses["openfl._internal.renderer._DrawCommandReader.BeginGradientFillView_Impl_"] = openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$;
@@ -17664,28 +18637,28 @@ openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$._ne
 	return d;
 };
 openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_type = function(this1) {
-	return this1.buffer.o[this1.oPos];
+	return this1.obj(0);
 };
 openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_colors = function(this1) {
-	return this1.buffer.ii[this1.iiPos];
+	return this1.iArr(0);
 };
 openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_alphas = function(this1) {
-	return this1.buffer.ff[this1.ffPos];
+	return this1.fArr(0);
 };
 openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_ratios = function(this1) {
-	return this1.buffer.ii[this1.iiPos + 1];
+	return this1.iArr(1);
 };
 openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_matrix = function(this1) {
-	return this1.buffer.o[this1.oPos + 1];
+	return this1.obj(1);
 };
 openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_spreadMethod = function(this1) {
-	return this1.buffer.o[this1.oPos + 2];
+	return this1.obj(2);
 };
 openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_interpolationMethod = function(this1) {
-	return this1.buffer.o[this1.oPos + 3];
+	return this1.obj(3);
 };
 openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_focalPointRatio = function(this1) {
-	return this1.buffer.f[this1.fPos];
+	return this1["float"](0);
 };
 var openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$ = {};
 $hxClasses["openfl._internal.renderer._DrawCommandReader.CubicCurveToView_Impl_"] = openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$;
@@ -17695,22 +18668,22 @@ openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$._new = f
 	return d;
 };
 openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlX1 = function(this1) {
-	return this1.buffer.f[this1.fPos];
+	return this1["float"](0);
 };
 openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlY1 = function(this1) {
-	return this1.buffer.f[this1.fPos + 1];
+	return this1["float"](1);
 };
 openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlX2 = function(this1) {
-	return this1.buffer.f[this1.fPos + 2];
+	return this1["float"](2);
 };
 openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlY2 = function(this1) {
-	return this1.buffer.f[this1.fPos + 3];
+	return this1["float"](3);
 };
 openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_anchorX = function(this1) {
-	return this1.buffer.f[this1.fPos + 4];
+	return this1["float"](4);
 };
 openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_anchorY = function(this1) {
-	return this1.buffer.f[this1.fPos + 5];
+	return this1["float"](5);
 };
 var openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$ = {};
 $hxClasses["openfl._internal.renderer._DrawCommandReader.CurveToView_Impl_"] = openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$;
@@ -17720,16 +18693,16 @@ openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$._new = functi
 	return d;
 };
 openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_controlX = function(this1) {
-	return this1.buffer.f[this1.fPos];
+	return this1["float"](0);
 };
 openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_controlY = function(this1) {
-	return this1.buffer.f[this1.fPos + 1];
+	return this1["float"](1);
 };
 openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_anchorX = function(this1) {
-	return this1.buffer.f[this1.fPos + 2];
+	return this1["float"](2);
 };
 openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_anchorY = function(this1) {
-	return this1.buffer.f[this1.fPos + 3];
+	return this1["float"](3);
 };
 var openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$ = {};
 $hxClasses["openfl._internal.renderer._DrawCommandReader.DrawCircleView_Impl_"] = openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$;
@@ -17739,13 +18712,13 @@ openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$._new = fun
 	return d;
 };
 openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_x = function(this1) {
-	return this1.buffer.f[this1.fPos];
+	return this1["float"](0);
 };
 openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_y = function(this1) {
-	return this1.buffer.f[this1.fPos + 1];
+	return this1["float"](1);
 };
 openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_radius = function(this1) {
-	return this1.buffer.f[this1.fPos + 2];
+	return this1["float"](2);
 };
 var openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$ = {};
 $hxClasses["openfl._internal.renderer._DrawCommandReader.DrawEllipseView_Impl_"] = openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$;
@@ -17755,16 +18728,16 @@ openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$._new = fu
 	return d;
 };
 openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_x = function(this1) {
-	return this1.buffer.f[this1.fPos];
+	return this1["float"](0);
 };
 openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_y = function(this1) {
-	return this1.buffer.f[this1.fPos + 1];
+	return this1["float"](1);
 };
 openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_width = function(this1) {
-	return this1.buffer.f[this1.fPos + 2];
+	return this1["float"](2);
 };
 openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_height = function(this1) {
-	return this1.buffer.f[this1.fPos + 3];
+	return this1["float"](3);
 };
 var openfl__$internal_renderer__$DrawCommandReader_DrawPathView_$Impl_$ = {};
 $hxClasses["openfl._internal.renderer._DrawCommandReader.DrawPathView_Impl_"] = openfl__$internal_renderer__$DrawCommandReader_DrawPathView_$Impl_$;
@@ -17774,13 +18747,13 @@ openfl__$internal_renderer__$DrawCommandReader_DrawPathView_$Impl_$._new = funct
 	return d;
 };
 openfl__$internal_renderer__$DrawCommandReader_DrawPathView_$Impl_$.get_commands = function(this1) {
-	return this1.buffer.o[this1.oPos];
+	return this1.obj(0);
 };
 openfl__$internal_renderer__$DrawCommandReader_DrawPathView_$Impl_$.get_data = function(this1) {
-	return this1.buffer.o[this1.oPos + 1];
+	return this1.obj(1);
 };
 openfl__$internal_renderer__$DrawCommandReader_DrawPathView_$Impl_$.get_winding = function(this1) {
-	return this1.buffer.o[this1.oPos + 2];
+	return this1.obj(2);
 };
 var openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$ = {};
 $hxClasses["openfl._internal.renderer._DrawCommandReader.DrawRectView_Impl_"] = openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$;
@@ -17790,16 +18763,16 @@ openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$._new = funct
 	return d;
 };
 openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_x = function(this1) {
-	return this1.buffer.f[this1.fPos];
+	return this1["float"](0);
 };
 openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_y = function(this1) {
-	return this1.buffer.f[this1.fPos + 1];
+	return this1["float"](1);
 };
 openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_width = function(this1) {
-	return this1.buffer.f[this1.fPos + 2];
+	return this1["float"](2);
 };
 openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_height = function(this1) {
-	return this1.buffer.f[this1.fPos + 3];
+	return this1["float"](3);
 };
 var openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$ = {};
 $hxClasses["openfl._internal.renderer._DrawCommandReader.DrawRoundRectView_Impl_"] = openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$;
@@ -17809,22 +18782,22 @@ openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$._new = 
 	return d;
 };
 openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_x = function(this1) {
-	return this1.buffer.f[this1.fPos];
+	return this1["float"](0);
 };
 openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_y = function(this1) {
-	return this1.buffer.f[this1.fPos + 1];
+	return this1["float"](1);
 };
 openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_width = function(this1) {
-	return this1.buffer.f[this1.fPos + 2];
+	return this1["float"](2);
 };
 openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_height = function(this1) {
-	return this1.buffer.f[this1.fPos + 3];
+	return this1["float"](3);
 };
 openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_ellipseWidth = function(this1) {
-	return this1.buffer.f[this1.fPos + 4];
+	return this1["float"](4);
 };
 openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_ellipseHeight = function(this1) {
-	return this1.buffer.o[this1.oPos];
+	return this1.obj(0);
 };
 var openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$ = {};
 $hxClasses["openfl._internal.renderer._DrawCommandReader.DrawTilesView_Impl_"] = openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$;
@@ -17834,22 +18807,22 @@ openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$._new = func
 	return d;
 };
 openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_sheet = function(this1) {
-	return this1.buffer.ts[this1.tsPos];
+	return this1.tileSheet(0);
 };
 openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData = function(this1) {
-	return this1.buffer.ff[this1.ffPos];
+	return this1.fArr(0);
 };
 openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_smooth = function(this1) {
-	return this1.buffer.b[this1.bPos];
+	return this1.bool(0);
 };
 openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_flags = function(this1) {
-	return this1.buffer.i[this1.iPos];
+	return this1["int"](0);
 };
 openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_shader = function(this1) {
-	return this1.buffer.o[this1.oPos];
+	return this1.obj(0);
 };
 openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_count = function(this1) {
-	return this1.buffer.i[this1.iPos + 1];
+	return this1["int"](1);
 };
 var openfl__$internal_renderer__$DrawCommandReader_DrawTrianglesView_$Impl_$ = {};
 $hxClasses["openfl._internal.renderer._DrawCommandReader.DrawTrianglesView_Impl_"] = openfl__$internal_renderer__$DrawCommandReader_DrawTrianglesView_$Impl_$;
@@ -17859,16 +18832,16 @@ openfl__$internal_renderer__$DrawCommandReader_DrawTrianglesView_$Impl_$._new = 
 	return d;
 };
 openfl__$internal_renderer__$DrawCommandReader_DrawTrianglesView_$Impl_$.get_vertices = function(this1) {
-	return this1.buffer.o[this1.oPos];
+	return this1.obj(0);
 };
 openfl__$internal_renderer__$DrawCommandReader_DrawTrianglesView_$Impl_$.get_indices = function(this1) {
-	return this1.buffer.o[this1.oPos + 1];
+	return this1.obj(1);
 };
 openfl__$internal_renderer__$DrawCommandReader_DrawTrianglesView_$Impl_$.get_uvtData = function(this1) {
-	return this1.buffer.o[this1.oPos + 2];
+	return this1.obj(2);
 };
 openfl__$internal_renderer__$DrawCommandReader_DrawTrianglesView_$Impl_$.get_culling = function(this1) {
-	return this1.buffer.o[this1.oPos + 3];
+	return this1.obj(3);
 };
 var openfl__$internal_renderer__$DrawCommandReader_EndFillView_$Impl_$ = {};
 $hxClasses["openfl._internal.renderer._DrawCommandReader.EndFillView_Impl_"] = openfl__$internal_renderer__$DrawCommandReader_EndFillView_$Impl_$;
@@ -17884,16 +18857,16 @@ openfl__$internal_renderer__$DrawCommandReader_LineBitmapStyleView_$Impl_$._new 
 	return d;
 };
 openfl__$internal_renderer__$DrawCommandReader_LineBitmapStyleView_$Impl_$.get_bitmap = function(this1) {
-	return this1.buffer.o[this1.oPos];
+	return this1.obj(0);
 };
 openfl__$internal_renderer__$DrawCommandReader_LineBitmapStyleView_$Impl_$.get_matrix = function(this1) {
-	return this1.buffer.o[this1.oPos + 1];
+	return this1.obj(1);
 };
 openfl__$internal_renderer__$DrawCommandReader_LineBitmapStyleView_$Impl_$.get_repeat = function(this1) {
-	return this1.buffer.b[this1.bPos];
+	return this1.bool(0);
 };
 openfl__$internal_renderer__$DrawCommandReader_LineBitmapStyleView_$Impl_$.get_smooth = function(this1) {
-	return this1.buffer.b[this1.bPos + 1];
+	return this1.bool(1);
 };
 var openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$ = {};
 $hxClasses["openfl._internal.renderer._DrawCommandReader.LineGradientStyleView_Impl_"] = openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$;
@@ -17903,28 +18876,28 @@ openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$._ne
 	return d;
 };
 openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_type = function(this1) {
-	return this1.buffer.o[this1.oPos];
+	return this1.obj(0);
 };
 openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_colors = function(this1) {
-	return this1.buffer.ii[this1.iiPos];
+	return this1.iArr(0);
 };
 openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_alphas = function(this1) {
-	return this1.buffer.ff[this1.ffPos];
+	return this1.fArr(0);
 };
 openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_ratios = function(this1) {
-	return this1.buffer.ii[this1.iiPos + 1];
+	return this1.iArr(1);
 };
 openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_matrix = function(this1) {
-	return this1.buffer.o[this1.oPos + 1];
+	return this1.obj(1);
 };
 openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_spreadMethod = function(this1) {
-	return this1.buffer.o[this1.oPos + 2];
+	return this1.obj(2);
 };
 openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_interpolationMethod = function(this1) {
-	return this1.buffer.o[this1.oPos + 3];
+	return this1.obj(3);
 };
 openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_focalPointRatio = function(this1) {
-	return this1.buffer.f[this1.fPos];
+	return this1["float"](0);
 };
 var openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$ = {};
 $hxClasses["openfl._internal.renderer._DrawCommandReader.LineStyleView_Impl_"] = openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$;
@@ -17934,28 +18907,28 @@ openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$._new = func
 	return d;
 };
 openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_thickness = function(this1) {
-	return this1.buffer.o[this1.oPos];
+	return this1.obj(0);
 };
 openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_color = function(this1) {
-	return this1.buffer.i[this1.iPos];
+	return this1["int"](0);
 };
 openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_alpha = function(this1) {
-	return this1.buffer.f[this1.fPos];
+	return this1["float"](0);
 };
 openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_pixelHinting = function(this1) {
-	return this1.buffer.b[this1.bPos];
+	return this1.bool(0);
 };
 openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_scaleMode = function(this1) {
-	return this1.buffer.o[this1.oPos + 1];
+	return this1.obj(1);
 };
 openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_caps = function(this1) {
-	return this1.buffer.o[this1.oPos + 2];
+	return this1.obj(2);
 };
 openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_joints = function(this1) {
-	return this1.buffer.o[this1.oPos + 3];
+	return this1.obj(3);
 };
 openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_miterLimit = function(this1) {
-	return this1.buffer.f[this1.fPos + 1];
+	return this1["float"](1);
 };
 var openfl__$internal_renderer__$DrawCommandReader_LineToView_$Impl_$ = {};
 $hxClasses["openfl._internal.renderer._DrawCommandReader.LineToView_Impl_"] = openfl__$internal_renderer__$DrawCommandReader_LineToView_$Impl_$;
@@ -17965,10 +18938,10 @@ openfl__$internal_renderer__$DrawCommandReader_LineToView_$Impl_$._new = functio
 	return d;
 };
 openfl__$internal_renderer__$DrawCommandReader_LineToView_$Impl_$.get_x = function(this1) {
-	return this1.buffer.f[this1.fPos];
+	return this1["float"](0);
 };
 openfl__$internal_renderer__$DrawCommandReader_LineToView_$Impl_$.get_y = function(this1) {
-	return this1.buffer.f[this1.fPos + 1];
+	return this1["float"](1);
 };
 var openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$ = {};
 $hxClasses["openfl._internal.renderer._DrawCommandReader.MoveToView_Impl_"] = openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$;
@@ -17978,10 +18951,10 @@ openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$._new = functio
 	return d;
 };
 openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$.get_x = function(this1) {
-	return this1.buffer.f[this1.fPos];
+	return this1["float"](0);
 };
 openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$.get_y = function(this1) {
-	return this1.buffer.f[this1.fPos + 1];
+	return this1["float"](1);
 };
 var openfl__$internal_renderer__$DrawCommandReader_OverrideMatrixView_$Impl_$ = {};
 $hxClasses["openfl._internal.renderer._DrawCommandReader.OverrideMatrixView_Impl_"] = openfl__$internal_renderer__$DrawCommandReader_OverrideMatrixView_$Impl_$;
@@ -17991,9 +18964,9 @@ openfl__$internal_renderer__$DrawCommandReader_OverrideMatrixView_$Impl_$._new =
 	return d;
 };
 openfl__$internal_renderer__$DrawCommandReader_OverrideMatrixView_$Impl_$.get_matrix = function(this1) {
-	return this1.buffer.o[this1.oPos];
+	return this1.obj(0);
 };
-var openfl__$internal_renderer_DrawCommandType = $hxClasses["openfl._internal.renderer.DrawCommandType"] = { __ename__ : true, __constructs__ : ["BEGIN_BITMAP_FILL","BEGIN_FILL","BEGIN_GRADIENT_FILL","CUBIC_CURVE_TO","CURVE_TO","DRAW_CIRCLE","DRAW_ELLIPSE","DRAW_PATH","DRAW_RECT","DRAW_ROUND_RECT","DRAW_TILES","DRAW_TRIANGLES","END_FILL","LINE_BITMAP_STYLE","LINE_GRADIENT_STYLE","LINE_STYLE","LINE_TO","MOVE_TO","OVERRIDE_MATRIX","UNKNOWN"] };
+var openfl__$internal_renderer_DrawCommandType = $hxClasses["openfl._internal.renderer.DrawCommandType"] = { __ename__ : ["openfl","_internal","renderer","DrawCommandType"], __constructs__ : ["BEGIN_BITMAP_FILL","BEGIN_FILL","BEGIN_GRADIENT_FILL","CUBIC_CURVE_TO","CURVE_TO","DRAW_CIRCLE","DRAW_ELLIPSE","DRAW_PATH","DRAW_RECT","DRAW_ROUND_RECT","DRAW_TILES","DRAW_TRIANGLES","END_FILL","LINE_BITMAP_STYLE","LINE_GRADIENT_STYLE","LINE_STYLE","LINE_TO","MOVE_TO","OVERRIDE_MATRIX","UNKNOWN"] };
 openfl__$internal_renderer_DrawCommandType.BEGIN_BITMAP_FILL = ["BEGIN_BITMAP_FILL",0];
 openfl__$internal_renderer_DrawCommandType.BEGIN_BITMAP_FILL.toString = $estr;
 openfl__$internal_renderer_DrawCommandType.BEGIN_BITMAP_FILL.__enum__ = openfl__$internal_renderer_DrawCommandType;
@@ -18242,7 +19215,28 @@ var openfl__$internal_renderer_RenderSession = function() {
 $hxClasses["openfl._internal.renderer.RenderSession"] = openfl__$internal_renderer_RenderSession;
 openfl__$internal_renderer_RenderSession.__name__ = ["openfl","_internal","renderer","RenderSession"];
 openfl__$internal_renderer_RenderSession.prototype = {
-	__class__: openfl__$internal_renderer_RenderSession
+	cairo: null
+	,context: null
+	,element: null
+	,gl: null
+	,renderer: null
+	,roundPixels: null
+	,transformProperty: null
+	,transformOriginProperty: null
+	,vendorPrefix: null
+	,z: null
+	,projectionMatrix: null
+	,drawCount: null
+	,currentBlendMode: null
+	,activeTextures: null
+	,shaderManager: null
+	,maskManager: null
+	,filterManager: null
+	,blendModeManager: null
+	,spriteBatch: null
+	,stencilManager: null
+	,defaultFramebuffer: null
+	,__class__: openfl__$internal_renderer_RenderSession
 };
 var openfl__$internal_renderer_cairo_CairoBitmap = function() { };
 $hxClasses["openfl._internal.renderer.cairo.CairoBitmap"] = openfl__$internal_renderer_cairo_CairoBitmap;
@@ -18456,48 +19450,33 @@ openfl__$internal_renderer_cairo_CairoGraphics.playCommands = function(commands,
 			++_g;
 			switch(type[1]) {
 			case 3:
-				var c;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.CUBIC_CURVE_TO;
-				c = data;
+				var c = data.readCubicCurveTo();
 				hasPath = true;
-				openfl__$internal_renderer_cairo_CairoGraphics.cairo.curveTo(c.buffer.f[c.fPos] - offsetX,c.buffer.f[c.fPos + 1] - offsetY,c.buffer.f[c.fPos + 2] - offsetX,c.buffer.f[c.fPos + 3] - offsetY,c.buffer.f[c.fPos + 4] - offsetX,c.buffer.f[c.fPos + 5] - offsetY);
+				openfl__$internal_renderer_cairo_CairoGraphics.cairo.curveTo(openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlX1(c) - offsetX,openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlY1(c) - offsetY,openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlX2(c) - offsetX,openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlY2(c) - offsetY,openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_anchorX(c) - offsetX,openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_anchorY(c) - offsetY);
 				break;
 			case 4:
-				var c1;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.CURVE_TO;
-				c1 = data;
+				var c1 = data.readCurveTo();
 				hasPath = true;
-				openfl__$internal_renderer_cairo_CairoGraphics.quadraticCurveTo(c1.buffer.f[c1.fPos] - offsetX,c1.buffer.f[c1.fPos + 1] - offsetY,c1.buffer.f[c1.fPos + 2] - offsetX,c1.buffer.f[c1.fPos + 3] - offsetY);
+				openfl__$internal_renderer_cairo_CairoGraphics.quadraticCurveTo(openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_controlX(c1) - offsetX,openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_controlY(c1) - offsetY,openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_anchorX(c1) - offsetX,openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_anchorY(c1) - offsetY);
 				break;
 			case 5:
-				var c2;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_CIRCLE;
-				c2 = data;
+				var c2 = data.readDrawCircle();
 				hasPath = true;
-				openfl__$internal_renderer_cairo_CairoGraphics.cairo.moveTo(c2.buffer.f[c2.fPos] - offsetX + c2.buffer.f[c2.fPos + 2],c2.buffer.f[c2.fPos + 1] - offsetY);
-				openfl__$internal_renderer_cairo_CairoGraphics.cairo.arc(c2.buffer.f[c2.fPos] - offsetX,c2.buffer.f[c2.fPos + 1] - offsetY,c2.buffer.f[c2.fPos + 2],0,Math.PI * 2);
+				openfl__$internal_renderer_cairo_CairoGraphics.cairo.moveTo(openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_x(c2) - offsetX + openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_radius(c2),openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_y(c2) - offsetY);
+				openfl__$internal_renderer_cairo_CairoGraphics.cairo.arc(openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_x(c2) - offsetX,openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_y(c2) - offsetY,openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_radius(c2),0,Math.PI * 2);
 				break;
 			case 8:
-				var c3;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_RECT;
-				c3 = data;
+				var c3 = data.readDrawRect();
 				hasPath = true;
-				openfl__$internal_renderer_cairo_CairoGraphics.cairo.rectangle(c3.buffer.f[c3.fPos] - offsetX,c3.buffer.f[c3.fPos + 1] - offsetY,c3.buffer.f[c3.fPos + 2],c3.buffer.f[c3.fPos + 3]);
+				openfl__$internal_renderer_cairo_CairoGraphics.cairo.rectangle(openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_x(c3) - offsetX,openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_y(c3) - offsetY,openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_width(c3),openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_height(c3));
 				break;
 			case 6:
-				var c4;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_ELLIPSE;
-				c4 = data;
+				var c4 = data.readDrawEllipse();
 				hasPath = true;
-				var x = c4.buffer.f[c4.fPos];
-				var y = c4.buffer.f[c4.fPos + 1];
-				var width = c4.buffer.f[c4.fPos + 2];
-				var height = c4.buffer.f[c4.fPos + 3];
+				var x = openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_x(c4);
+				var y = openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_y(c4);
+				var width = openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_width(c4);
+				var height = openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_height(c4);
 				x -= offsetX;
 				y -= offsetY;
 				var kappa = .5522848;
@@ -18514,48 +19493,36 @@ openfl__$internal_renderer_cairo_CairoGraphics.playCommands = function(commands,
 				openfl__$internal_renderer_cairo_CairoGraphics.cairo.curveTo(xm - ox,ye,x,ym + oy,x,ym);
 				break;
 			case 9:
-				var c5;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_ROUND_RECT;
-				c5 = data;
+				var c5 = data.readDrawRoundRect();
 				hasPath = true;
-				openfl__$internal_renderer_cairo_CairoGraphics.drawRoundRect(c5.buffer.f[c5.fPos] - offsetX,c5.buffer.f[c5.fPos + 1] - offsetY,c5.buffer.f[c5.fPos + 2],c5.buffer.f[c5.fPos + 3],c5.buffer.f[c5.fPos + 4],c5.buffer.o[c5.oPos]);
+				openfl__$internal_renderer_cairo_CairoGraphics.drawRoundRect(openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_x(c5) - offsetX,openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_y(c5) - offsetY,openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_width(c5),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_height(c5),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_ellipseWidth(c5),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_ellipseHeight(c5));
 				break;
 			case 16:
-				var c6;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.LINE_TO;
-				c6 = data;
+				var c6 = data.readLineTo();
 				hasPath = true;
-				openfl__$internal_renderer_cairo_CairoGraphics.cairo.lineTo(c6.buffer.f[c6.fPos] - offsetX,c6.buffer.f[c6.fPos + 1] - offsetY);
-				positionX = c6.buffer.f[c6.fPos];
-				positionY = c6.buffer.f[c6.fPos + 1];
+				openfl__$internal_renderer_cairo_CairoGraphics.cairo.lineTo(openfl__$internal_renderer__$DrawCommandReader_LineToView_$Impl_$.get_x(c6) - offsetX,openfl__$internal_renderer__$DrawCommandReader_LineToView_$Impl_$.get_y(c6) - offsetY);
+				positionX = openfl__$internal_renderer__$DrawCommandReader_LineToView_$Impl_$.get_x(c6);
+				positionY = openfl__$internal_renderer__$DrawCommandReader_LineToView_$Impl_$.get_y(c6);
 				break;
 			case 17:
-				var c7;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.MOVE_TO;
-				c7 = data;
-				openfl__$internal_renderer_cairo_CairoGraphics.cairo.moveTo(c7.buffer.f[c7.fPos] - offsetX,c7.buffer.f[c7.fPos + 1] - offsetY);
-				positionX = c7.buffer.f[c7.fPos];
-				positionY = c7.buffer.f[c7.fPos + 1];
+				var c7 = data.readMoveTo();
+				openfl__$internal_renderer_cairo_CairoGraphics.cairo.moveTo(openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$.get_x(c7) - offsetX,openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$.get_y(c7) - offsetY);
+				positionX = openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$.get_x(c7);
+				positionY = openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$.get_y(c7);
 				closeGap = true;
-				startX = c7.buffer.f[c7.fPos];
-				startY = c7.buffer.f[c7.fPos + 1];
+				startX = openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$.get_x(c7);
+				startY = openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$.get_y(c7);
 				break;
 			case 15:
-				var c8;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.LINE_STYLE;
-				c8 = data;
+				var c8 = data.readLineStyle();
 				if(stroke && openfl__$internal_renderer_cairo_CairoGraphics.hasStroke) openfl__$internal_renderer_cairo_CairoGraphics.closePath();
 				openfl__$internal_renderer_cairo_CairoGraphics.cairo.moveTo(positionX - offsetX,positionY - offsetY);
-				if(c8.buffer.o[c8.oPos] == null) openfl__$internal_renderer_cairo_CairoGraphics.hasStroke = false; else {
+				if(openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_thickness(c8) == null) openfl__$internal_renderer_cairo_CairoGraphics.hasStroke = false; else {
 					openfl__$internal_renderer_cairo_CairoGraphics.hasStroke = true;
-					openfl__$internal_renderer_cairo_CairoGraphics.cairo.set_lineWidth(c8.buffer.o[c8.oPos] > 0?c8.buffer.o[c8.oPos]:1);
-					if(c8.buffer.o[c8.oPos + 3] == null) openfl__$internal_renderer_cairo_CairoGraphics.cairo.set_lineJoin(1); else openfl__$internal_renderer_cairo_CairoGraphics.cairo.set_lineJoin((function($this) {
+					openfl__$internal_renderer_cairo_CairoGraphics.cairo.set_lineWidth(openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_thickness(c8) > 0?openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_thickness(c8):1);
+					if(openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_joints(c8) == null) openfl__$internal_renderer_cairo_CairoGraphics.cairo.set_lineJoin(1); else openfl__$internal_renderer_cairo_CairoGraphics.cairo.set_lineJoin((function($this) {
 						var $r;
-						var _g2 = c8.buffer.o[c8.oPos + 3];
+						var _g2 = openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_joints(c8);
 						$r = (function($this) {
 							var $r;
 							switch(_g2) {
@@ -18572,9 +19539,9 @@ openfl__$internal_renderer_cairo_CairoGraphics.playCommands = function(commands,
 						}($this));
 						return $r;
 					}(this)));
-					if(c8.buffer.o[c8.oPos + 2] == null) openfl__$internal_renderer_cairo_CairoGraphics.cairo.set_lineCap(1); else openfl__$internal_renderer_cairo_CairoGraphics.cairo.set_lineCap((function($this) {
+					if(openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_caps(c8) == null) openfl__$internal_renderer_cairo_CairoGraphics.cairo.set_lineCap(1); else openfl__$internal_renderer_cairo_CairoGraphics.cairo.set_lineCap((function($this) {
 						var $r;
-						var _g21 = c8.buffer.o[c8.oPos + 2];
+						var _g21 = openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_caps(c8);
 						$r = (function($this) {
 							var $r;
 							switch(_g21) {
@@ -18591,73 +19558,55 @@ openfl__$internal_renderer_cairo_CairoGraphics.playCommands = function(commands,
 						}($this));
 						return $r;
 					}(this)));
-					openfl__$internal_renderer_cairo_CairoGraphics.cairo.set_miterLimit(c8.buffer.f[c8.fPos + 1]);
-					var r = ((c8.buffer.i[c8.iPos] & 16711680) >>> 16) / 255;
-					var g = ((c8.buffer.i[c8.iPos] & 65280) >>> 8) / 255;
-					var b = (c8.buffer.i[c8.iPos] & 255) / 255;
-					if(c8.buffer.f[c8.fPos] == 1) openfl__$internal_renderer_cairo_CairoGraphics.strokePattern = lime_graphics_cairo__$CairoPattern_CairoPattern_$Impl_$.createRGB(r,g,b); else openfl__$internal_renderer_cairo_CairoGraphics.strokePattern = lime_graphics_cairo__$CairoPattern_CairoPattern_$Impl_$.createRGBA(r,g,b,c8.buffer.f[c8.fPos]);
+					openfl__$internal_renderer_cairo_CairoGraphics.cairo.set_miterLimit(openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_miterLimit(c8));
+					var r = ((openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_color(c8) & 16711680) >>> 16) / 255;
+					var g = ((openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_color(c8) & 65280) >>> 8) / 255;
+					var b = (openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_color(c8) & 255) / 255;
+					if(openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_alpha(c8) == 1) openfl__$internal_renderer_cairo_CairoGraphics.strokePattern = lime_graphics_cairo__$CairoPattern_CairoPattern_$Impl_$.createRGB(r,g,b); else openfl__$internal_renderer_cairo_CairoGraphics.strokePattern = lime_graphics_cairo__$CairoPattern_CairoPattern_$Impl_$.createRGBA(r,g,b,openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_alpha(c8));
 				}
 				break;
 			case 14:
-				var c9;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.LINE_GRADIENT_STYLE;
-				c9 = data;
+				var c9 = data.readLineGradientStyle();
 				if(stroke && openfl__$internal_renderer_cairo_CairoGraphics.hasStroke) openfl__$internal_renderer_cairo_CairoGraphics.closePath();
 				openfl__$internal_renderer_cairo_CairoGraphics.cairo.moveTo(positionX - offsetX,positionY - offsetY);
-				openfl__$internal_renderer_cairo_CairoGraphics.strokePattern = openfl__$internal_renderer_cairo_CairoGraphics.createGradientPattern(c9.buffer.o[c9.oPos],c9.buffer.ii[c9.iiPos],c9.buffer.ff[c9.ffPos],c9.buffer.ii[c9.iiPos + 1],c9.buffer.o[c9.oPos + 1],c9.buffer.o[c9.oPos + 2],c9.buffer.o[c9.oPos + 3],c9.buffer.f[c9.fPos]);
+				openfl__$internal_renderer_cairo_CairoGraphics.strokePattern = openfl__$internal_renderer_cairo_CairoGraphics.createGradientPattern(openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_type(c9),openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_colors(c9),openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_alphas(c9),openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_ratios(c9),openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_matrix(c9),openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_spreadMethod(c9),openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_interpolationMethod(c9),openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_focalPointRatio(c9));
 				openfl__$internal_renderer_cairo_CairoGraphics.hasStroke = true;
 				break;
 			case 13:
-				var c10;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.LINE_BITMAP_STYLE;
-				c10 = data;
+				var c10 = data.readLineBitmapStyle();
 				if(stroke && openfl__$internal_renderer_cairo_CairoGraphics.hasStroke) openfl__$internal_renderer_cairo_CairoGraphics.closePath();
 				openfl__$internal_renderer_cairo_CairoGraphics.cairo.moveTo(positionX - offsetX,positionY - offsetY);
-				openfl__$internal_renderer_cairo_CairoGraphics.strokePattern = openfl__$internal_renderer_cairo_CairoGraphics.createImagePattern(c10.buffer.o[c10.oPos],c10.buffer.o[c10.oPos + 1],c10.buffer.b[c10.bPos]);
+				openfl__$internal_renderer_cairo_CairoGraphics.strokePattern = openfl__$internal_renderer_cairo_CairoGraphics.createImagePattern(openfl__$internal_renderer__$DrawCommandReader_LineBitmapStyleView_$Impl_$.get_bitmap(c10),openfl__$internal_renderer__$DrawCommandReader_LineBitmapStyleView_$Impl_$.get_matrix(c10),openfl__$internal_renderer__$DrawCommandReader_LineBitmapStyleView_$Impl_$.get_repeat(c10));
 				openfl__$internal_renderer_cairo_CairoGraphics.hasStroke = true;
 				break;
 			case 0:
-				var c11;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.BEGIN_BITMAP_FILL;
-				c11 = data;
-				openfl__$internal_renderer_cairo_CairoGraphics.fillPattern = openfl__$internal_renderer_cairo_CairoGraphics.createImagePattern(c11.buffer.o[c11.oPos],c11.buffer.o[c11.oPos + 1],c11.buffer.b[c11.bPos]);
-				openfl__$internal_renderer_cairo_CairoGraphics.bitmapFill = c11.buffer.o[c11.oPos];
-				openfl__$internal_renderer_cairo_CairoGraphics.bitmapRepeat = c11.buffer.b[c11.bPos];
+				var c11 = data.readBeginBitmapFill();
+				openfl__$internal_renderer_cairo_CairoGraphics.fillPattern = openfl__$internal_renderer_cairo_CairoGraphics.createImagePattern(openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_bitmap(c11),openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_matrix(c11),openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_repeat(c11));
+				openfl__$internal_renderer_cairo_CairoGraphics.bitmapFill = openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_bitmap(c11);
+				openfl__$internal_renderer_cairo_CairoGraphics.bitmapRepeat = openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_repeat(c11);
 				openfl__$internal_renderer_cairo_CairoGraphics.hasFill = true;
 				break;
 			case 1:
-				var c12;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.BEGIN_FILL;
-				c12 = data;
-				if(c12.buffer.f[c12.fPos] < 0.005) openfl__$internal_renderer_cairo_CairoGraphics.hasFill = false; else {
+				var c12 = data.readBeginFill();
+				if(openfl__$internal_renderer__$DrawCommandReader_BeginFillView_$Impl_$.get_alpha(c12) < 0.005) openfl__$internal_renderer_cairo_CairoGraphics.hasFill = false; else {
 					if(openfl__$internal_renderer_cairo_CairoGraphics.fillPattern != null) openfl__$internal_renderer_cairo_CairoGraphics.fillPatternMatrix = null;
-					openfl__$internal_renderer_cairo_CairoGraphics.fillPattern = lime_graphics_cairo__$CairoPattern_CairoPattern_$Impl_$.createRGBA(((c12.buffer.i[c12.iPos] & 16711680) >>> 16) / 255,((c12.buffer.i[c12.iPos] & 65280) >>> 8) / 255,(c12.buffer.i[c12.iPos] & 255) / 255,c12.buffer.f[c12.fPos]);
+					openfl__$internal_renderer_cairo_CairoGraphics.fillPattern = lime_graphics_cairo__$CairoPattern_CairoPattern_$Impl_$.createRGBA(((openfl__$internal_renderer__$DrawCommandReader_BeginFillView_$Impl_$.get_color(c12) & 16711680) >>> 16) / 255,((openfl__$internal_renderer__$DrawCommandReader_BeginFillView_$Impl_$.get_color(c12) & 65280) >>> 8) / 255,(openfl__$internal_renderer__$DrawCommandReader_BeginFillView_$Impl_$.get_color(c12) & 255) / 255,openfl__$internal_renderer__$DrawCommandReader_BeginFillView_$Impl_$.get_alpha(c12));
 					openfl__$internal_renderer_cairo_CairoGraphics.hasFill = true;
 				}
 				openfl__$internal_renderer_cairo_CairoGraphics.bitmapFill = null;
 				break;
 			case 2:
-				var c13;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.BEGIN_GRADIENT_FILL;
-				c13 = data;
+				var c13 = data.readBeginGradientFill();
 				if(openfl__$internal_renderer_cairo_CairoGraphics.fillPattern != null) openfl__$internal_renderer_cairo_CairoGraphics.fillPatternMatrix = null;
-				openfl__$internal_renderer_cairo_CairoGraphics.fillPattern = openfl__$internal_renderer_cairo_CairoGraphics.createGradientPattern(c13.buffer.o[c13.oPos],c13.buffer.ii[c13.iiPos],c13.buffer.ff[c13.ffPos],c13.buffer.ii[c13.iiPos + 1],c13.buffer.o[c13.oPos + 1],c13.buffer.o[c13.oPos + 2],c13.buffer.o[c13.oPos + 3],c13.buffer.f[c13.fPos]);
+				openfl__$internal_renderer_cairo_CairoGraphics.fillPattern = openfl__$internal_renderer_cairo_CairoGraphics.createGradientPattern(openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_type(c13),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_colors(c13),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_alphas(c13),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_ratios(c13),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_matrix(c13),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_spreadMethod(c13),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_interpolationMethod(c13),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_focalPointRatio(c13));
 				openfl__$internal_renderer_cairo_CairoGraphics.hasFill = true;
 				openfl__$internal_renderer_cairo_CairoGraphics.bitmapFill = null;
 				break;
 			case 11:
-				var c14;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_TRIANGLES;
-				c14 = data;
-				var v = c14.buffer.o[c14.oPos];
-				var ind = c14.buffer.o[c14.oPos + 1];
-				var uvt = c14.buffer.o[c14.oPos + 2];
+				var c14 = data.readDrawTriangles();
+				var v = openfl__$internal_renderer__$DrawCommandReader_DrawTrianglesView_$Impl_$.get_vertices(c14);
+				var ind = openfl__$internal_renderer__$DrawCommandReader_DrawTrianglesView_$Impl_$.get_indices(c14);
+				var uvt = openfl__$internal_renderer__$DrawCommandReader_DrawTrianglesView_$Impl_$.get_uvtData(c14);
 				var colorFill = openfl__$internal_renderer_cairo_CairoGraphics.bitmapFill == null;
 				if(colorFill && uvt != null) throw "__break__";
 				var width1 = 0;
@@ -18704,7 +19653,13 @@ openfl__$internal_renderer_cairo_CairoGraphics.playCommands = function(commands,
 							uvt.length;
 						}
 					}
-					var skipT = c14.buffer.o[c14.oPos + 2].length != v.length;
+					var skipT;
+					skipT = (function($this) {
+						var $r;
+						var this5 = openfl__$internal_renderer__$DrawCommandReader_DrawTrianglesView_$Impl_$.get_uvtData(c14);
+						$r = this5.length;
+						return $r;
+					}(this)) != v.length;
 					var normalizedUVT = openfl__$internal_renderer_cairo_CairoGraphics.normalizeUVT(uvt,skipT);
 					var maxUVT = normalizedUVT.max;
 					uvt = normalizedUVT.uvt;
@@ -18763,7 +19718,7 @@ openfl__$internal_renderer_cairo_CairoGraphics.playCommands = function(commands,
 					y2 = v.data[iby];
 					x3 = v.data[icx];
 					y3 = v.data[icy];
-					var _g23 = c14.buffer.o[c14.oPos + 3];
+					var _g23 = openfl__$internal_renderer__$DrawCommandReader_DrawTrianglesView_$Impl_$.get_culling(c14);
 					switch(_g23) {
 					case 2:
 						if(!((x2 - x1) * (y3 - y1) - (y2 - y1) * (x3 - x1) < 0)) {
@@ -18820,21 +19775,18 @@ openfl__$internal_renderer_cairo_CairoGraphics.playCommands = function(commands,
 				}
 				break;
 			case 10:
-				var c15;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_TILES;
-				c15 = data;
-				var useScale = (c15.buffer.i[c15.iPos] & 1) > 0;
-				var useRotation = (c15.buffer.i[c15.iPos] & 2) > 0;
+				var c15 = data.readDrawTiles();
+				var useScale = (openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_flags(c15) & 1) > 0;
+				var useRotation = (openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_flags(c15) & 2) > 0;
 				var offsetX1 = openfl__$internal_renderer_cairo_CairoGraphics.bounds.x;
 				var offsetY1 = openfl__$internal_renderer_cairo_CairoGraphics.bounds.y;
-				var useTransform = (c15.buffer.i[c15.iPos] & 16) > 0;
-				var useRGB = (c15.buffer.i[c15.iPos] & 4) > 0;
-				var useAlpha = (c15.buffer.i[c15.iPos] & 8) > 0;
-				var useRect = (c15.buffer.i[c15.iPos] & 32) > 0;
-				var useOrigin = (c15.buffer.i[c15.iPos] & 64) > 0;
-				var useBlendAdd = (c15.buffer.i[c15.iPos] & 65536) > 0;
-				var useBlendOverlay = (c15.buffer.i[c15.iPos] & 4194304) > 0;
+				var useTransform = (openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_flags(c15) & 16) > 0;
+				var useRGB = (openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_flags(c15) & 4) > 0;
+				var useAlpha = (openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_flags(c15) & 8) > 0;
+				var useRect = (openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_flags(c15) & 32) > 0;
+				var useOrigin = (openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_flags(c15) & 64) > 0;
+				var useBlendAdd = (openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_flags(c15) & 65536) > 0;
+				var useBlendOverlay = (openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_flags(c15) & 4194304) > 0;
 				if(useTransform) {
 					useScale = false;
 					useRotation = false;
@@ -18866,48 +19818,48 @@ openfl__$internal_renderer_cairo_CairoGraphics.playCommands = function(commands,
 					alphaIndex = numValues;
 					numValues++;
 				}
-				var totalCount = c15.buffer.ff[c15.ffPos].length;
-				if(c15.buffer.i[c15.iPos + 1] >= 0 && totalCount > c15.buffer.i[c15.iPos + 1]) totalCount = c15.buffer.i[c15.iPos + 1];
+				var totalCount = openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData(c15).length;
+				if(openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_count(c15) >= 0 && totalCount > openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_count(c15)) totalCount = openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_count(c15);
 				var itemCount = totalCount / numValues | 0;
 				var index = 0;
 				var rect = null;
 				var center = null;
 				var previousTileID = -1;
 				var surface;
-				c15.buffer.ts[c15.tsPos].__bitmap.__sync();
-				surface = c15.buffer.ts[c15.tsPos].__bitmap.getSurface();
+				openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_sheet(c15).__bitmap.__sync();
+				surface = openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_sheet(c15).__bitmap.getSurface();
 				openfl__$internal_renderer_cairo_CairoGraphics.cairo.save();
 				if(useBlendAdd) openfl__$internal_renderer_cairo_CairoGraphics.cairo.set_operator(12);
 				if(useBlendOverlay) openfl__$internal_renderer_cairo_CairoGraphics.cairo.set_operator(16);
 				while(index < totalCount) {
-					var i2 = c15.buffer.ff[c15.ffPos][index + 2] | 0;
+					var i2 = Std["int"](openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData(c15)[index + 2]);
 					var tileID;
 					if(!useRect) tileID = i2; else tileID = -1;
 					if(!useRect && tileID != previousTileID) {
-						rect = c15.buffer.ts[c15.tsPos].__tileRects[tileID];
-						center = c15.buffer.ts[c15.tsPos].__centerPoints[tileID];
+						rect = openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_sheet(c15).__tileRects[tileID];
+						center = openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_sheet(c15).__centerPoints[tileID];
 						previousTileID = tileID;
 					} else if(useRect) {
-						rect = c15.buffer.ts[c15.tsPos].__rectTile;
-						rect.setTo(c15.buffer.ff[c15.ffPos][index + 2],c15.buffer.ff[c15.ffPos][index + 3],c15.buffer.ff[c15.ffPos][index + 4],c15.buffer.ff[c15.ffPos][index + 5]);
-						center = c15.buffer.ts[c15.tsPos].__point;
-						if(useOrigin) center.setTo(c15.buffer.ff[c15.ffPos][index + 6],c15.buffer.ff[c15.ffPos][index + 7]); else center.setTo(0,0);
+						rect = openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_sheet(c15).__rectTile;
+						rect.setTo(openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData(c15)[index + 2],openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData(c15)[index + 3],openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData(c15)[index + 4],openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData(c15)[index + 5]);
+						center = openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_sheet(c15).__point;
+						if(useOrigin) center.setTo(openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData(c15)[index + 6],openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData(c15)[index + 7]); else center.setTo(0,0);
 					}
 					if(rect != null && rect.width > 0 && rect.height > 0 && center != null) {
 						openfl__$internal_renderer_cairo_CairoGraphics.cairo.identityMatrix();
 						if(useTransform) {
-							var matrix1 = new lime_math_Matrix3(c15.buffer.ff[c15.ffPos][index + transformIndex],c15.buffer.ff[c15.ffPos][index + transformIndex + 1],c15.buffer.ff[c15.ffPos][index + transformIndex + 2],c15.buffer.ff[c15.ffPos][index + transformIndex + 3],0,0);
+							var matrix1 = new lime_math_Matrix3(openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData(c15)[index + transformIndex],openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData(c15)[index + transformIndex + 1],openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData(c15)[index + transformIndex + 2],openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData(c15)[index + transformIndex + 3],0,0);
 							openfl__$internal_renderer_cairo_CairoGraphics.cairo.set_matrix(matrix1);
 						}
-						openfl__$internal_renderer_cairo_CairoGraphics.cairo.translate(c15.buffer.ff[c15.ffPos][index] - offsetX1,c15.buffer.ff[c15.ffPos][index + 1] - offsetY1);
-						if(useRotation) openfl__$internal_renderer_cairo_CairoGraphics.cairo.rotate(c15.buffer.ff[c15.ffPos][index + rotationIndex]);
+						openfl__$internal_renderer_cairo_CairoGraphics.cairo.translate(openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData(c15)[index] - offsetX1,openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData(c15)[index + 1] - offsetY1);
+						if(useRotation) openfl__$internal_renderer_cairo_CairoGraphics.cairo.rotate(openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData(c15)[index + rotationIndex]);
 						if(useScale) {
-							var scale = c15.buffer.ff[c15.ffPos][index + scaleIndex];
+							var scale = openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData(c15)[index + scaleIndex];
 							openfl__$internal_renderer_cairo_CairoGraphics.cairo.scale(scale,scale);
 						}
 						openfl__$internal_renderer_cairo_CairoGraphics.cairo.setSourceSurface(surface,0,0);
 						if(useAlpha) {
-							if(!openfl__$internal_renderer_cairo_CairoGraphics.hitTesting) openfl__$internal_renderer_cairo_CairoGraphics.cairo.paintWithAlpha(c15.buffer.ff[c15.ffPos][index + alphaIndex]);
+							if(!openfl__$internal_renderer_cairo_CairoGraphics.hitTesting) openfl__$internal_renderer_cairo_CairoGraphics.cairo.paintWithAlpha(openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData(c15)[index + alphaIndex]);
 						} else if(!openfl__$internal_renderer_cairo_CairoGraphics.hitTesting) openfl__$internal_renderer_cairo_CairoGraphics.cairo.paint();
 					}
 					index += numValues;
@@ -18916,8 +19868,7 @@ openfl__$internal_renderer_cairo_CairoGraphics.playCommands = function(commands,
 				openfl__$internal_renderer_cairo_CairoGraphics.cairo.restore();
 				break;
 			default:
-				data.advance();
-				data.prev = type;
+				data.skip(type);
 			}
 		}
 	} catch( e ) { if( e != "__break__" ) throw e; }
@@ -18976,39 +19927,27 @@ openfl__$internal_renderer_cairo_CairoGraphics.renderMask = function(graphics,re
 			++_g;
 			switch(type[1]) {
 			case 3:
-				var c;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.CUBIC_CURVE_TO;
-				c = data;
-				cairo.curveTo(c.buffer.f[c.fPos] - offsetX,c.buffer.f[c.fPos + 1] - offsetY,c.buffer.f[c.fPos + 2] - offsetX,c.buffer.f[c.fPos + 3] - offsetY,c.buffer.f[c.fPos + 4] - offsetX,c.buffer.f[c.fPos + 5] - offsetY);
-				positionX = c.buffer.f[c.fPos + 4];
-				positionY = c.buffer.f[c.fPos + 4];
+				var c = data.readCubicCurveTo();
+				cairo.curveTo(openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlX1(c) - offsetX,openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlY1(c) - offsetY,openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlX2(c) - offsetX,openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlY2(c) - offsetY,openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_anchorX(c) - offsetX,openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_anchorY(c) - offsetY);
+				positionX = openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_anchorX(c);
+				positionY = openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_anchorX(c);
 				break;
 			case 4:
-				var c1;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.CURVE_TO;
-				c1 = data;
-				openfl__$internal_renderer_cairo_CairoGraphics.quadraticCurveTo(c1.buffer.f[c1.fPos] - offsetX,c1.buffer.f[c1.fPos + 1] - offsetY,c1.buffer.f[c1.fPos + 2] - offsetX,c1.buffer.f[c1.fPos + 3] - offsetY);
-				positionX = c1.buffer.f[c1.fPos + 2];
-				positionY = c1.buffer.f[c1.fPos + 3];
+				var c1 = data.readCurveTo();
+				openfl__$internal_renderer_cairo_CairoGraphics.quadraticCurveTo(openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_controlX(c1) - offsetX,openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_controlY(c1) - offsetY,openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_anchorX(c1) - offsetX,openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_anchorY(c1) - offsetY);
+				positionX = openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_anchorX(c1);
+				positionY = openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_anchorY(c1);
 				break;
 			case 5:
-				var c2;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_CIRCLE;
-				c2 = data;
-				cairo.arc(c2.buffer.f[c2.fPos] - offsetX,c2.buffer.f[c2.fPos + 1] - offsetY,c2.buffer.f[c2.fPos + 2],0,Math.PI * 2);
+				var c2 = data.readDrawCircle();
+				cairo.arc(openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_x(c2) - offsetX,openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_y(c2) - offsetY,openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_radius(c2),0,Math.PI * 2);
 				break;
 			case 6:
-				var c3;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_ELLIPSE;
-				c3 = data;
-				var x = c3.buffer.f[c3.fPos];
-				var y = c3.buffer.f[c3.fPos + 1];
-				var width = c3.buffer.f[c3.fPos + 2];
-				var height = c3.buffer.f[c3.fPos + 3];
+				var c3 = data.readDrawEllipse();
+				var x = openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_x(c3);
+				var y = openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_y(c3);
+				var width = openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_width(c3);
+				var height = openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_height(c3);
 				x -= offsetX;
 				y -= offsetY;
 				var kappa = .5522848;
@@ -19025,40 +19964,27 @@ openfl__$internal_renderer_cairo_CairoGraphics.renderMask = function(graphics,re
 				cairo.curveTo(xm - ox,ye,x,ym + oy,x,ym);
 				break;
 			case 8:
-				var c4;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_RECT;
-				c4 = data;
-				cairo.rectangle(c4.buffer.f[c4.fPos] - offsetX,c4.buffer.f[c4.fPos + 1] - offsetY,c4.buffer.f[c4.fPos + 2],c4.buffer.f[c4.fPos + 3]);
+				var c4 = data.readDrawRect();
+				cairo.rectangle(openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_x(c4) - offsetX,openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_y(c4) - offsetY,openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_width(c4),openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_height(c4));
 				break;
 			case 9:
-				var c5;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_ROUND_RECT;
-				c5 = data;
-				openfl__$internal_renderer_cairo_CairoGraphics.drawRoundRect(c5.buffer.f[c5.fPos] - offsetX,c5.buffer.f[c5.fPos + 1] - offsetY,c5.buffer.f[c5.fPos + 2],c5.buffer.f[c5.fPos + 3],c5.buffer.f[c5.fPos + 4],c5.buffer.o[c5.oPos]);
+				var c5 = data.readDrawRoundRect();
+				openfl__$internal_renderer_cairo_CairoGraphics.drawRoundRect(openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_x(c5) - offsetX,openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_y(c5) - offsetY,openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_width(c5),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_height(c5),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_ellipseWidth(c5),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_ellipseHeight(c5));
 				break;
 			case 16:
-				var c6;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.LINE_TO;
-				c6 = data;
-				cairo.lineTo(c6.buffer.f[c6.fPos] - offsetX,c6.buffer.f[c6.fPos + 1] - offsetY);
-				positionX = c6.buffer.f[c6.fPos];
-				positionY = c6.buffer.f[c6.fPos + 1];
+				var c6 = data.readLineTo();
+				cairo.lineTo(openfl__$internal_renderer__$DrawCommandReader_LineToView_$Impl_$.get_x(c6) - offsetX,openfl__$internal_renderer__$DrawCommandReader_LineToView_$Impl_$.get_y(c6) - offsetY);
+				positionX = openfl__$internal_renderer__$DrawCommandReader_LineToView_$Impl_$.get_x(c6);
+				positionY = openfl__$internal_renderer__$DrawCommandReader_LineToView_$Impl_$.get_y(c6);
 				break;
 			case 17:
-				var c7;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.MOVE_TO;
-				c7 = data;
-				cairo.moveTo(c7.buffer.f[c7.fPos] - offsetX,c7.buffer.f[c7.fPos + 1] - offsetY);
-				positionX = c7.buffer.f[c7.fPos];
-				positionY = c7.buffer.f[c7.fPos + 1];
+				var c7 = data.readMoveTo();
+				cairo.moveTo(openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$.get_x(c7) - offsetX,openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$.get_y(c7) - offsetY);
+				positionX = openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$.get_x(c7);
+				positionY = openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$.get_y(c7);
 				break;
 			default:
-				data.advance();
-				data.prev = type;
+				data.skip(type);
 			}
 		}
 		data.destroy();
@@ -19109,7 +20035,8 @@ $hxClasses["openfl._internal.renderer.cairo.CairoRenderer"] = openfl__$internal_
 openfl__$internal_renderer_cairo_CairoRenderer.__name__ = ["openfl","_internal","renderer","cairo","CairoRenderer"];
 openfl__$internal_renderer_cairo_CairoRenderer.__super__ = openfl__$internal_renderer_AbstractRenderer;
 openfl__$internal_renderer_cairo_CairoRenderer.prototype = $extend(openfl__$internal_renderer_AbstractRenderer.prototype,{
-	render: function(stage) {
+	cairo: null
+	,render: function(stage) {
 		this.cairo.identityMatrix();
 		if(stage.__clearBeforeRender) {
 			this.cairo.setSourceRGB(stage.__colorSplit[0],stage.__colorSplit[1],stage.__colorSplit[2]);
@@ -19294,62 +20221,39 @@ openfl__$internal_renderer_canvas_CanvasGraphics.hitTest = function(graphics,x,y
 			++_g;
 			switch(type[1]) {
 			case 3:
-				var c;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.CUBIC_CURVE_TO;
-				c = data;
-				openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.cubicCurveTo(c.buffer.f[c.fPos],c.buffer.f[c.fPos + 1],c.buffer.f[c.fPos + 2],c.buffer.f[c.fPos + 3],c.buffer.f[c.fPos + 4],c.buffer.f[c.fPos + 5]);
-				openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.cubicCurveTo(c.buffer.f[c.fPos],c.buffer.f[c.fPos + 1],c.buffer.f[c.fPos + 2],c.buffer.f[c.fPos + 3],c.buffer.f[c.fPos + 4],c.buffer.f[c.fPos + 5]);
+				var c = data.readCubicCurveTo();
+				openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.cubicCurveTo(openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlX1(c),openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlY1(c),openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlX2(c),openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlY2(c),openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_anchorX(c),openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_anchorY(c));
+				openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.cubicCurveTo(openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlX1(c),openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlY1(c),openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlX2(c),openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlY2(c),openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_anchorX(c),openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_anchorY(c));
 				break;
 			case 4:
-				var c1;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.CURVE_TO;
-				c1 = data;
-				openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.curveTo(c1.buffer.f[c1.fPos],c1.buffer.f[c1.fPos + 1],c1.buffer.f[c1.fPos + 2],c1.buffer.f[c1.fPos + 3]);
-				openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.curveTo(c1.buffer.f[c1.fPos],c1.buffer.f[c1.fPos + 1],c1.buffer.f[c1.fPos + 2],c1.buffer.f[c1.fPos + 3]);
+				var c1 = data.readCurveTo();
+				openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.curveTo(openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_controlX(c1),openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_controlY(c1),openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_anchorX(c1),openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_anchorY(c1));
+				openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.curveTo(openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_controlX(c1),openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_controlY(c1),openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_anchorX(c1),openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_anchorY(c1));
 				break;
 			case 16:
-				var c2;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.LINE_TO;
-				c2 = data;
-				openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.lineTo(c2.buffer.f[c2.fPos],c2.buffer.f[c2.fPos + 1]);
-				openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.lineTo(c2.buffer.f[c2.fPos],c2.buffer.f[c2.fPos + 1]);
+				var c2 = data.readLineTo();
+				openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.lineTo(openfl__$internal_renderer__$DrawCommandReader_LineToView_$Impl_$.get_x(c2),openfl__$internal_renderer__$DrawCommandReader_LineToView_$Impl_$.get_y(c2));
+				openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.lineTo(openfl__$internal_renderer__$DrawCommandReader_LineToView_$Impl_$.get_x(c2),openfl__$internal_renderer__$DrawCommandReader_LineToView_$Impl_$.get_y(c2));
 				break;
 			case 17:
-				var c3;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.MOVE_TO;
-				c3 = data;
-				openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.moveTo(c3.buffer.f[c3.fPos],c3.buffer.f[c3.fPos + 1]);
-				openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.moveTo(c3.buffer.f[c3.fPos],c3.buffer.f[c3.fPos + 1]);
+				var c3 = data.readMoveTo();
+				openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.moveTo(openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$.get_x(c3),openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$.get_y(c3));
+				openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.moveTo(openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$.get_x(c3),openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$.get_y(c3));
 				break;
 			case 14:
-				var c4;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.LINE_GRADIENT_STYLE;
-				c4 = data;
-				openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.lineGradientStyle(c4.buffer.o[c4.oPos],c4.buffer.ii[c4.iiPos],c4.buffer.ff[c4.ffPos],c4.buffer.ii[c4.iiPos + 1],c4.buffer.o[c4.oPos + 1],c4.buffer.o[c4.oPos + 2],c4.buffer.o[c4.oPos + 3],c4.buffer.f[c4.fPos]);
+				var c4 = data.readLineGradientStyle();
+				openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.lineGradientStyle(openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_type(c4),openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_colors(c4),openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_alphas(c4),openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_ratios(c4),openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_matrix(c4),openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_spreadMethod(c4),openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_interpolationMethod(c4),openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_focalPointRatio(c4));
 				break;
 			case 13:
-				var c5;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.LINE_BITMAP_STYLE;
-				c5 = data;
-				openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.lineBitmapStyle(c5.buffer.o[c5.oPos],c5.buffer.o[c5.oPos + 1],c5.buffer.b[c5.bPos],c5.buffer.b[c5.bPos + 1]);
+				var c5 = data.readLineBitmapStyle();
+				openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.lineBitmapStyle(openfl__$internal_renderer__$DrawCommandReader_LineBitmapStyleView_$Impl_$.get_bitmap(c5),openfl__$internal_renderer__$DrawCommandReader_LineBitmapStyleView_$Impl_$.get_matrix(c5),openfl__$internal_renderer__$DrawCommandReader_LineBitmapStyleView_$Impl_$.get_repeat(c5),openfl__$internal_renderer__$DrawCommandReader_LineBitmapStyleView_$Impl_$.get_smooth(c5));
 				break;
 			case 15:
-				var c6;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.LINE_STYLE;
-				c6 = data;
-				openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.lineStyle(c6.buffer.o[c6.oPos],c6.buffer.i[c6.iPos],1,c6.buffer.b[c6.bPos],c6.buffer.o[c6.oPos + 1],c6.buffer.o[c6.oPos + 2],c6.buffer.o[c6.oPos + 3],c6.buffer.f[c6.fPos + 1]);
+				var c6 = data.readLineStyle();
+				openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.lineStyle(openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_thickness(c6),openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_color(c6),1,openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_pixelHinting(c6),openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_scaleMode(c6),openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_caps(c6),openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_joints(c6),openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_miterLimit(c6));
 				break;
 			case 12:
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.END_FILL;
-				data;
+				data.readEndFill();
 				openfl__$internal_renderer_canvas_CanvasGraphics.endFill();
 				openfl__$internal_renderer_canvas_CanvasGraphics.endStroke();
 				if(openfl__$internal_renderer_canvas_CanvasGraphics.hasFill && openfl__$internal_renderer_canvas_CanvasGraphics.context.isPointInPath(x,y)) {
@@ -19375,63 +20279,41 @@ openfl__$internal_renderer_canvas_CanvasGraphics.hitTest = function(graphics,x,y
 					return true;
 				}
 				if(type == openfl__$internal_renderer_DrawCommandType.BEGIN_BITMAP_FILL) {
-					var c7;
-					data.advance();
-					data.prev = openfl__$internal_renderer_DrawCommandType.BEGIN_BITMAP_FILL;
-					c7 = data;
-					openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.beginBitmapFill(c7.buffer.o[c7.oPos],c7.buffer.o[c7.oPos + 1],c7.buffer.b[c7.bPos],c7.buffer.b[c7.bPos + 1]);
-					openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.beginBitmapFill(c7.buffer.o[c7.oPos],c7.buffer.o[c7.oPos + 1],c7.buffer.b[c7.bPos],c7.buffer.b[c7.bPos + 1]);
+					var c7 = data.readBeginBitmapFill();
+					openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.beginBitmapFill(openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_bitmap(c7),openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_matrix(c7),openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_repeat(c7),openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_smooth(c7));
+					openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.beginBitmapFill(openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_bitmap(c7),openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_matrix(c7),openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_repeat(c7),openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_smooth(c7));
 				} else if(type == openfl__$internal_renderer_DrawCommandType.BEGIN_GRADIENT_FILL) {
-					var c8;
-					data.advance();
-					data.prev = openfl__$internal_renderer_DrawCommandType.BEGIN_GRADIENT_FILL;
-					c8 = data;
-					openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.beginGradientFill(c8.buffer.o[c8.oPos],c8.buffer.ii[c8.iiPos],c8.buffer.ff[c8.ffPos],c8.buffer.ii[c8.iiPos + 1],c8.buffer.o[c8.oPos + 1],c8.buffer.o[c8.oPos + 2],c8.buffer.o[c8.oPos + 3],c8.buffer.f[c8.fPos]);
-					openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.beginGradientFill(c8.buffer.o[c8.oPos],c8.buffer.ii[c8.iiPos],c8.buffer.ff[c8.ffPos],c8.buffer.ii[c8.iiPos + 1],c8.buffer.o[c8.oPos + 1],c8.buffer.o[c8.oPos + 2],c8.buffer.o[c8.oPos + 3],c8.buffer.f[c8.fPos]);
+					var c8 = data.readBeginGradientFill();
+					openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.beginGradientFill(openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_type(c8),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_colors(c8),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_alphas(c8),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_ratios(c8),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_matrix(c8),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_spreadMethod(c8),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_interpolationMethod(c8),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_focalPointRatio(c8));
+					openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.beginGradientFill(openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_type(c8),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_colors(c8),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_alphas(c8),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_ratios(c8),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_matrix(c8),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_spreadMethod(c8),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_interpolationMethod(c8),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_focalPointRatio(c8));
 				} else {
-					var c9;
-					data.advance();
-					data.prev = openfl__$internal_renderer_DrawCommandType.BEGIN_FILL;
-					c9 = data;
-					openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.beginFill(c9.buffer.i[c9.iPos],1);
-					openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.beginFill(c9.buffer.i[c9.iPos],1);
+					var c9 = data.readBeginFill();
+					openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.beginFill(openfl__$internal_renderer__$DrawCommandReader_BeginFillView_$Impl_$.get_color(c9),1);
+					openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.beginFill(openfl__$internal_renderer__$DrawCommandReader_BeginFillView_$Impl_$.get_color(c9),1);
 				}
 				break;
 			case 5:
-				var c10;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_CIRCLE;
-				c10 = data;
-				openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.drawCircle(c10.buffer.f[c10.fPos],c10.buffer.f[c10.fPos + 1],c10.buffer.f[c10.fPos + 2]);
-				openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.drawCircle(c10.buffer.f[c10.fPos],c10.buffer.f[c10.fPos + 1],c10.buffer.f[c10.fPos + 2]);
+				var c10 = data.readDrawCircle();
+				openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.drawCircle(openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_x(c10),openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_y(c10),openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_radius(c10));
+				openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.drawCircle(openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_x(c10),openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_y(c10),openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_radius(c10));
 				break;
 			case 6:
-				var c11;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_ELLIPSE;
-				c11 = data;
-				openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.drawEllipse(c11.buffer.f[c11.fPos],c11.buffer.f[c11.fPos + 1],c11.buffer.f[c11.fPos + 2],c11.buffer.f[c11.fPos + 3]);
-				openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.drawEllipse(c11.buffer.f[c11.fPos],c11.buffer.f[c11.fPos + 1],c11.buffer.f[c11.fPos + 2],c11.buffer.f[c11.fPos + 3]);
+				var c11 = data.readDrawEllipse();
+				openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.drawEllipse(openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_x(c11),openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_y(c11),openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_width(c11),openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_height(c11));
+				openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.drawEllipse(openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_x(c11),openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_y(c11),openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_width(c11),openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_height(c11));
 				break;
 			case 8:
-				var c12;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_RECT;
-				c12 = data;
-				openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.drawRect(c12.buffer.f[c12.fPos],c12.buffer.f[c12.fPos + 1],c12.buffer.f[c12.fPos + 2],c12.buffer.f[c12.fPos + 3]);
-				openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.drawRect(c12.buffer.f[c12.fPos],c12.buffer.f[c12.fPos + 1],c12.buffer.f[c12.fPos + 2],c12.buffer.f[c12.fPos + 3]);
+				var c12 = data.readDrawRect();
+				openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.drawRect(openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_x(c12),openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_y(c12),openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_width(c12),openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_height(c12));
+				openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.drawRect(openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_x(c12),openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_y(c12),openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_width(c12),openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_height(c12));
 				break;
 			case 9:
-				var c13;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_ROUND_RECT;
-				c13 = data;
-				openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.drawRoundRect(c13.buffer.f[c13.fPos],c13.buffer.f[c13.fPos + 1],c13.buffer.f[c13.fPos + 2],c13.buffer.f[c13.fPos + 3],c13.buffer.f[c13.fPos + 4],c13.buffer.o[c13.oPos]);
-				openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.drawRoundRect(c13.buffer.f[c13.fPos],c13.buffer.f[c13.fPos + 1],c13.buffer.f[c13.fPos + 2],c13.buffer.f[c13.fPos + 3],c13.buffer.f[c13.fPos + 4],c13.buffer.o[c13.oPos]);
+				var c13 = data.readDrawRoundRect();
+				openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.drawRoundRect(openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_x(c13),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_y(c13),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_width(c13),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_height(c13),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_ellipseWidth(c13),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_ellipseHeight(c13));
+				openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.drawRoundRect(openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_x(c13),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_y(c13),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_width(c13),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_height(c13),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_ellipseWidth(c13),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_ellipseHeight(c13));
 				break;
 			default:
-				data.advance();
-				data.prev = type;
+				data.skip(type);
 			}
 		}
 		if(openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.get_length() > 0) openfl__$internal_renderer_canvas_CanvasGraphics.endFill();
@@ -19506,36 +20388,24 @@ openfl__$internal_renderer_canvas_CanvasGraphics.playCommands = function(command
 		++_g;
 		switch(type[1]) {
 		case 3:
-			var c;
-			data.advance();
-			data.prev = openfl__$internal_renderer_DrawCommandType.CUBIC_CURVE_TO;
-			c = data;
-			openfl__$internal_renderer_canvas_CanvasGraphics.context.bezierCurveTo(c.buffer.f[c.fPos] - offsetX,c.buffer.f[c.fPos + 1] - offsetY,c.buffer.f[c.fPos + 2] - offsetX,c.buffer.f[c.fPos + 3] - offsetY,c.buffer.f[c.fPos + 4] - offsetX,c.buffer.f[c.fPos + 5] - offsetY);
+			var c = data.readCubicCurveTo();
+			openfl__$internal_renderer_canvas_CanvasGraphics.context.bezierCurveTo(openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlX1(c) - offsetX,openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlY1(c) - offsetY,openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlX2(c) - offsetX,openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlY2(c) - offsetY,openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_anchorX(c) - offsetX,openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_anchorY(c) - offsetY);
 			break;
 		case 4:
-			var c1;
-			data.advance();
-			data.prev = openfl__$internal_renderer_DrawCommandType.CURVE_TO;
-			c1 = data;
-			openfl__$internal_renderer_canvas_CanvasGraphics.context.quadraticCurveTo(c1.buffer.f[c1.fPos] - offsetX,c1.buffer.f[c1.fPos + 1] - offsetY,c1.buffer.f[c1.fPos + 2] - offsetX,c1.buffer.f[c1.fPos + 3] - offsetY);
+			var c1 = data.readCurveTo();
+			openfl__$internal_renderer_canvas_CanvasGraphics.context.quadraticCurveTo(openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_controlX(c1) - offsetX,openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_controlY(c1) - offsetY,openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_anchorX(c1) - offsetX,openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_anchorY(c1) - offsetY);
 			break;
 		case 5:
-			var c2;
-			data.advance();
-			data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_CIRCLE;
-			c2 = data;
-			openfl__$internal_renderer_canvas_CanvasGraphics.context.moveTo(c2.buffer.f[c2.fPos] - offsetX + c2.buffer.f[c2.fPos + 2],c2.buffer.f[c2.fPos + 1] - offsetY);
-			openfl__$internal_renderer_canvas_CanvasGraphics.context.arc(c2.buffer.f[c2.fPos] - offsetX,c2.buffer.f[c2.fPos + 1] - offsetY,c2.buffer.f[c2.fPos + 2],0,Math.PI * 2,true);
+			var c2 = data.readDrawCircle();
+			openfl__$internal_renderer_canvas_CanvasGraphics.context.moveTo(openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_x(c2) - offsetX + openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_radius(c2),openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_y(c2) - offsetY);
+			openfl__$internal_renderer_canvas_CanvasGraphics.context.arc(openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_x(c2) - offsetX,openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_y(c2) - offsetY,openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_radius(c2),0,Math.PI * 2,true);
 			break;
 		case 6:
-			var c3;
-			data.advance();
-			data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_ELLIPSE;
-			c3 = data;
-			var x = c3.buffer.f[c3.fPos];
-			var y = c3.buffer.f[c3.fPos + 1];
-			var width = c3.buffer.f[c3.fPos + 2];
-			var height = c3.buffer.f[c3.fPos + 3];
+			var c3 = data.readDrawEllipse();
+			var x = openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_x(c3);
+			var y = openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_y(c3);
+			var width = openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_width(c3);
+			var height = openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_height(c3);
 			x -= offsetX;
 			y -= offsetY;
 			var kappa = .5522848;
@@ -19552,97 +20422,76 @@ openfl__$internal_renderer_canvas_CanvasGraphics.playCommands = function(command
 			openfl__$internal_renderer_canvas_CanvasGraphics.context.bezierCurveTo(xm - ox,ye,x,ym + oy,x,ym);
 			break;
 		case 9:
-			var c4;
-			data.advance();
-			data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_ROUND_RECT;
-			c4 = data;
-			openfl__$internal_renderer_canvas_CanvasGraphics.drawRoundRect(c4.buffer.f[c4.fPos] - offsetX,c4.buffer.f[c4.fPos + 1] - offsetY,c4.buffer.f[c4.fPos + 2],c4.buffer.f[c4.fPos + 3],c4.buffer.f[c4.fPos + 4],c4.buffer.o[c4.oPos]);
+			var c4 = data.readDrawRoundRect();
+			openfl__$internal_renderer_canvas_CanvasGraphics.drawRoundRect(openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_x(c4) - offsetX,openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_y(c4) - offsetY,openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_width(c4),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_height(c4),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_ellipseWidth(c4),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_ellipseHeight(c4));
 			break;
 		case 16:
-			var c5;
-			data.advance();
-			data.prev = openfl__$internal_renderer_DrawCommandType.LINE_TO;
-			c5 = data;
-			openfl__$internal_renderer_canvas_CanvasGraphics.context.lineTo(c5.buffer.f[c5.fPos] - offsetX,c5.buffer.f[c5.fPos + 1] - offsetY);
-			positionX = c5.buffer.f[c5.fPos];
-			positionY = c5.buffer.f[c5.fPos + 1];
+			var c5 = data.readLineTo();
+			openfl__$internal_renderer_canvas_CanvasGraphics.context.lineTo(openfl__$internal_renderer__$DrawCommandReader_LineToView_$Impl_$.get_x(c5) - offsetX,openfl__$internal_renderer__$DrawCommandReader_LineToView_$Impl_$.get_y(c5) - offsetY);
+			positionX = openfl__$internal_renderer__$DrawCommandReader_LineToView_$Impl_$.get_x(c5);
+			positionY = openfl__$internal_renderer__$DrawCommandReader_LineToView_$Impl_$.get_y(c5);
 			break;
 		case 17:
-			var c6;
-			data.advance();
-			data.prev = openfl__$internal_renderer_DrawCommandType.MOVE_TO;
-			c6 = data;
-			openfl__$internal_renderer_canvas_CanvasGraphics.context.moveTo(c6.buffer.f[c6.fPos] - offsetX,c6.buffer.f[c6.fPos + 1] - offsetY);
-			positionX = c6.buffer.f[c6.fPos];
-			positionY = c6.buffer.f[c6.fPos + 1];
+			var c6 = data.readMoveTo();
+			openfl__$internal_renderer_canvas_CanvasGraphics.context.moveTo(openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$.get_x(c6) - offsetX,openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$.get_y(c6) - offsetY);
+			positionX = openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$.get_x(c6);
+			positionY = openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$.get_y(c6);
 			closeGap = true;
-			startX = c6.buffer.f[c6.fPos];
-			startY = c6.buffer.f[c6.fPos + 1];
+			startX = openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$.get_x(c6);
+			startY = openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$.get_y(c6);
 			break;
 		case 15:
-			var c7;
-			data.advance();
-			data.prev = openfl__$internal_renderer_DrawCommandType.LINE_STYLE;
-			c7 = data;
+			var c7 = data.readLineStyle();
 			if(stroke && openfl__$internal_renderer_canvas_CanvasGraphics.hasStroke) {
 				openfl__$internal_renderer_canvas_CanvasGraphics.context.closePath();
 				if(!openfl__$internal_renderer_canvas_CanvasGraphics.hitTesting) openfl__$internal_renderer_canvas_CanvasGraphics.context.stroke();
 				openfl__$internal_renderer_canvas_CanvasGraphics.context.beginPath();
 			}
 			openfl__$internal_renderer_canvas_CanvasGraphics.context.moveTo(positionX - offsetX,positionY - offsetY);
-			if(c7.buffer.o[c7.oPos] == null) openfl__$internal_renderer_canvas_CanvasGraphics.hasStroke = false; else {
-				if(c7.buffer.o[c7.oPos] > 0) openfl__$internal_renderer_canvas_CanvasGraphics.context.lineWidth = c7.buffer.o[c7.oPos]; else openfl__$internal_renderer_canvas_CanvasGraphics.context.lineWidth = 1;
-				if(c7.buffer.o[c7.oPos + 3] == null) openfl__$internal_renderer_canvas_CanvasGraphics.context.lineJoin = "round"; else openfl__$internal_renderer_canvas_CanvasGraphics.context.lineJoin = openfl_display__$JointStyle_JointStyle_$Impl_$.toString(c7.buffer.o[c7.oPos + 3]).toLowerCase();
-				if(c7.buffer.o[c7.oPos + 2] == null) openfl__$internal_renderer_canvas_CanvasGraphics.context.lineCap = "round"; else {
-					var _g2 = c7.buffer.o[c7.oPos + 2];
+			if(openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_thickness(c7) == null) openfl__$internal_renderer_canvas_CanvasGraphics.hasStroke = false; else {
+				if(openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_thickness(c7) > 0) openfl__$internal_renderer_canvas_CanvasGraphics.context.lineWidth = openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_thickness(c7); else openfl__$internal_renderer_canvas_CanvasGraphics.context.lineWidth = 1;
+				if(openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_joints(c7) == null) openfl__$internal_renderer_canvas_CanvasGraphics.context.lineJoin = "round"; else openfl__$internal_renderer_canvas_CanvasGraphics.context.lineJoin = openfl_display__$JointStyle_JointStyle_$Impl_$.toString(openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_joints(c7)).toLowerCase();
+				if(openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_caps(c7) == null) openfl__$internal_renderer_canvas_CanvasGraphics.context.lineCap = "round"; else {
+					var _g2 = openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_caps(c7);
 					switch(_g2) {
 					case 0:
 						openfl__$internal_renderer_canvas_CanvasGraphics.context.lineCap = "butt";
 						break;
 					default:
-						openfl__$internal_renderer_canvas_CanvasGraphics.context.lineCap = openfl_display__$CapsStyle_CapsStyle_$Impl_$.toString(c7.buffer.o[c7.oPos + 2]).toLowerCase();
+						openfl__$internal_renderer_canvas_CanvasGraphics.context.lineCap = openfl_display__$CapsStyle_CapsStyle_$Impl_$.toString(openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_caps(c7)).toLowerCase();
 					}
 				}
-				openfl__$internal_renderer_canvas_CanvasGraphics.context.miterLimit = c7.buffer.f[c7.fPos + 1];
-				if(c7.buffer.f[c7.fPos] == 1) openfl__$internal_renderer_canvas_CanvasGraphics.context.strokeStyle = "#" + StringTools.hex(c7.buffer.i[c7.iPos] & 16777215,6); else {
-					var r = (c7.buffer.i[c7.iPos] & 16711680) >>> 16;
-					var g = (c7.buffer.i[c7.iPos] & 65280) >>> 8;
-					var b = c7.buffer.i[c7.iPos] & 255;
-					openfl__$internal_renderer_canvas_CanvasGraphics.context.strokeStyle = "rgba(" + r + ", " + g + ", " + b + ", " + c7.buffer.f[c7.fPos] + ")";
+				openfl__$internal_renderer_canvas_CanvasGraphics.context.miterLimit = openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_miterLimit(c7);
+				if(openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_alpha(c7) == 1) openfl__$internal_renderer_canvas_CanvasGraphics.context.strokeStyle = "#" + StringTools.hex(openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_color(c7) & 16777215,6); else {
+					var r = (openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_color(c7) & 16711680) >>> 16;
+					var g = (openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_color(c7) & 65280) >>> 8;
+					var b = openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_color(c7) & 255;
+					openfl__$internal_renderer_canvas_CanvasGraphics.context.strokeStyle = "rgba(" + r + ", " + g + ", " + b + ", " + openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_alpha(c7) + ")";
 				}
 				openfl__$internal_renderer_canvas_CanvasGraphics.hasStroke = true;
 			}
 			break;
 		case 14:
-			var c8;
-			data.advance();
-			data.prev = openfl__$internal_renderer_DrawCommandType.LINE_GRADIENT_STYLE;
-			c8 = data;
+			var c8 = data.readLineGradientStyle();
 			if(stroke && openfl__$internal_renderer_canvas_CanvasGraphics.hasStroke) openfl__$internal_renderer_canvas_CanvasGraphics.closePath();
 			openfl__$internal_renderer_canvas_CanvasGraphics.context.moveTo(positionX - offsetX,positionY - offsetY);
-			openfl__$internal_renderer_canvas_CanvasGraphics.context.strokeStyle = openfl__$internal_renderer_canvas_CanvasGraphics.createGradientPattern(c8.buffer.o[c8.oPos],c8.buffer.ii[c8.iiPos],c8.buffer.ff[c8.ffPos],c8.buffer.ii[c8.iiPos + 1],c8.buffer.o[c8.oPos + 1],c8.buffer.o[c8.oPos + 2],c8.buffer.o[c8.oPos + 3],c8.buffer.f[c8.fPos]);
+			openfl__$internal_renderer_canvas_CanvasGraphics.context.strokeStyle = openfl__$internal_renderer_canvas_CanvasGraphics.createGradientPattern(openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_type(c8),openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_colors(c8),openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_alphas(c8),openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_ratios(c8),openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_matrix(c8),openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_spreadMethod(c8),openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_interpolationMethod(c8),openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_focalPointRatio(c8));
 			openfl__$internal_renderer_canvas_CanvasGraphics.hasStroke = true;
 			break;
 		case 13:
-			var c9;
-			data.advance();
-			data.prev = openfl__$internal_renderer_DrawCommandType.LINE_BITMAP_STYLE;
-			c9 = data;
+			var c9 = data.readLineBitmapStyle();
 			if(stroke && openfl__$internal_renderer_canvas_CanvasGraphics.hasStroke) openfl__$internal_renderer_canvas_CanvasGraphics.closePath();
 			openfl__$internal_renderer_canvas_CanvasGraphics.context.moveTo(positionX - offsetX,positionY - offsetY);
-			openfl__$internal_renderer_canvas_CanvasGraphics.context.strokeStyle = openfl__$internal_renderer_canvas_CanvasGraphics.createBitmapFill(c9.buffer.o[c9.oPos],c9.buffer.b[c9.bPos]);
+			openfl__$internal_renderer_canvas_CanvasGraphics.context.strokeStyle = openfl__$internal_renderer_canvas_CanvasGraphics.createBitmapFill(openfl__$internal_renderer__$DrawCommandReader_LineBitmapStyleView_$Impl_$.get_bitmap(c9),openfl__$internal_renderer__$DrawCommandReader_LineBitmapStyleView_$Impl_$.get_repeat(c9));
 			openfl__$internal_renderer_canvas_CanvasGraphics.hasStroke = true;
 			break;
 		case 0:
-			var c10;
-			data.advance();
-			data.prev = openfl__$internal_renderer_DrawCommandType.BEGIN_BITMAP_FILL;
-			c10 = data;
-			openfl__$internal_renderer_canvas_CanvasGraphics.context.fillStyle = openfl__$internal_renderer_canvas_CanvasGraphics.createBitmapFill(c10.buffer.o[c10.oPos],true);
+			var c10 = data.readBeginBitmapFill();
+			openfl__$internal_renderer_canvas_CanvasGraphics.context.fillStyle = openfl__$internal_renderer_canvas_CanvasGraphics.createBitmapFill(openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_bitmap(c10),true);
 			openfl__$internal_renderer_canvas_CanvasGraphics.hasFill = true;
-			if(c10.buffer.o[c10.oPos + 1] != null) {
-				openfl__$internal_renderer_canvas_CanvasGraphics.pendingMatrix = c10.buffer.o[c10.oPos + 1];
-				openfl__$internal_renderer_canvas_CanvasGraphics.inversePendingMatrix = c10.buffer.o[c10.oPos + 1].clone();
+			if(openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_matrix(c10) != null) {
+				openfl__$internal_renderer_canvas_CanvasGraphics.pendingMatrix = openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_matrix(c10);
+				openfl__$internal_renderer_canvas_CanvasGraphics.inversePendingMatrix = openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_matrix(c10).clone();
 				openfl__$internal_renderer_canvas_CanvasGraphics.inversePendingMatrix.invert();
 			} else {
 				openfl__$internal_renderer_canvas_CanvasGraphics.pendingMatrix = null;
@@ -19650,35 +20499,26 @@ openfl__$internal_renderer_canvas_CanvasGraphics.playCommands = function(command
 			}
 			break;
 		case 1:
-			var c11;
-			data.advance();
-			data.prev = openfl__$internal_renderer_DrawCommandType.BEGIN_FILL;
-			c11 = data;
-			if(c11.buffer.f[c11.fPos] < 0.005) openfl__$internal_renderer_canvas_CanvasGraphics.hasFill = false; else {
-				if(c11.buffer.f[c11.fPos] == 1) openfl__$internal_renderer_canvas_CanvasGraphics.context.fillStyle = "#" + StringTools.hex(c11.buffer.i[c11.iPos],6); else {
-					var r1 = (c11.buffer.i[c11.iPos] & 16711680) >>> 16;
-					var g1 = (c11.buffer.i[c11.iPos] & 65280) >>> 8;
-					var b1 = c11.buffer.i[c11.iPos] & 255;
-					openfl__$internal_renderer_canvas_CanvasGraphics.context.fillStyle = "rgba(" + r1 + ", " + g1 + ", " + b1 + ", " + c11.buffer.f[c11.fPos] + ")";
+			var c11 = data.readBeginFill();
+			if(openfl__$internal_renderer__$DrawCommandReader_BeginFillView_$Impl_$.get_alpha(c11) < 0.005) openfl__$internal_renderer_canvas_CanvasGraphics.hasFill = false; else {
+				if(openfl__$internal_renderer__$DrawCommandReader_BeginFillView_$Impl_$.get_alpha(c11) == 1) openfl__$internal_renderer_canvas_CanvasGraphics.context.fillStyle = "#" + StringTools.hex(openfl__$internal_renderer__$DrawCommandReader_BeginFillView_$Impl_$.get_color(c11),6); else {
+					var r1 = (openfl__$internal_renderer__$DrawCommandReader_BeginFillView_$Impl_$.get_color(c11) & 16711680) >>> 16;
+					var g1 = (openfl__$internal_renderer__$DrawCommandReader_BeginFillView_$Impl_$.get_color(c11) & 65280) >>> 8;
+					var b1 = openfl__$internal_renderer__$DrawCommandReader_BeginFillView_$Impl_$.get_color(c11) & 255;
+					openfl__$internal_renderer_canvas_CanvasGraphics.context.fillStyle = "rgba(" + r1 + ", " + g1 + ", " + b1 + ", " + openfl__$internal_renderer__$DrawCommandReader_BeginFillView_$Impl_$.get_alpha(c11) + ")";
 				}
 				openfl__$internal_renderer_canvas_CanvasGraphics.bitmapFill = null;
 				openfl__$internal_renderer_canvas_CanvasGraphics.hasFill = true;
 			}
 			break;
 		case 2:
-			var c12;
-			data.advance();
-			data.prev = openfl__$internal_renderer_DrawCommandType.BEGIN_GRADIENT_FILL;
-			c12 = data;
-			openfl__$internal_renderer_canvas_CanvasGraphics.context.fillStyle = openfl__$internal_renderer_canvas_CanvasGraphics.createGradientPattern(c12.buffer.o[c12.oPos],c12.buffer.ii[c12.iiPos],c12.buffer.ff[c12.ffPos],c12.buffer.ii[c12.iiPos + 1],c12.buffer.o[c12.oPos + 1],c12.buffer.o[c12.oPos + 2],c12.buffer.o[c12.oPos + 3],c12.buffer.f[c12.fPos]);
+			var c12 = data.readBeginGradientFill();
+			openfl__$internal_renderer_canvas_CanvasGraphics.context.fillStyle = openfl__$internal_renderer_canvas_CanvasGraphics.createGradientPattern(openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_type(c12),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_colors(c12),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_alphas(c12),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_ratios(c12),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_matrix(c12),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_spreadMethod(c12),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_interpolationMethod(c12),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_focalPointRatio(c12));
 			openfl__$internal_renderer_canvas_CanvasGraphics.bitmapFill = null;
 			openfl__$internal_renderer_canvas_CanvasGraphics.hasFill = true;
 			break;
 		case 8:
-			var c13;
-			data.advance();
-			data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_RECT;
-			c13 = data;
+			var c13 = data.readDrawRect();
 			var optimizationUsed = false;
 			if(openfl__$internal_renderer_canvas_CanvasGraphics.bitmapFill != null) {
 				var st = 0;
@@ -19688,29 +20528,28 @@ openfl__$internal_renderer_canvas_CanvasGraphics.playCommands = function(command
 				var canOptimizeMatrix = true;
 				if(openfl__$internal_renderer_canvas_CanvasGraphics.pendingMatrix != null) {
 					if(openfl__$internal_renderer_canvas_CanvasGraphics.pendingMatrix.b != 0 || openfl__$internal_renderer_canvas_CanvasGraphics.pendingMatrix.c != 0) canOptimizeMatrix = false; else {
-						var stl = openfl__$internal_renderer_canvas_CanvasGraphics.inversePendingMatrix.transformPoint(new openfl_geom_Point(c13.buffer.f[c13.fPos],c13.buffer.f[c13.fPos + 1]));
-						var sbr = openfl__$internal_renderer_canvas_CanvasGraphics.inversePendingMatrix.transformPoint(new openfl_geom_Point(c13.buffer.f[c13.fPos] + c13.buffer.f[c13.fPos + 2],c13.buffer.f[c13.fPos + 1] + c13.buffer.f[c13.fPos + 3]));
+						var stl = openfl__$internal_renderer_canvas_CanvasGraphics.inversePendingMatrix.transformPoint(new openfl_geom_Point(openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_x(c13),openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_y(c13)));
+						var sbr = openfl__$internal_renderer_canvas_CanvasGraphics.inversePendingMatrix.transformPoint(new openfl_geom_Point(openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_x(c13) + openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_width(c13),openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_y(c13) + openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_height(c13)));
 						st = stl.y;
 						sl = stl.x;
 						sb = sbr.y;
 						sr = sbr.x;
 					}
 				} else {
-					st = c13.buffer.f[c13.fPos + 1];
-					sl = c13.buffer.f[c13.fPos];
-					sb = c13.buffer.f[c13.fPos + 1] + c13.buffer.f[c13.fPos + 3];
-					sr = c13.buffer.f[c13.fPos] + c13.buffer.f[c13.fPos + 2];
+					st = openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_y(c13);
+					sl = openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_x(c13);
+					sb = openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_y(c13) + openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_height(c13);
+					sr = openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_x(c13) + openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_width(c13);
 				}
 				if(canOptimizeMatrix && st >= 0 && sl >= 0 && sr <= openfl__$internal_renderer_canvas_CanvasGraphics.bitmapFill.width && sb <= openfl__$internal_renderer_canvas_CanvasGraphics.bitmapFill.height) {
 					optimizationUsed = true;
-					if(!openfl__$internal_renderer_canvas_CanvasGraphics.hitTesting) openfl__$internal_renderer_canvas_CanvasGraphics.context.drawImage(openfl__$internal_renderer_canvas_CanvasGraphics.bitmapFill.image.get_src(),sl,st,sr - sl,sb - st,c13.buffer.f[c13.fPos] - offsetX,c13.buffer.f[c13.fPos + 1] - offsetY,c13.buffer.f[c13.fPos + 2],c13.buffer.f[c13.fPos + 3]);
+					if(!openfl__$internal_renderer_canvas_CanvasGraphics.hitTesting) openfl__$internal_renderer_canvas_CanvasGraphics.context.drawImage(openfl__$internal_renderer_canvas_CanvasGraphics.bitmapFill.image.get_src(),sl,st,sr - sl,sb - st,openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_x(c13) - offsetX,openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_y(c13) - offsetY,openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_width(c13),openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_height(c13));
 				}
 			}
-			if(!optimizationUsed) openfl__$internal_renderer_canvas_CanvasGraphics.context.rect(c13.buffer.f[c13.fPos] - offsetX,c13.buffer.f[c13.fPos + 1] - offsetY,c13.buffer.f[c13.fPos + 2],c13.buffer.f[c13.fPos + 3]);
+			if(!optimizationUsed) openfl__$internal_renderer_canvas_CanvasGraphics.context.rect(openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_x(c13) - offsetX,openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_y(c13) - offsetY,openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_width(c13),openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_height(c13));
 			break;
 		default:
-			data.advance();
-			data.prev = type;
+			data.skip(type);
 		}
 	}
 	data.destroy();
@@ -19769,135 +20608,88 @@ openfl__$internal_renderer_canvas_CanvasGraphics.render = function(graphics,rend
 					++_g;
 					switch(type[1]) {
 					case 3:
-						var c;
-						data.advance();
-						data.prev = openfl__$internal_renderer_DrawCommandType.CUBIC_CURVE_TO;
-						c = data;
-						openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.cubicCurveTo(c.buffer.f[c.fPos],c.buffer.f[c.fPos + 1],c.buffer.f[c.fPos + 2],c.buffer.f[c.fPos + 3],c.buffer.f[c.fPos + 4],c.buffer.f[c.fPos + 5]);
-						openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.cubicCurveTo(c.buffer.f[c.fPos],c.buffer.f[c.fPos + 1],c.buffer.f[c.fPos + 2],c.buffer.f[c.fPos + 3],c.buffer.f[c.fPos + 4],c.buffer.f[c.fPos + 5]);
+						var c = data.readCubicCurveTo();
+						openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.cubicCurveTo(openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlX1(c),openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlY1(c),openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlX2(c),openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlY2(c),openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_anchorX(c),openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_anchorY(c));
+						openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.cubicCurveTo(openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlX1(c),openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlY1(c),openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlX2(c),openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlY2(c),openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_anchorX(c),openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_anchorY(c));
 						break;
 					case 4:
-						var c1;
-						data.advance();
-						data.prev = openfl__$internal_renderer_DrawCommandType.CURVE_TO;
-						c1 = data;
-						openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.curveTo(c1.buffer.f[c1.fPos],c1.buffer.f[c1.fPos + 1],c1.buffer.f[c1.fPos + 2],c1.buffer.f[c1.fPos + 3]);
-						openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.curveTo(c1.buffer.f[c1.fPos],c1.buffer.f[c1.fPos + 1],c1.buffer.f[c1.fPos + 2],c1.buffer.f[c1.fPos + 3]);
+						var c1 = data.readCurveTo();
+						openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.curveTo(openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_controlX(c1),openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_controlY(c1),openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_anchorX(c1),openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_anchorY(c1));
+						openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.curveTo(openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_controlX(c1),openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_controlY(c1),openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_anchorX(c1),openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_anchorY(c1));
 						break;
 					case 16:
-						var c2;
-						data.advance();
-						data.prev = openfl__$internal_renderer_DrawCommandType.LINE_TO;
-						c2 = data;
-						openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.lineTo(c2.buffer.f[c2.fPos],c2.buffer.f[c2.fPos + 1]);
-						openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.lineTo(c2.buffer.f[c2.fPos],c2.buffer.f[c2.fPos + 1]);
+						var c2 = data.readLineTo();
+						openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.lineTo(openfl__$internal_renderer__$DrawCommandReader_LineToView_$Impl_$.get_x(c2),openfl__$internal_renderer__$DrawCommandReader_LineToView_$Impl_$.get_y(c2));
+						openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.lineTo(openfl__$internal_renderer__$DrawCommandReader_LineToView_$Impl_$.get_x(c2),openfl__$internal_renderer__$DrawCommandReader_LineToView_$Impl_$.get_y(c2));
 						break;
 					case 17:
-						var c3;
-						data.advance();
-						data.prev = openfl__$internal_renderer_DrawCommandType.MOVE_TO;
-						c3 = data;
-						openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.moveTo(c3.buffer.f[c3.fPos],c3.buffer.f[c3.fPos + 1]);
-						openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.moveTo(c3.buffer.f[c3.fPos],c3.buffer.f[c3.fPos + 1]);
+						var c3 = data.readMoveTo();
+						openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.moveTo(openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$.get_x(c3),openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$.get_y(c3));
+						openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.moveTo(openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$.get_x(c3),openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$.get_y(c3));
 						break;
 					case 12:
-						data.advance();
-						data.prev = openfl__$internal_renderer_DrawCommandType.END_FILL;
-						data;
+						data.readEndFill();
 						openfl__$internal_renderer_canvas_CanvasGraphics.endFill();
 						openfl__$internal_renderer_canvas_CanvasGraphics.endStroke();
 						openfl__$internal_renderer_canvas_CanvasGraphics.hasFill = false;
 						openfl__$internal_renderer_canvas_CanvasGraphics.bitmapFill = null;
 						break;
 					case 15:
-						var c4;
-						data.advance();
-						data.prev = openfl__$internal_renderer_DrawCommandType.LINE_STYLE;
-						c4 = data;
-						openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.lineStyle(c4.buffer.o[c4.oPos],c4.buffer.i[c4.iPos],c4.buffer.f[c4.fPos],c4.buffer.b[c4.bPos],c4.buffer.o[c4.oPos + 1],c4.buffer.o[c4.oPos + 2],c4.buffer.o[c4.oPos + 3],c4.buffer.f[c4.fPos + 1]);
+						var c4 = data.readLineStyle();
+						openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.lineStyle(openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_thickness(c4),openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_color(c4),openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_alpha(c4),openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_pixelHinting(c4),openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_scaleMode(c4),openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_caps(c4),openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_joints(c4),openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_miterLimit(c4));
 						break;
 					case 14:
-						var c5;
-						data.advance();
-						data.prev = openfl__$internal_renderer_DrawCommandType.LINE_GRADIENT_STYLE;
-						c5 = data;
-						openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.lineGradientStyle(c5.buffer.o[c5.oPos],c5.buffer.ii[c5.iiPos],c5.buffer.ff[c5.ffPos],c5.buffer.ii[c5.iiPos + 1],c5.buffer.o[c5.oPos + 1],c5.buffer.o[c5.oPos + 2],c5.buffer.o[c5.oPos + 3],c5.buffer.f[c5.fPos]);
+						var c5 = data.readLineGradientStyle();
+						openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.lineGradientStyle(openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_type(c5),openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_colors(c5),openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_alphas(c5),openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_ratios(c5),openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_matrix(c5),openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_spreadMethod(c5),openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_interpolationMethod(c5),openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_focalPointRatio(c5));
 						break;
 					case 13:
-						var c6;
-						data.advance();
-						data.prev = openfl__$internal_renderer_DrawCommandType.LINE_BITMAP_STYLE;
-						c6 = data;
-						openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.lineBitmapStyle(c6.buffer.o[c6.oPos],c6.buffer.o[c6.oPos + 1],c6.buffer.b[c6.bPos],c6.buffer.b[c6.bPos + 1]);
+						var c6 = data.readLineBitmapStyle();
+						openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.lineBitmapStyle(openfl__$internal_renderer__$DrawCommandReader_LineBitmapStyleView_$Impl_$.get_bitmap(c6),openfl__$internal_renderer__$DrawCommandReader_LineBitmapStyleView_$Impl_$.get_matrix(c6),openfl__$internal_renderer__$DrawCommandReader_LineBitmapStyleView_$Impl_$.get_repeat(c6),openfl__$internal_renderer__$DrawCommandReader_LineBitmapStyleView_$Impl_$.get_smooth(c6));
 						break;
 					case 0:case 1:case 2:
 						openfl__$internal_renderer_canvas_CanvasGraphics.endFill();
 						openfl__$internal_renderer_canvas_CanvasGraphics.endStroke();
 						if(type == openfl__$internal_renderer_DrawCommandType.BEGIN_BITMAP_FILL) {
-							var c7;
-							data.advance();
-							data.prev = openfl__$internal_renderer_DrawCommandType.BEGIN_BITMAP_FILL;
-							c7 = data;
-							openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.beginBitmapFill(c7.buffer.o[c7.oPos],c7.buffer.o[c7.oPos + 1],c7.buffer.b[c7.bPos],c7.buffer.b[c7.bPos + 1]);
-							openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.beginBitmapFill(c7.buffer.o[c7.oPos],c7.buffer.o[c7.oPos + 1],c7.buffer.b[c7.bPos],c7.buffer.b[c7.bPos + 1]);
+							var c7 = data.readBeginBitmapFill();
+							openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.beginBitmapFill(openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_bitmap(c7),openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_matrix(c7),openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_repeat(c7),openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_smooth(c7));
+							openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.beginBitmapFill(openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_bitmap(c7),openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_matrix(c7),openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_repeat(c7),openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_smooth(c7));
 						} else if(type == openfl__$internal_renderer_DrawCommandType.BEGIN_GRADIENT_FILL) {
-							var c8;
-							data.advance();
-							data.prev = openfl__$internal_renderer_DrawCommandType.BEGIN_GRADIENT_FILL;
-							c8 = data;
-							openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.beginGradientFill(c8.buffer.o[c8.oPos],c8.buffer.ii[c8.iiPos],c8.buffer.ff[c8.ffPos],c8.buffer.ii[c8.iiPos + 1],c8.buffer.o[c8.oPos + 1],c8.buffer.o[c8.oPos + 2],c8.buffer.o[c8.oPos + 3],c8.buffer.f[c8.fPos]);
-							openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.beginGradientFill(c8.buffer.o[c8.oPos],c8.buffer.ii[c8.iiPos],c8.buffer.ff[c8.ffPos],c8.buffer.ii[c8.iiPos + 1],c8.buffer.o[c8.oPos + 1],c8.buffer.o[c8.oPos + 2],c8.buffer.o[c8.oPos + 3],c8.buffer.f[c8.fPos]);
+							var c8 = data.readBeginGradientFill();
+							openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.beginGradientFill(openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_type(c8),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_colors(c8),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_alphas(c8),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_ratios(c8),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_matrix(c8),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_spreadMethod(c8),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_interpolationMethod(c8),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_focalPointRatio(c8));
+							openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.beginGradientFill(openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_type(c8),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_colors(c8),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_alphas(c8),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_ratios(c8),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_matrix(c8),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_spreadMethod(c8),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_interpolationMethod(c8),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_focalPointRatio(c8));
 						} else {
-							var c9;
-							data.advance();
-							data.prev = openfl__$internal_renderer_DrawCommandType.BEGIN_FILL;
-							c9 = data;
-							openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.beginFill(c9.buffer.i[c9.iPos],c9.buffer.f[c9.fPos]);
-							openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.beginFill(c9.buffer.i[c9.iPos],c9.buffer.f[c9.fPos]);
+							var c9 = data.readBeginFill();
+							openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.beginFill(openfl__$internal_renderer__$DrawCommandReader_BeginFillView_$Impl_$.get_color(c9),openfl__$internal_renderer__$DrawCommandReader_BeginFillView_$Impl_$.get_alpha(c9));
+							openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.beginFill(openfl__$internal_renderer__$DrawCommandReader_BeginFillView_$Impl_$.get_color(c9),openfl__$internal_renderer__$DrawCommandReader_BeginFillView_$Impl_$.get_alpha(c9));
 						}
 						break;
 					case 5:
-						var c10;
-						data.advance();
-						data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_CIRCLE;
-						c10 = data;
-						openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.drawCircle(c10.buffer.f[c10.fPos],c10.buffer.f[c10.fPos + 1],c10.buffer.f[c10.fPos + 2]);
-						openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.drawCircle(c10.buffer.f[c10.fPos],c10.buffer.f[c10.fPos + 1],c10.buffer.f[c10.fPos + 2]);
+						var c10 = data.readDrawCircle();
+						openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.drawCircle(openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_x(c10),openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_y(c10),openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_radius(c10));
+						openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.drawCircle(openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_x(c10),openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_y(c10),openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_radius(c10));
 						break;
 					case 6:
-						var c11;
-						data.advance();
-						data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_ELLIPSE;
-						c11 = data;
-						openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.drawEllipse(c11.buffer.f[c11.fPos],c11.buffer.f[c11.fPos + 1],c11.buffer.f[c11.fPos + 2],c11.buffer.f[c11.fPos + 3]);
-						openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.drawEllipse(c11.buffer.f[c11.fPos],c11.buffer.f[c11.fPos + 1],c11.buffer.f[c11.fPos + 2],c11.buffer.f[c11.fPos + 3]);
+						var c11 = data.readDrawEllipse();
+						openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.drawEllipse(openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_x(c11),openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_y(c11),openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_width(c11),openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_height(c11));
+						openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.drawEllipse(openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_x(c11),openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_y(c11),openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_width(c11),openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_height(c11));
 						break;
 					case 8:
-						var c12;
-						data.advance();
-						data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_RECT;
-						c12 = data;
-						openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.drawRect(c12.buffer.f[c12.fPos],c12.buffer.f[c12.fPos + 1],c12.buffer.f[c12.fPos + 2],c12.buffer.f[c12.fPos + 3]);
-						openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.drawRect(c12.buffer.f[c12.fPos],c12.buffer.f[c12.fPos + 1],c12.buffer.f[c12.fPos + 2],c12.buffer.f[c12.fPos + 3]);
+						var c12 = data.readDrawRect();
+						openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.drawRect(openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_x(c12),openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_y(c12),openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_width(c12),openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_height(c12));
+						openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.drawRect(openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_x(c12),openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_y(c12),openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_width(c12),openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_height(c12));
 						break;
 					case 9:
-						var c13;
-						data.advance();
-						data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_ROUND_RECT;
-						c13 = data;
-						openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.drawRoundRect(c13.buffer.f[c13.fPos],c13.buffer.f[c13.fPos + 1],c13.buffer.f[c13.fPos + 2],c13.buffer.f[c13.fPos + 3],c13.buffer.f[c13.fPos + 4],c13.buffer.o[c13.oPos]);
-						openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.drawRoundRect(c13.buffer.f[c13.fPos],c13.buffer.f[c13.fPos + 1],c13.buffer.f[c13.fPos + 2],c13.buffer.f[c13.fPos + 3],c13.buffer.f[c13.fPos + 4],c13.buffer.o[c13.oPos]);
+						var c13 = data.readDrawRoundRect();
+						openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.drawRoundRect(openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_x(c13),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_y(c13),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_width(c13),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_height(c13),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_ellipseWidth(c13),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_ellipseHeight(c13));
+						openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.drawRoundRect(openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_x(c13),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_y(c13),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_width(c13),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_height(c13),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_ellipseWidth(c13),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_ellipseHeight(c13));
 						break;
 					case 11:
 						openfl__$internal_renderer_canvas_CanvasGraphics.endFill();
 						openfl__$internal_renderer_canvas_CanvasGraphics.endStroke();
-						var c14;
-						data.advance();
-						data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_TRIANGLES;
-						c14 = data;
-						var v = c14.buffer.o[c14.oPos];
-						var ind = c14.buffer.o[c14.oPos + 1];
-						var uvt = c14.buffer.o[c14.oPos + 2];
+						var c14 = data.readDrawTriangles();
+						var v = openfl__$internal_renderer__$DrawCommandReader_DrawTrianglesView_$Impl_$.get_vertices(c14);
+						var ind = openfl__$internal_renderer__$DrawCommandReader_DrawTrianglesView_$Impl_$.get_indices(c14);
+						var uvt = openfl__$internal_renderer__$DrawCommandReader_DrawTrianglesView_$Impl_$.get_uvtData(c14);
 						var pattern = null;
 						var colorFill = openfl__$internal_renderer_canvas_CanvasGraphics.bitmapFill == null;
 						if(colorFill && uvt != null) throw "__break__";
@@ -19995,7 +20787,7 @@ openfl__$internal_renderer_canvas_CanvasGraphics.render = function(graphics,rend
 							y2 = v.data[iby];
 							x3 = v.data[icx];
 							y3 = v.data[icy];
-							var _g21 = c14.buffer.o[c14.oPos + 3];
+							var _g21 = openfl__$internal_renderer__$DrawCommandReader_DrawTrianglesView_$Impl_$.get_culling(c14);
 							switch(_g21) {
 							case 2:
 								if(!((x2 - x1) * (y3 - y1) - (y2 - y1) * (x3 - x1) < 0)) {
@@ -20052,20 +20844,17 @@ openfl__$internal_renderer_canvas_CanvasGraphics.render = function(graphics,rend
 						}
 						break;
 					case 10:
-						var c15;
-						data.advance();
-						data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_TILES;
-						c15 = data;
-						var useScale = (c15.buffer.i[c15.iPos] & 1) > 0;
+						var c15 = data.readDrawTiles();
+						var useScale = (openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_flags(c15) & 1) > 0;
 						var offsetX = openfl__$internal_renderer_canvas_CanvasGraphics.bounds.x;
 						var offsetY = openfl__$internal_renderer_canvas_CanvasGraphics.bounds.y;
-						var useRotation = (c15.buffer.i[c15.iPos] & 2) > 0;
-						var useTransform = (c15.buffer.i[c15.iPos] & 16) > 0;
-						var useRGB = (c15.buffer.i[c15.iPos] & 4) > 0;
-						var useAlpha = (c15.buffer.i[c15.iPos] & 8) > 0;
-						var useRect = (c15.buffer.i[c15.iPos] & 32) > 0;
-						var useOrigin = (c15.buffer.i[c15.iPos] & 64) > 0;
-						var useBlendAdd = (c15.buffer.i[c15.iPos] & 65536) > 0;
+						var useRotation = (openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_flags(c15) & 2) > 0;
+						var useTransform = (openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_flags(c15) & 16) > 0;
+						var useRGB = (openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_flags(c15) & 4) > 0;
+						var useAlpha = (openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_flags(c15) & 8) > 0;
+						var useRect = (openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_flags(c15) & 32) > 0;
+						var useOrigin = (openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_flags(c15) & 64) > 0;
+						var useBlendAdd = (openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_flags(c15) & 65536) > 0;
 						if(useTransform) {
 							useScale = false;
 							useRotation = false;
@@ -20097,39 +20886,39 @@ openfl__$internal_renderer_canvas_CanvasGraphics.render = function(graphics,rend
 							alphaIndex = numValues;
 							numValues++;
 						}
-						var totalCount = c15.buffer.ff[c15.ffPos].length;
-						if(c15.buffer.i[c15.iPos + 1] >= 0 && totalCount > c15.buffer.i[c15.iPos + 1]) totalCount = c15.buffer.i[c15.iPos + 1];
+						var totalCount = openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData(c15).length;
+						if(openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_count(c15) >= 0 && totalCount > openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_count(c15)) totalCount = openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_count(c15);
 						var itemCount = totalCount / numValues | 0;
 						var index = 0;
 						var rect = null;
 						var center = null;
 						var previousTileID = -1;
 						var surface;
-						c15.buffer.ts[c15.tsPos].__bitmap.__sync();
-						surface = c15.buffer.ts[c15.tsPos].__bitmap.image.get_src();
+						openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_sheet(c15).__bitmap.__sync();
+						surface = openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_sheet(c15).__bitmap.image.get_src();
 						if(useBlendAdd) openfl__$internal_renderer_canvas_CanvasGraphics.context.globalCompositeOperation = "lighter";
 						while(index < totalCount) {
 							var tileID;
-							if(!useRect) tileID = c15.buffer.ff[c15.ffPos][index + 2] | 0; else tileID = -1;
+							if(!useRect) tileID = Std["int"](openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData(c15)[index + 2]); else tileID = -1;
 							if(!useRect && tileID != previousTileID) {
-								rect = c15.buffer.ts[c15.tsPos].__tileRects[tileID];
-								center = c15.buffer.ts[c15.tsPos].__centerPoints[tileID];
+								rect = openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_sheet(c15).__tileRects[tileID];
+								center = openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_sheet(c15).__centerPoints[tileID];
 								previousTileID = tileID;
 							} else if(useRect) {
-								rect = c15.buffer.ts[c15.tsPos].__rectTile;
-								rect.setTo(c15.buffer.ff[c15.ffPos][index + 2],c15.buffer.ff[c15.ffPos][index + 3],c15.buffer.ff[c15.ffPos][index + 4],c15.buffer.ff[c15.ffPos][index + 5]);
-								center = c15.buffer.ts[c15.tsPos].__point;
-								if(useOrigin) center.setTo(c15.buffer.ff[c15.ffPos][index + 6],c15.buffer.ff[c15.ffPos][index + 7]); else center.setTo(0,0);
+								rect = openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_sheet(c15).__rectTile;
+								rect.setTo(openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData(c15)[index + 2],openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData(c15)[index + 3],openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData(c15)[index + 4],openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData(c15)[index + 5]);
+								center = openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_sheet(c15).__point;
+								if(useOrigin) center.setTo(openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData(c15)[index + 6],openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData(c15)[index + 7]); else center.setTo(0,0);
 							}
 							if(rect != null && rect.width > 0 && rect.height > 0 && center != null) {
 								openfl__$internal_renderer_canvas_CanvasGraphics.context.save();
-								openfl__$internal_renderer_canvas_CanvasGraphics.context.translate(c15.buffer.ff[c15.ffPos][index] - offsetX,c15.buffer.ff[c15.ffPos][index + 1] - offsetY);
-								if(useRotation) openfl__$internal_renderer_canvas_CanvasGraphics.context.rotate(c15.buffer.ff[c15.ffPos][index + rotationIndex]);
+								openfl__$internal_renderer_canvas_CanvasGraphics.context.translate(openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData(c15)[index] - offsetX,openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData(c15)[index + 1] - offsetY);
+								if(useRotation) openfl__$internal_renderer_canvas_CanvasGraphics.context.rotate(openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData(c15)[index + rotationIndex]);
 								var scale = 1.0;
-								if(useScale) scale = c15.buffer.ff[c15.ffPos][index + scaleIndex];
-								if(useTransform) openfl__$internal_renderer_canvas_CanvasGraphics.context.transform(c15.buffer.ff[c15.ffPos][index + transformIndex],c15.buffer.ff[c15.ffPos][index + transformIndex + 1],c15.buffer.ff[c15.ffPos][index + transformIndex + 2],c15.buffer.ff[c15.ffPos][index + transformIndex + 3],0,0);
-								if(useAlpha) openfl__$internal_renderer_canvas_CanvasGraphics.context.globalAlpha = c15.buffer.ff[c15.ffPos][index + alphaIndex];
-								openfl__$internal_renderer_canvas_CanvasGraphics.context.imageSmoothingEnabled = c15.buffer.b[c15.bPos];
+								if(useScale) scale = openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData(c15)[index + scaleIndex];
+								if(useTransform) openfl__$internal_renderer_canvas_CanvasGraphics.context.transform(openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData(c15)[index + transformIndex],openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData(c15)[index + transformIndex + 1],openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData(c15)[index + transformIndex + 2],openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData(c15)[index + transformIndex + 3],0,0);
+								if(useAlpha) openfl__$internal_renderer_canvas_CanvasGraphics.context.globalAlpha = openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData(c15)[index + alphaIndex];
+								openfl__$internal_renderer_canvas_CanvasGraphics.context.imageSmoothingEnabled = openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_smooth(c15);
 								openfl__$internal_renderer_canvas_CanvasGraphics.context.drawImage(surface,rect.x,rect.y,rect.width,rect.height,-center.x * scale,-center.y * scale,rect.width * scale,rect.height * scale);
 								openfl__$internal_renderer_canvas_CanvasGraphics.context.restore();
 							}
@@ -20138,8 +20927,7 @@ openfl__$internal_renderer_canvas_CanvasGraphics.render = function(graphics,rend
 						if(useBlendAdd) openfl__$internal_renderer_canvas_CanvasGraphics.context.globalCompositeOperation = "source-over";
 						break;
 					default:
-						data.advance();
-						data.prev = type;
+						data.skip(type);
 					}
 				}
 			} catch( e ) { if( e != "__break__" ) throw e; }
@@ -20166,39 +20954,27 @@ openfl__$internal_renderer_canvas_CanvasGraphics.renderMask = function(graphics,
 			++_g;
 			switch(type[1]) {
 			case 3:
-				var c;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.CUBIC_CURVE_TO;
-				c = data;
-				openfl__$internal_renderer_canvas_CanvasGraphics.context.bezierCurveTo(c.buffer.f[c.fPos] - offsetX,c.buffer.f[c.fPos + 1] - offsetY,c.buffer.f[c.fPos + 2] - offsetX,c.buffer.f[c.fPos + 3] - offsetY,c.buffer.f[c.fPos + 4] - offsetX,c.buffer.f[c.fPos + 5] - offsetY);
-				positionX = c.buffer.f[c.fPos + 4];
-				positionY = c.buffer.f[c.fPos + 5];
+				var c = data.readCubicCurveTo();
+				openfl__$internal_renderer_canvas_CanvasGraphics.context.bezierCurveTo(openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlX1(c) - offsetX,openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlY1(c) - offsetY,openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlX2(c) - offsetX,openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlY2(c) - offsetY,openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_anchorX(c) - offsetX,openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_anchorY(c) - offsetY);
+				positionX = openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_anchorX(c);
+				positionY = openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_anchorY(c);
 				break;
 			case 4:
-				var c1;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.CURVE_TO;
-				c1 = data;
-				openfl__$internal_renderer_canvas_CanvasGraphics.context.quadraticCurveTo(c1.buffer.f[c1.fPos] - offsetX,c1.buffer.f[c1.fPos + 1] - offsetY,c1.buffer.f[c1.fPos + 2] - offsetX,c1.buffer.f[c1.fPos + 3] - offsetY);
-				positionX = c1.buffer.f[c1.fPos + 2];
-				positionY = c1.buffer.f[c1.fPos + 3];
+				var c1 = data.readCurveTo();
+				openfl__$internal_renderer_canvas_CanvasGraphics.context.quadraticCurveTo(openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_controlX(c1) - offsetX,openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_controlY(c1) - offsetY,openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_anchorX(c1) - offsetX,openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_anchorY(c1) - offsetY);
+				positionX = openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_anchorX(c1);
+				positionY = openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_anchorY(c1);
 				break;
 			case 5:
-				var c2;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_CIRCLE;
-				c2 = data;
-				openfl__$internal_renderer_canvas_CanvasGraphics.context.arc(c2.buffer.f[c2.fPos] - offsetX,c2.buffer.f[c2.fPos + 1] - offsetY,c2.buffer.f[c2.fPos + 2],0,Math.PI * 2,true);
+				var c2 = data.readDrawCircle();
+				openfl__$internal_renderer_canvas_CanvasGraphics.context.arc(openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_x(c2) - offsetX,openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_y(c2) - offsetY,openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_radius(c2),0,Math.PI * 2,true);
 				break;
 			case 6:
-				var c3;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_ELLIPSE;
-				c3 = data;
-				var x = c3.buffer.f[c3.fPos];
-				var y = c3.buffer.f[c3.fPos + 1];
-				var width = c3.buffer.f[c3.fPos + 2];
-				var height = c3.buffer.f[c3.fPos + 3];
+				var c3 = data.readDrawEllipse();
+				var x = openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_x(c3);
+				var y = openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_y(c3);
+				var width = openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_width(c3);
+				var height = openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_height(c3);
 				x -= offsetX;
 				y -= offsetY;
 				var kappa = .5522848;
@@ -20215,40 +20991,27 @@ openfl__$internal_renderer_canvas_CanvasGraphics.renderMask = function(graphics,
 				openfl__$internal_renderer_canvas_CanvasGraphics.context.bezierCurveTo(xm - ox,ye,x,ym + oy,x,ym);
 				break;
 			case 8:
-				var c4;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_RECT;
-				c4 = data;
-				openfl__$internal_renderer_canvas_CanvasGraphics.context.rect(c4.buffer.f[c4.fPos] - offsetX,c4.buffer.f[c4.fPos + 1] - offsetY,c4.buffer.f[c4.fPos + 2],c4.buffer.f[c4.fPos + 3]);
+				var c4 = data.readDrawRect();
+				openfl__$internal_renderer_canvas_CanvasGraphics.context.rect(openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_x(c4) - offsetX,openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_y(c4) - offsetY,openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_width(c4),openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_height(c4));
 				break;
 			case 9:
-				var c5;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_ROUND_RECT;
-				c5 = data;
-				openfl__$internal_renderer_canvas_CanvasGraphics.drawRoundRect(c5.buffer.f[c5.fPos] - offsetX,c5.buffer.f[c5.fPos + 1] - offsetY,c5.buffer.f[c5.fPos + 2],c5.buffer.f[c5.fPos + 3],c5.buffer.f[c5.fPos + 4],c5.buffer.o[c5.oPos]);
+				var c5 = data.readDrawRoundRect();
+				openfl__$internal_renderer_canvas_CanvasGraphics.drawRoundRect(openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_x(c5) - offsetX,openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_y(c5) - offsetY,openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_width(c5),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_height(c5),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_ellipseWidth(c5),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_ellipseHeight(c5));
 				break;
 			case 16:
-				var c6;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.LINE_TO;
-				c6 = data;
-				openfl__$internal_renderer_canvas_CanvasGraphics.context.lineTo(c6.buffer.f[c6.fPos] - offsetX,c6.buffer.f[c6.fPos + 1] - offsetY);
-				positionX = c6.buffer.f[c6.fPos];
-				positionY = c6.buffer.f[c6.fPos + 1];
+				var c6 = data.readLineTo();
+				openfl__$internal_renderer_canvas_CanvasGraphics.context.lineTo(openfl__$internal_renderer__$DrawCommandReader_LineToView_$Impl_$.get_x(c6) - offsetX,openfl__$internal_renderer__$DrawCommandReader_LineToView_$Impl_$.get_y(c6) - offsetY);
+				positionX = openfl__$internal_renderer__$DrawCommandReader_LineToView_$Impl_$.get_x(c6);
+				positionY = openfl__$internal_renderer__$DrawCommandReader_LineToView_$Impl_$.get_y(c6);
 				break;
 			case 17:
-				var c7;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.MOVE_TO;
-				c7 = data;
-				openfl__$internal_renderer_canvas_CanvasGraphics.context.moveTo(c7.buffer.f[c7.fPos] - offsetX,c7.buffer.f[c7.fPos + 1] - offsetY);
-				positionX = c7.buffer.f[c7.fPos];
-				positionY = c7.buffer.f[c7.fPos + 1];
+				var c7 = data.readMoveTo();
+				openfl__$internal_renderer_canvas_CanvasGraphics.context.moveTo(openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$.get_x(c7) - offsetX,openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$.get_y(c7) - offsetY);
+				positionX = openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$.get_x(c7);
+				positionY = openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$.get_y(c7);
 				break;
 			default:
-				data.advance();
-				data.prev = type;
+				data.skip(type);
 			}
 		}
 		data.destroy();
@@ -20299,7 +21062,8 @@ $hxClasses["openfl._internal.renderer.canvas.CanvasRenderer"] = openfl__$interna
 openfl__$internal_renderer_canvas_CanvasRenderer.__name__ = ["openfl","_internal","renderer","canvas","CanvasRenderer"];
 openfl__$internal_renderer_canvas_CanvasRenderer.__super__ = openfl__$internal_renderer_AbstractRenderer;
 openfl__$internal_renderer_canvas_CanvasRenderer.prototype = $extend(openfl__$internal_renderer_AbstractRenderer.prototype,{
-	render: function(stage) {
+	context: null
+	,render: function(stage) {
 		this.context.setTransform(1,0,0,1,0,0);
 		this.context.globalAlpha = 1;
 		if(!stage.__transparent && stage.__clearBeforeRender) {
@@ -20644,7 +21408,8 @@ openfl__$internal_renderer_dom_DOMRenderer.initializeElement = function(displayO
 };
 openfl__$internal_renderer_dom_DOMRenderer.__super__ = openfl__$internal_renderer_AbstractRenderer;
 openfl__$internal_renderer_dom_DOMRenderer.prototype = $extend(openfl__$internal_renderer_AbstractRenderer.prototype,{
-	render: function(stage) {
+	element: null
+	,render: function(stage) {
 		this.element.style.background = stage.__colorString;
 		this.renderSession.z = 1;
 		stage.__renderDOM(this.renderSession);
@@ -20949,7 +21714,28 @@ openfl__$internal_renderer_opengl_GLRenderer.renderBitmap = function(shape,rende
 };
 openfl__$internal_renderer_opengl_GLRenderer.__super__ = openfl__$internal_renderer_AbstractRenderer;
 openfl__$internal_renderer_opengl_GLRenderer.prototype = $extend(openfl__$internal_renderer_AbstractRenderer.prototype,{
-	destroy: function() {
+	blendModeManager: null
+	,contextLost: null
+	,defaultFramebuffer: null
+	,filterManager: null
+	,gl: null
+	,_glContextId: null
+	,maskManager: null
+	,offset: null
+	,options: null
+	,preserveDrawingBuffer: null
+	,projection: null
+	,shaderManager: null
+	,spriteBatch: null
+	,stencilManager: null
+	,view: null
+	,projectionMatrix: null
+	,__stage: null
+	,vpX: null
+	,vpY: null
+	,vpWidth: null
+	,vpHeight: null
+	,destroy: function() {
 		openfl__$internal_renderer_opengl_GLRenderer.glContexts[this._glContextId] = null;
 		this.projection = null;
 		this.offset = null;
@@ -21078,7 +21864,21 @@ openfl__$internal_renderer_opengl_shaders2_Shader.compileShader = function(gl,sh
 	return shader;
 };
 openfl__$internal_renderer_opengl_shaders2_Shader.prototype = {
-	init: function(force) {
+	gl: null
+	,vertexSrc: null
+	,fragmentSrc: null
+	,attributes: null
+	,uniforms: null
+	,compiled: null
+	,ID: null
+	,program: null
+	,wrapS: null
+	,wrapT: null
+	,smooth: null
+	,blendMode: null
+	,vertexString: null
+	,fragmentString: null
+	,init: function(force) {
 		if(force == null) force = false;
 		if(this.compiled && !force) return;
 		if(this.vertexSrc != null) this.vertexString = this.vertexSrc.join("\n");
@@ -21388,7 +22188,9 @@ var openfl__$internal_renderer_opengl_utils_BlendModeManager = function(gl) {
 $hxClasses["openfl._internal.renderer.opengl.utils.BlendModeManager"] = openfl__$internal_renderer_opengl_utils_BlendModeManager;
 openfl__$internal_renderer_opengl_utils_BlendModeManager.__name__ = ["openfl","_internal","renderer","opengl","utils","BlendModeManager"];
 openfl__$internal_renderer_opengl_utils_BlendModeManager.prototype = {
-	destroy: function() {
+	currentBlendMode: null
+	,gl: null
+	,destroy: function() {
 		this.gl = null;
 	}
 	,setBlendMode: function(blendMode,force) {
@@ -21441,7 +22243,14 @@ openfl__$internal_renderer_opengl_utils_DrawPath.getStack = function(graphics,gl
 	return openfl__$internal_renderer_opengl_utils_PathBuiler.build(graphics,gl);
 };
 openfl__$internal_renderer_opengl_utils_DrawPath.prototype = {
-	update: function(line,fill,fillIndex,winding) {
+	line: null
+	,fill: null
+	,fillIndex: null
+	,isRemovable: null
+	,winding: null
+	,points: null
+	,type: null
+	,update: function(line,fill,fillIndex,winding) {
 		this.updateLine(line);
 		this.fill = fill;
 		this.fillIndex = fillIndex;
@@ -21550,12 +22359,9 @@ openfl__$internal_renderer_opengl_utils_PathBuiler.build = function(graphics,gl)
 			++_g;
 			switch(type[1]) {
 			case 0:
-				var c;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.BEGIN_BITMAP_FILL;
-				c = data;
+				var c = data.readBeginBitmapFill();
 				openfl__$internal_renderer_opengl_utils_PathBuiler.endFill();
-				if(c.buffer.o[c.oPos] != null) openfl__$internal_renderer_opengl_utils_PathBuiler.__fill = openfl__$internal_renderer_opengl_utils_FillType.Texture(c.buffer.o[c.oPos],c.buffer.o[c.oPos + 1],c.buffer.b[c.bPos],c.buffer.b[c.bPos + 1]); else openfl__$internal_renderer_opengl_utils_PathBuiler.__fill = openfl__$internal_renderer_opengl_utils_FillType.None;
+				if(openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_bitmap(c) != null) openfl__$internal_renderer_opengl_utils_PathBuiler.__fill = openfl__$internal_renderer_opengl_utils_FillType.Texture(openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_bitmap(c),openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_matrix(c),openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_repeat(c),openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_smooth(c)); else openfl__$internal_renderer_opengl_utils_PathBuiler.__fill = openfl__$internal_renderer_opengl_utils_FillType.None;
 				if(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points == null || openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points.length == 0) {
 					if(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.isRemovable && (openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points == null || openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points.length == 0)) openfl__$internal_renderer_opengl_utils_PathBuiler.__drawPaths.pop(); else openfl__$internal_renderer_opengl_utils_PathBuiler.closePath();
 					openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath = new openfl__$internal_renderer_opengl_utils_DrawPath();
@@ -21566,12 +22372,9 @@ openfl__$internal_renderer_opengl_utils_PathBuiler.build = function(graphics,gl)
 				}
 				break;
 			case 1:
-				var c1;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.BEGIN_FILL;
-				c1 = data;
+				var c1 = data.readBeginFill();
 				openfl__$internal_renderer_opengl_utils_PathBuiler.endFill();
-				if(c1.buffer.f[c1.fPos] > 0) openfl__$internal_renderer_opengl_utils_PathBuiler.__fill = openfl__$internal_renderer_opengl_utils_FillType.Color(c1.buffer.i[c1.iPos] & 16777215,c1.buffer.f[c1.fPos]); else openfl__$internal_renderer_opengl_utils_PathBuiler.__fill = openfl__$internal_renderer_opengl_utils_FillType.None;
+				if(openfl__$internal_renderer__$DrawCommandReader_BeginFillView_$Impl_$.get_alpha(c1) > 0) openfl__$internal_renderer_opengl_utils_PathBuiler.__fill = openfl__$internal_renderer_opengl_utils_FillType.Color(openfl__$internal_renderer__$DrawCommandReader_BeginFillView_$Impl_$.get_color(c1) & 16777215,openfl__$internal_renderer__$DrawCommandReader_BeginFillView_$Impl_$.get_alpha(c1)); else openfl__$internal_renderer_opengl_utils_PathBuiler.__fill = openfl__$internal_renderer_opengl_utils_FillType.None;
 				if(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points == null || openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points.length == 0) {
 					if(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.isRemovable && (openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points == null || openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points.length == 0)) openfl__$internal_renderer_opengl_utils_PathBuiler.__drawPaths.pop(); else openfl__$internal_renderer_opengl_utils_PathBuiler.closePath();
 					openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath = new openfl__$internal_renderer_opengl_utils_DrawPath();
@@ -21582,84 +22385,48 @@ openfl__$internal_renderer_opengl_utils_PathBuiler.build = function(graphics,gl)
 				}
 				break;
 			case 3:
-				var c2;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.CUBIC_CURVE_TO;
-				c2 = data;
-				if(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points == null || openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points.length == 0) {
-					if(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.isRemovable && (openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points == null || openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points.length == 0)) openfl__$internal_renderer_opengl_utils_PathBuiler.__drawPaths.pop(); else openfl__$internal_renderer_opengl_utils_PathBuiler.closePath();
-					openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath = new openfl__$internal_renderer_opengl_utils_DrawPath();
-					openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.update(openfl__$internal_renderer_opengl_utils_PathBuiler.__line,openfl__$internal_renderer_opengl_utils_PathBuiler.__fill,openfl__$internal_renderer_opengl_utils_PathBuiler.__fillIndex,openfl__$internal_renderer_opengl_utils_PathBuiler.__currentWinding);
-					openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.type = openfl__$internal_renderer_opengl_utils_GraphicType.Polygon;
-					openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points.push(0);
-					openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points.push(0);
-					openfl__$internal_renderer_opengl_utils_PathBuiler.__drawPaths.push(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath);
-				}
-				openfl__$internal_renderer_GraphicsPaths.cubicCurveTo(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points,c2.buffer.f[c2.fPos],c2.buffer.f[c2.fPos + 1],c2.buffer.f[c2.fPos + 2],c2.buffer.f[c2.fPos + 3],c2.buffer.f[c2.fPos + 4],c2.buffer.f[c2.fPos + 5]);
+				var c2 = data.readCubicCurveTo();
+				openfl__$internal_renderer_opengl_utils_PathBuiler.cubicCurveTo(openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlX1(c2),openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlY1(c2),openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlX2(c2),openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlY2(c2),openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_anchorX(c2),openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_anchorY(c2));
 				break;
 			case 4:
-				var c3;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.CURVE_TO;
-				c3 = data;
-				if(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points == null || openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points.length == 0) {
-					if(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.isRemovable && (openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points == null || openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points.length == 0)) openfl__$internal_renderer_opengl_utils_PathBuiler.__drawPaths.pop(); else openfl__$internal_renderer_opengl_utils_PathBuiler.closePath();
-					openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath = new openfl__$internal_renderer_opengl_utils_DrawPath();
-					openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.update(openfl__$internal_renderer_opengl_utils_PathBuiler.__line,openfl__$internal_renderer_opengl_utils_PathBuiler.__fill,openfl__$internal_renderer_opengl_utils_PathBuiler.__fillIndex,openfl__$internal_renderer_opengl_utils_PathBuiler.__currentWinding);
-					openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.type = openfl__$internal_renderer_opengl_utils_GraphicType.Polygon;
-					openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points.push(0);
-					openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points.push(0);
-					openfl__$internal_renderer_opengl_utils_PathBuiler.__drawPaths.push(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath);
-				}
-				openfl__$internal_renderer_GraphicsPaths.curveTo(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points,c3.buffer.f[c3.fPos],c3.buffer.f[c3.fPos + 1],c3.buffer.f[c3.fPos + 2],c3.buffer.f[c3.fPos + 3]);
+				var c3 = data.readCurveTo();
+				openfl__$internal_renderer_opengl_utils_PathBuiler.curveTo(openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_controlX(c3),openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_controlY(c3),openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_anchorX(c3),openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_anchorY(c3));
 				break;
 			case 5:
-				var c4;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_CIRCLE;
-				c4 = data;
+				var c4 = data.readDrawCircle();
 				if(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.isRemovable && (openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points == null || openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points.length == 0)) openfl__$internal_renderer_opengl_utils_PathBuiler.__drawPaths.pop(); else openfl__$internal_renderer_opengl_utils_PathBuiler.closePath();
 				openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath = new openfl__$internal_renderer_opengl_utils_DrawPath();
 				openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.update(openfl__$internal_renderer_opengl_utils_PathBuiler.__line,openfl__$internal_renderer_opengl_utils_PathBuiler.__fill,openfl__$internal_renderer_opengl_utils_PathBuiler.__fillIndex,openfl__$internal_renderer_opengl_utils_PathBuiler.__currentWinding);
 				openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.type = openfl__$internal_renderer_opengl_utils_GraphicType.Circle;
-				openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points = [c4.buffer.f[c4.fPos],c4.buffer.f[c4.fPos + 1],c4.buffer.f[c4.fPos + 2]];
+				openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points = [openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_x(c4),openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_y(c4),openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_radius(c4)];
 				openfl__$internal_renderer_opengl_utils_PathBuiler.__drawPaths.push(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath);
 				break;
 			case 6:
-				var c5;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_ELLIPSE;
-				c5 = data;
+				var c5 = data.readDrawEllipse();
 				if(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.isRemovable && (openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points == null || openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points.length == 0)) openfl__$internal_renderer_opengl_utils_PathBuiler.__drawPaths.pop(); else openfl__$internal_renderer_opengl_utils_PathBuiler.closePath();
 				openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath = new openfl__$internal_renderer_opengl_utils_DrawPath();
 				openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.update(openfl__$internal_renderer_opengl_utils_PathBuiler.__line,openfl__$internal_renderer_opengl_utils_PathBuiler.__fill,openfl__$internal_renderer_opengl_utils_PathBuiler.__fillIndex,openfl__$internal_renderer_opengl_utils_PathBuiler.__currentWinding);
 				openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.type = openfl__$internal_renderer_opengl_utils_GraphicType.Ellipse;
-				openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points = [c5.buffer.f[c5.fPos],c5.buffer.f[c5.fPos + 1],c5.buffer.f[c5.fPos + 2],c5.buffer.f[c5.fPos + 3]];
+				openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points = [openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_x(c5),openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_y(c5),openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_width(c5),openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_height(c5)];
 				openfl__$internal_renderer_opengl_utils_PathBuiler.__drawPaths.push(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath);
 				break;
 			case 8:
-				var c6;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_RECT;
-				c6 = data;
+				var c6 = data.readDrawRect();
 				if(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.isRemovable && (openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points == null || openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points.length == 0)) openfl__$internal_renderer_opengl_utils_PathBuiler.__drawPaths.pop(); else openfl__$internal_renderer_opengl_utils_PathBuiler.closePath();
 				openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath = new openfl__$internal_renderer_opengl_utils_DrawPath();
 				openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.update(openfl__$internal_renderer_opengl_utils_PathBuiler.__line,openfl__$internal_renderer_opengl_utils_PathBuiler.__fill,openfl__$internal_renderer_opengl_utils_PathBuiler.__fillIndex,openfl__$internal_renderer_opengl_utils_PathBuiler.__currentWinding);
 				openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.type = openfl__$internal_renderer_opengl_utils_GraphicType.Rectangle(false);
-				openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points = [c6.buffer.f[c6.fPos],c6.buffer.f[c6.fPos + 1],c6.buffer.f[c6.fPos + 2],c6.buffer.f[c6.fPos + 3]];
+				openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points = [openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_x(c6),openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_y(c6),openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_width(c6),openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_height(c6)];
 				openfl__$internal_renderer_opengl_utils_PathBuiler.__drawPaths.push(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath);
 				break;
 			case 9:
-				var c7;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_ROUND_RECT;
-				c7 = data;
-				var x = c7.buffer.f[c7.fPos];
-				var y = c7.buffer.f[c7.fPos + 1];
-				var width = c7.buffer.f[c7.fPos + 2];
-				var height = c7.buffer.f[c7.fPos + 3];
-				var rx = c7.buffer.f[c7.fPos + 4];
-				var ry = c7.buffer.o[c7.oPos];
+				var c7 = data.readDrawRoundRect();
+				var x = openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_x(c7);
+				var y = openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_y(c7);
+				var width = openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_width(c7);
+				var height = openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_height(c7);
+				var rx = openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_ellipseWidth(c7);
+				var ry = openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_ellipseHeight(c7);
 				if(ry == null) ry = rx;
 				rx *= 0.5;
 				ry *= 0.5;
@@ -21673,26 +22440,25 @@ openfl__$internal_renderer_opengl_utils_PathBuiler.build = function(graphics,gl)
 				openfl__$internal_renderer_opengl_utils_PathBuiler.__drawPaths.push(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath);
 				break;
 			case 12:
-				var c8;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.END_FILL;
-				c8 = data;
+				var c8 = data.readEndFill();
 				openfl__$internal_renderer_opengl_utils_PathBuiler.endFill();
 				break;
 			case 15:
-				var c9;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.LINE_STYLE;
-				c9 = data;
+				var c9 = data.readLineStyle();
 				openfl__$internal_renderer_opengl_utils_PathBuiler.__line = new openfl__$internal_renderer_opengl_utils_LineStyle();
-				if(c9.buffer.o[c9.oPos] == null || isNaN(c9.buffer.o[c9.oPos]) || c9.buffer.o[c9.oPos] < 0) openfl__$internal_renderer_opengl_utils_PathBuiler.__line.width = 0; else if(c9.buffer.o[c9.oPos] == 0) openfl__$internal_renderer_opengl_utils_PathBuiler.__line.width = 1; else openfl__$internal_renderer_opengl_utils_PathBuiler.__line.width = c9.buffer.o[c9.oPos];
+				if(openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_thickness(c9) == null || (function($this) {
+					var $r;
+					var f = openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_thickness(c9);
+					$r = isNaN(f);
+					return $r;
+				}(this)) || openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_thickness(c9) < 0) openfl__$internal_renderer_opengl_utils_PathBuiler.__line.width = 0; else if(openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_thickness(c9) == 0) openfl__$internal_renderer_opengl_utils_PathBuiler.__line.width = 1; else openfl__$internal_renderer_opengl_utils_PathBuiler.__line.width = openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_thickness(c9);
 				if(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.isRemovable && (openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points == null || openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points.length == 0)) openfl__$internal_renderer_opengl_utils_PathBuiler.__drawPaths.pop(); else openfl__$internal_renderer_opengl_utils_PathBuiler.closePath();
-				openfl__$internal_renderer_opengl_utils_PathBuiler.__line.color = c9.buffer.i[c9.iPos];
-				openfl__$internal_renderer_opengl_utils_PathBuiler.__line.alpha = c9.buffer.f[c9.fPos];
-				openfl__$internal_renderer_opengl_utils_PathBuiler.__line.scaleMode = c9.buffer.o[c9.oPos + 1];
-				openfl__$internal_renderer_opengl_utils_PathBuiler.__line.caps = c9.buffer.o[c9.oPos + 2];
-				openfl__$internal_renderer_opengl_utils_PathBuiler.__line.joints = c9.buffer.o[c9.oPos + 3];
-				openfl__$internal_renderer_opengl_utils_PathBuiler.__line.miterLimit = c9.buffer.f[c9.fPos + 1];
+				openfl__$internal_renderer_opengl_utils_PathBuiler.__line.color = openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_color(c9);
+				openfl__$internal_renderer_opengl_utils_PathBuiler.__line.alpha = openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_alpha(c9);
+				openfl__$internal_renderer_opengl_utils_PathBuiler.__line.scaleMode = openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_scaleMode(c9);
+				openfl__$internal_renderer_opengl_utils_PathBuiler.__line.caps = openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_caps(c9);
+				openfl__$internal_renderer_opengl_utils_PathBuiler.__line.joints = openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_joints(c9);
+				openfl__$internal_renderer_opengl_utils_PathBuiler.__line.miterLimit = openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_miterLimit(c9);
 				openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath = new openfl__$internal_renderer_opengl_utils_DrawPath();
 				openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.update(openfl__$internal_renderer_opengl_utils_PathBuiler.__line,openfl__$internal_renderer_opengl_utils_PathBuiler.__fill,openfl__$internal_renderer_opengl_utils_PathBuiler.__fillIndex,openfl__$internal_renderer_opengl_utils_PathBuiler.__currentWinding);
 				openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points = [];
@@ -21700,34 +22466,19 @@ openfl__$internal_renderer_opengl_utils_PathBuiler.build = function(graphics,gl)
 				openfl__$internal_renderer_opengl_utils_PathBuiler.__drawPaths.push(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath);
 				break;
 			case 16:
-				var c10;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.LINE_TO;
-				c10 = data;
-				openfl__$internal_renderer_opengl_utils_PathBuiler.lineTo(c10.buffer.f[c10.fPos],c10.buffer.f[c10.fPos + 1]);
+				var c10 = data.readLineTo();
+				openfl__$internal_renderer_opengl_utils_PathBuiler.lineTo(openfl__$internal_renderer__$DrawCommandReader_LineToView_$Impl_$.get_x(c10),openfl__$internal_renderer__$DrawCommandReader_LineToView_$Impl_$.get_y(c10));
 				break;
 			case 17:
-				var c11;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.MOVE_TO;
-				c11 = data;
-				if(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.isRemovable && (openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points == null || openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points.length == 0)) openfl__$internal_renderer_opengl_utils_PathBuiler.__drawPaths.pop(); else openfl__$internal_renderer_opengl_utils_PathBuiler.closePath();
-				openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath = new openfl__$internal_renderer_opengl_utils_DrawPath();
-				openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.update(openfl__$internal_renderer_opengl_utils_PathBuiler.__line,openfl__$internal_renderer_opengl_utils_PathBuiler.__fill,openfl__$internal_renderer_opengl_utils_PathBuiler.__fillIndex,openfl__$internal_renderer_opengl_utils_PathBuiler.__currentWinding);
-				openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.type = openfl__$internal_renderer_opengl_utils_GraphicType.Polygon;
-				openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points.push(c11.buffer.f[c11.fPos]);
-				openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points.push(c11.buffer.f[c11.fPos + 1]);
-				openfl__$internal_renderer_opengl_utils_PathBuiler.__drawPaths.push(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath);
+				var c11 = data.readMoveTo();
+				openfl__$internal_renderer_opengl_utils_PathBuiler.moveTo(openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$.get_x(c11),openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$.get_y(c11));
 				break;
 			case 11:
-				var c12;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_TRIANGLES;
-				c12 = data;
-				var uvtData = c12.buffer.o[c12.oPos + 2];
-				var vertices = c12.buffer.o[c12.oPos];
-				var indices = c12.buffer.o[c12.oPos + 1];
-				var culling = c12.buffer.o[c12.oPos + 3];
+				var c12 = data.readDrawTriangles();
+				var uvtData = openfl__$internal_renderer__$DrawCommandReader_DrawTrianglesView_$Impl_$.get_uvtData(c12);
+				var vertices = openfl__$internal_renderer__$DrawCommandReader_DrawTrianglesView_$Impl_$.get_vertices(c12);
+				var indices = openfl__$internal_renderer__$DrawCommandReader_DrawTrianglesView_$Impl_$.get_indices(c12);
+				var culling = openfl__$internal_renderer__$DrawCommandReader_DrawTrianglesView_$Impl_$.get_culling(c12);
 				var isColor;
 				{
 					var _g2 = openfl__$internal_renderer_opengl_utils_PathBuiler.__fill;
@@ -21798,25 +22549,19 @@ openfl__$internal_renderer_opengl_utils_PathBuiler.build = function(graphics,gl)
 				openfl__$internal_renderer_opengl_utils_PathBuiler.__drawPaths.push(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath);
 				break;
 			case 10:
-				var c13;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_TILES;
-				c13 = data;
+				var c13 = data.readDrawTiles();
 				if(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.isRemovable && (openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points == null || openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points.length == 0)) openfl__$internal_renderer_opengl_utils_PathBuiler.__drawPaths.pop(); else openfl__$internal_renderer_opengl_utils_PathBuiler.closePath();
 				openfl__$internal_renderer_opengl_utils_PathBuiler.__fillIndex++;
 				openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath = new openfl__$internal_renderer_opengl_utils_DrawPath(false);
 				openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.update(openfl__$internal_renderer_opengl_utils_PathBuiler.__line,openfl__$internal_renderer_opengl_utils_PathBuiler.__fill,openfl__$internal_renderer_opengl_utils_PathBuiler.__fillIndex,openfl__$internal_renderer_opengl_utils_PathBuiler.__currentWinding);
-				openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.type = openfl__$internal_renderer_opengl_utils_GraphicType.DrawTiles(c13.buffer.ts[c13.tsPos],c13.buffer.ff[c13.ffPos],c13.buffer.b[c13.bPos],c13.buffer.i[c13.iPos],c13.buffer.o[c13.oPos],c13.buffer.i[c13.iPos + 1]);
+				openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.type = openfl__$internal_renderer_opengl_utils_GraphicType.DrawTiles(openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_sheet(c13),openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData(c13),openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_smooth(c13),openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_flags(c13),openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_shader(c13),openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_count(c13));
 				openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.isRemovable = false;
 				openfl__$internal_renderer_opengl_utils_PathBuiler.__drawPaths.push(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath);
 				break;
 			case 7:
-				var c14;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_PATH;
-				c14 = data;
+				var c14 = data.readDrawPath();
 				if(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.isRemovable && (openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points == null || openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points.length == 0)) openfl__$internal_renderer_opengl_utils_PathBuiler.__drawPaths.pop(); else openfl__$internal_renderer_opengl_utils_PathBuiler.closePath();
-				var _g22 = c14.buffer.o[c14.oPos + 2];
+				var _g22 = openfl__$internal_renderer__$DrawCommandReader_DrawPathView_$Impl_$.get_winding(c14);
 				switch(_g22) {
 				case "evenOdd":
 					openfl__$internal_renderer_opengl_utils_PathBuiler.__currentWinding = 0;
@@ -21836,14 +22581,19 @@ openfl__$internal_renderer_opengl_utils_PathBuiler.build = function(graphics,gl)
 				var ay;
 				var idx = 0;
 				var _g31 = 0;
-				var _g23 = c14.buffer.o[c14.oPos].length;
+				var _g23;
+				var this5 = openfl__$internal_renderer__$DrawCommandReader_DrawPathView_$Impl_$.get_commands(c14);
+				_g23 = this5.length;
 				while(_g31 < _g23) {
 					var i1 = _g31++;
-					command = c14.buffer.o[c14.oPos].data[i1];
+					var this6 = openfl__$internal_renderer__$DrawCommandReader_DrawPathView_$Impl_$.get_commands(c14);
+					command = this6.data[i1];
 					switch(command) {
 					case 1:
-						ax = c14.buffer.o[c14.oPos + 1].data[idx];
-						ay = c14.buffer.o[c14.oPos + 1].data[idx + 1];
+						var this7 = openfl__$internal_renderer__$DrawCommandReader_DrawPathView_$Impl_$.get_data(c14);
+						ax = this7.data[idx];
+						var this8 = openfl__$internal_renderer__$DrawCommandReader_DrawPathView_$Impl_$.get_data(c14);
+						ay = this8.data[idx + 1];
 						idx += 2;
 						if(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.isRemovable && (openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points == null || openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points.length == 0)) openfl__$internal_renderer_opengl_utils_PathBuiler.__drawPaths.pop(); else openfl__$internal_renderer_opengl_utils_PathBuiler.closePath();
 						openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath = new openfl__$internal_renderer_opengl_utils_DrawPath();
@@ -21854,8 +22604,10 @@ openfl__$internal_renderer_opengl_utils_PathBuiler.build = function(graphics,gl)
 						openfl__$internal_renderer_opengl_utils_PathBuiler.__drawPaths.push(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath);
 						break;
 					case 4:
-						ax = c14.buffer.o[c14.oPos + 1].data[idx + 2];
-						ay = c14.buffer.o[c14.oPos + 1].data[idx + 3];
+						var this9 = openfl__$internal_renderer__$DrawCommandReader_DrawPathView_$Impl_$.get_data(c14);
+						ax = this9.data[idx + 2];
+						var this10 = openfl__$internal_renderer__$DrawCommandReader_DrawPathView_$Impl_$.get_data(c14);
+						ay = this10.data[idx + 3];
 						idx += 4;
 						if(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.isRemovable && (openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points == null || openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points.length == 0)) openfl__$internal_renderer_opengl_utils_PathBuiler.__drawPaths.pop(); else openfl__$internal_renderer_opengl_utils_PathBuiler.closePath();
 						openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath = new openfl__$internal_renderer_opengl_utils_DrawPath();
@@ -21866,22 +22618,30 @@ openfl__$internal_renderer_opengl_utils_PathBuiler.build = function(graphics,gl)
 						openfl__$internal_renderer_opengl_utils_PathBuiler.__drawPaths.push(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath);
 						break;
 					case 2:
-						ax = c14.buffer.o[c14.oPos + 1].data[idx];
-						ay = c14.buffer.o[c14.oPos + 1].data[idx + 1];
+						var this11 = openfl__$internal_renderer__$DrawCommandReader_DrawPathView_$Impl_$.get_data(c14);
+						ax = this11.data[idx];
+						var this12 = openfl__$internal_renderer__$DrawCommandReader_DrawPathView_$Impl_$.get_data(c14);
+						ay = this12.data[idx + 1];
 						idx += 2;
 						openfl__$internal_renderer_opengl_utils_PathBuiler.lineTo(ax,ay);
 						break;
 					case 5:
-						ax = c14.buffer.o[c14.oPos + 1].data[idx + 2];
-						ay = c14.buffer.o[c14.oPos + 1].data[idx + 3];
+						var this13 = openfl__$internal_renderer__$DrawCommandReader_DrawPathView_$Impl_$.get_data(c14);
+						ax = this13.data[idx + 2];
+						var this14 = openfl__$internal_renderer__$DrawCommandReader_DrawPathView_$Impl_$.get_data(c14);
+						ay = this14.data[idx + 3];
 						idx += 4;
 						openfl__$internal_renderer_opengl_utils_PathBuiler.lineTo(ax,ay);
 						break;
 					case 3:
-						cx = c14.buffer.o[c14.oPos + 1].data[idx];
-						cy = c14.buffer.o[c14.oPos + 1].data[idx + 1];
-						ax = c14.buffer.o[c14.oPos + 1].data[idx + 2];
-						ay = c14.buffer.o[c14.oPos + 1].data[idx + 3];
+						var this15 = openfl__$internal_renderer__$DrawCommandReader_DrawPathView_$Impl_$.get_data(c14);
+						cx = this15.data[idx];
+						var this16 = openfl__$internal_renderer__$DrawCommandReader_DrawPathView_$Impl_$.get_data(c14);
+						cy = this16.data[idx + 1];
+						var this17 = openfl__$internal_renderer__$DrawCommandReader_DrawPathView_$Impl_$.get_data(c14);
+						ax = this17.data[idx + 2];
+						var this18 = openfl__$internal_renderer__$DrawCommandReader_DrawPathView_$Impl_$.get_data(c14);
+						ay = this18.data[idx + 3];
 						idx += 4;
 						if(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points == null || openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points.length == 0) {
 							if(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.isRemovable && (openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points == null || openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points.length == 0)) openfl__$internal_renderer_opengl_utils_PathBuiler.__drawPaths.pop(); else openfl__$internal_renderer_opengl_utils_PathBuiler.closePath();
@@ -21895,12 +22655,18 @@ openfl__$internal_renderer_opengl_utils_PathBuiler.build = function(graphics,gl)
 						openfl__$internal_renderer_GraphicsPaths.curveTo(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points,cx,cy,ax,ay);
 						break;
 					case 6:
-						cx = c14.buffer.o[c14.oPos + 1].data[idx];
-						cy = c14.buffer.o[c14.oPos + 1].data[idx + 1];
-						cx2 = c14.buffer.o[c14.oPos + 1].data[idx + 2];
-						cy2 = c14.buffer.o[c14.oPos + 1].data[idx + 3];
-						ax = c14.buffer.o[c14.oPos + 1].data[idx + 4];
-						ay = c14.buffer.o[c14.oPos + 1].data[idx + 5];
+						var this19 = openfl__$internal_renderer__$DrawCommandReader_DrawPathView_$Impl_$.get_data(c14);
+						cx = this19.data[idx];
+						var this20 = openfl__$internal_renderer__$DrawCommandReader_DrawPathView_$Impl_$.get_data(c14);
+						cy = this20.data[idx + 1];
+						var this21 = openfl__$internal_renderer__$DrawCommandReader_DrawPathView_$Impl_$.get_data(c14);
+						cx2 = this21.data[idx + 2];
+						var this22 = openfl__$internal_renderer__$DrawCommandReader_DrawPathView_$Impl_$.get_data(c14);
+						cy2 = this22.data[idx + 3];
+						var this23 = openfl__$internal_renderer__$DrawCommandReader_DrawPathView_$Impl_$.get_data(c14);
+						ax = this23.data[idx + 4];
+						var this24 = openfl__$internal_renderer__$DrawCommandReader_DrawPathView_$Impl_$.get_data(c14);
+						ay = this24.data[idx + 5];
 						idx += 6;
 						if(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points == null || openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points.length == 0) {
 							if(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.isRemovable && (openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points == null || openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points.length == 0)) openfl__$internal_renderer_opengl_utils_PathBuiler.__drawPaths.pop(); else openfl__$internal_renderer_opengl_utils_PathBuiler.closePath();
@@ -21919,20 +22685,16 @@ openfl__$internal_renderer_opengl_utils_PathBuiler.build = function(graphics,gl)
 				openfl__$internal_renderer_opengl_utils_PathBuiler.__currentWinding = 0;
 				break;
 			case 18:
-				var c15;
-				data.advance();
-				data.prev = openfl__$internal_renderer_DrawCommandType.OVERRIDE_MATRIX;
-				c15 = data;
+				var c15 = data.readOverrideMatrix();
 				if(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.isRemovable && (openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points == null || openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points.length == 0)) openfl__$internal_renderer_opengl_utils_PathBuiler.__drawPaths.pop(); else openfl__$internal_renderer_opengl_utils_PathBuiler.closePath();
 				openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath = new openfl__$internal_renderer_opengl_utils_DrawPath();
 				openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.update(openfl__$internal_renderer_opengl_utils_PathBuiler.__line,openfl__$internal_renderer_opengl_utils_PathBuiler.__fill,openfl__$internal_renderer_opengl_utils_PathBuiler.__fillIndex,openfl__$internal_renderer_opengl_utils_PathBuiler.__currentWinding);
-				openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.type = openfl__$internal_renderer_opengl_utils_GraphicType.OverrideMatrix(c15.buffer.o[c15.oPos]);
+				openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.type = openfl__$internal_renderer_opengl_utils_GraphicType.OverrideMatrix(openfl__$internal_renderer__$DrawCommandReader_OverrideMatrixView_$Impl_$.get_matrix(c15));
 				openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.isRemovable = false;
 				openfl__$internal_renderer_opengl_utils_PathBuiler.__drawPaths.push(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath);
 				break;
 			default:
-				data.advance();
-				data.prev = type;
+				data.skip(type);
 			}
 		}
 		openfl__$internal_renderer_opengl_utils_PathBuiler.closePath();
@@ -21953,9 +22715,16 @@ var openfl__$internal_renderer_opengl_utils_LineStyle = function() {
 $hxClasses["openfl._internal.renderer.opengl.utils.LineStyle"] = openfl__$internal_renderer_opengl_utils_LineStyle;
 openfl__$internal_renderer_opengl_utils_LineStyle.__name__ = ["openfl","_internal","renderer","opengl","utils","LineStyle"];
 openfl__$internal_renderer_opengl_utils_LineStyle.prototype = {
-	__class__: openfl__$internal_renderer_opengl_utils_LineStyle
+	width: null
+	,color: null
+	,alpha: null
+	,scaleMode: null
+	,caps: null
+	,joints: null
+	,miterLimit: null
+	,__class__: openfl__$internal_renderer_opengl_utils_LineStyle
 };
-var openfl__$internal_renderer_opengl_utils_FillType = $hxClasses["openfl._internal.renderer.opengl.utils.FillType"] = { __ename__ : true, __constructs__ : ["None","Color","Texture","Gradient"] };
+var openfl__$internal_renderer_opengl_utils_FillType = $hxClasses["openfl._internal.renderer.opengl.utils.FillType"] = { __ename__ : ["openfl","_internal","renderer","opengl","utils","FillType"], __constructs__ : ["None","Color","Texture","Gradient"] };
 openfl__$internal_renderer_opengl_utils_FillType.None = ["None",0];
 openfl__$internal_renderer_opengl_utils_FillType.None.toString = $estr;
 openfl__$internal_renderer_opengl_utils_FillType.None.__enum__ = openfl__$internal_renderer_opengl_utils_FillType;
@@ -21974,7 +22743,25 @@ var openfl__$internal_renderer_opengl_utils_FilterManager = function(gl,transpar
 $hxClasses["openfl._internal.renderer.opengl.utils.FilterManager"] = openfl__$internal_renderer_opengl_utils_FilterManager;
 openfl__$internal_renderer_opengl_utils_FilterManager.__name__ = ["openfl","_internal","renderer","opengl","utils","FilterManager"];
 openfl__$internal_renderer_opengl_utils_FilterManager.prototype = {
-	applyFilterPass: function(filter,filterArea,width,height) {
+	buffer: null
+	,colorArray: null
+	,colorBuffer: null
+	,defaultShader: null
+	,filterStack: null
+	,gl: null
+	,height: null
+	,indexBuffer: null
+	,offsetX: null
+	,offsetY: null
+	,renderSession: null
+	,texturePool: null
+	,transparent: null
+	,uvArray: null
+	,uvBuffer: null
+	,vertexArray: null
+	,vertexBuffer: null
+	,width: null
+	,applyFilterPass: function(filter,filterArea,width,height) {
 	}
 	,begin: function(renderSession,buffer) {
 		this.renderSession = renderSession;
@@ -22055,7 +22842,11 @@ $hxClasses["openfl._internal.renderer.opengl.utils.GLMaskManager"] = openfl__$in
 openfl__$internal_renderer_opengl_utils_GLMaskManager.__name__ = ["openfl","_internal","renderer","opengl","utils","GLMaskManager"];
 openfl__$internal_renderer_opengl_utils_GLMaskManager.__super__ = openfl__$internal_renderer_AbstractMaskManager;
 openfl__$internal_renderer_opengl_utils_GLMaskManager.prototype = $extend(openfl__$internal_renderer_AbstractMaskManager.prototype,{
-	destroy: function() {
+	gl: null
+	,clips: null
+	,currentClip: null
+	,savedClip: null
+	,destroy: function() {
 		this.gl = null;
 	}
 	,pushRect: function(rect,transform) {
@@ -22120,7 +22911,13 @@ var openfl__$internal_renderer_opengl_utils_VertexAttribute = function(component
 $hxClasses["openfl._internal.renderer.opengl.utils.VertexAttribute"] = openfl__$internal_renderer_opengl_utils_VertexAttribute;
 openfl__$internal_renderer_opengl_utils_VertexAttribute.__name__ = ["openfl","_internal","renderer","opengl","utils","VertexAttribute"];
 openfl__$internal_renderer_opengl_utils_VertexAttribute.prototype = {
-	copy: function() {
+	components: null
+	,normalized: null
+	,type: null
+	,name: null
+	,enabled: null
+	,defaultValue: null
+	,copy: function() {
 		return new openfl__$internal_renderer_opengl_utils_VertexAttribute(this.components,this.type,this.normalized,this.name,this.defaultValue);
 	}
 	,getElementsBytes: function() {
@@ -22153,7 +22950,11 @@ var openfl_geom_Rectangle = function(x,y,width,height) {
 $hxClasses["openfl.geom.Rectangle"] = openfl_geom_Rectangle;
 openfl_geom_Rectangle.__name__ = ["openfl","geom","Rectangle"];
 openfl_geom_Rectangle.prototype = {
-	clone: function() {
+	height: null
+	,width: null
+	,x: null
+	,y: null
+	,clone: function() {
 		return new openfl_geom_Rectangle(this.x,this.y,this.width,this.height);
 	}
 	,contains: function(x,y) {
@@ -23291,7 +24092,10 @@ var openfl__$internal_renderer_opengl_utils_GLStack = function(gl) {
 $hxClasses["openfl._internal.renderer.opengl.utils.GLStack"] = openfl__$internal_renderer_opengl_utils_GLStack;
 openfl__$internal_renderer_opengl_utils_GLStack.__name__ = ["openfl","_internal","renderer","opengl","utils","GLStack"];
 openfl__$internal_renderer_opengl_utils_GLStack.prototype = {
-	reset: function() {
+	lastIndex: null
+	,buckets: null
+	,gl: null
+	,reset: function() {
 		this.buckets = [];
 		this.lastIndex = 0;
 	}
@@ -23326,7 +24130,29 @@ var openfl__$internal_renderer_opengl_utils_GLBucket = function(gl) {
 $hxClasses["openfl._internal.renderer.opengl.utils.GLBucket"] = openfl__$internal_renderer_opengl_utils_GLBucket;
 openfl__$internal_renderer_opengl_utils_GLBucket.__name__ = ["openfl","_internal","renderer","opengl","utils","GLBucket"];
 openfl__$internal_renderer_opengl_utils_GLBucket.prototype = {
-	getData: function(type) {
+	gl: null
+	,color: null
+	,alpha: null
+	,dirty: null
+	,graphicType: null
+	,lastIndex: null
+	,fillIndex: null
+	,mode: null
+	,fills: null
+	,lines: null
+	,bitmap: null
+	,texture: null
+	,textureMatrix: null
+	,textureRepeat: null
+	,textureSmooth: null
+	,textureTL: null
+	,textureBR: null
+	,overrideMatrix: null
+	,tileBuffer: null
+	,glTile: null
+	,tile: null
+	,uploadTileBuffer: null
+	,getData: function(type) {
 		var data;
 		switch(type[1]) {
 		case 1:
@@ -23503,7 +24329,24 @@ var openfl__$internal_renderer_opengl_utils_GLBucketData = function(gl) {
 $hxClasses["openfl._internal.renderer.opengl.utils.GLBucketData"] = openfl__$internal_renderer_opengl_utils_GLBucketData;
 openfl__$internal_renderer_opengl_utils_GLBucketData.__name__ = ["openfl","_internal","renderer","opengl","utils","GLBucketData"];
 openfl__$internal_renderer_opengl_utils_GLBucketData.prototype = {
-	reset: function() {
+	type: null
+	,gl: null
+	,drawMode: null
+	,glLength: null
+	,glStart: null
+	,vertexArray: null
+	,glVerts: null
+	,lastVertsSize: null
+	,verts: null
+	,rawVerts: null
+	,stride: null
+	,indexBuffer: null
+	,glIndices: null
+	,indices: null
+	,rawIndices: null
+	,available: null
+	,parent: null
+	,reset: function() {
 		this.available = true;
 		this.verts = [];
 		this.indices = [];
@@ -23549,7 +24392,7 @@ openfl__$internal_renderer_opengl_utils_GLBucketData.prototype = {
 	}
 	,__class__: openfl__$internal_renderer_opengl_utils_GLBucketData
 };
-var openfl__$internal_renderer_opengl_utils_BucketMode = $hxClasses["openfl._internal.renderer.opengl.utils.BucketMode"] = { __ename__ : true, __constructs__ : ["None","Fill","PatternFill","Line","PatternLine","DrawTriangles","DrawTiles"] };
+var openfl__$internal_renderer_opengl_utils_BucketMode = $hxClasses["openfl._internal.renderer.opengl.utils.BucketMode"] = { __ename__ : ["openfl","_internal","renderer","opengl","utils","BucketMode"], __constructs__ : ["None","Fill","PatternFill","Line","PatternLine","DrawTriangles","DrawTiles"] };
 openfl__$internal_renderer_opengl_utils_BucketMode.None = ["None",0];
 openfl__$internal_renderer_opengl_utils_BucketMode.None.toString = $estr;
 openfl__$internal_renderer_opengl_utils_BucketMode.None.__enum__ = openfl__$internal_renderer_opengl_utils_BucketMode;
@@ -23571,7 +24414,7 @@ openfl__$internal_renderer_opengl_utils_BucketMode.DrawTriangles.__enum__ = open
 openfl__$internal_renderer_opengl_utils_BucketMode.DrawTiles = ["DrawTiles",6];
 openfl__$internal_renderer_opengl_utils_BucketMode.DrawTiles.toString = $estr;
 openfl__$internal_renderer_opengl_utils_BucketMode.DrawTiles.__enum__ = openfl__$internal_renderer_opengl_utils_BucketMode;
-var openfl__$internal_renderer_opengl_utils_BucketDataType = $hxClasses["openfl._internal.renderer.opengl.utils.BucketDataType"] = { __ename__ : true, __constructs__ : ["Line","Fill"] };
+var openfl__$internal_renderer_opengl_utils_BucketDataType = $hxClasses["openfl._internal.renderer.opengl.utils.BucketDataType"] = { __ename__ : ["openfl","_internal","renderer","opengl","utils","BucketDataType"], __constructs__ : ["Line","Fill"] };
 openfl__$internal_renderer_opengl_utils_BucketDataType.Line = ["Line",0];
 openfl__$internal_renderer_opengl_utils_BucketDataType.Line.toString = $estr;
 openfl__$internal_renderer_opengl_utils_BucketDataType.Line.__enum__ = openfl__$internal_renderer_opengl_utils_BucketDataType;
@@ -23593,7 +24436,19 @@ var openfl__$internal_renderer_opengl_utils_GLGraphicsData = function(gl) {
 $hxClasses["openfl._internal.renderer.opengl.utils.GLGraphicsData"] = openfl__$internal_renderer_opengl_utils_GLGraphicsData;
 openfl__$internal_renderer_opengl_utils_GLGraphicsData.__name__ = ["openfl","_internal","renderer","opengl","utils","GLGraphicsData"];
 openfl__$internal_renderer_opengl_utils_GLGraphicsData.prototype = {
-	reset: function() {
+	gl: null
+	,tint: null
+	,alpha: null
+	,dirty: null
+	,mode: null
+	,lastIndex: null
+	,data: null
+	,glData: null
+	,dataBuffer: null
+	,indices: null
+	,glIndices: null
+	,indexBuffer: null
+	,reset: function() {
 		this.data = [];
 		this.indices = [];
 		this.lastIndex = 0;
@@ -23615,7 +24470,7 @@ openfl__$internal_renderer_opengl_utils_GLGraphicsData.prototype = {
 	}
 	,__class__: openfl__$internal_renderer_opengl_utils_GLGraphicsData
 };
-var openfl__$internal_renderer_opengl_utils_GraphicType = $hxClasses["openfl._internal.renderer.opengl.utils.GraphicType"] = { __ename__ : true, __constructs__ : ["Polygon","Rectangle","Circle","Ellipse","DrawTriangles","DrawTiles","OverrideMatrix"] };
+var openfl__$internal_renderer_opengl_utils_GraphicType = $hxClasses["openfl._internal.renderer.opengl.utils.GraphicType"] = { __ename__ : ["openfl","_internal","renderer","opengl","utils","GraphicType"], __constructs__ : ["Polygon","Rectangle","Circle","Ellipse","DrawTriangles","DrawTiles","OverrideMatrix"] };
 openfl__$internal_renderer_opengl_utils_GraphicType.Polygon = ["Polygon",0];
 openfl__$internal_renderer_opengl_utils_GraphicType.Polygon.toString = $estr;
 openfl__$internal_renderer_opengl_utils_GraphicType.Polygon.__enum__ = openfl__$internal_renderer_opengl_utils_GraphicType;
@@ -23645,7 +24500,16 @@ var openfl__$internal_renderer_opengl_utils_PingPongTexture = function(gl,width,
 $hxClasses["openfl._internal.renderer.opengl.utils.PingPongTexture"] = openfl__$internal_renderer_opengl_utils_PingPongTexture;
 openfl__$internal_renderer_opengl_utils_PingPongTexture.__name__ = ["openfl","_internal","renderer","opengl","utils","PingPongTexture"];
 openfl__$internal_renderer_opengl_utils_PingPongTexture.prototype = {
-	swap: function() {
+	gl: null
+	,width: null
+	,height: null
+	,smoothing: null
+	,useOldTexture: null
+	,powerOfTwo: null
+	,__swapped: null
+	,__texture0: null
+	,__texture1: null
+	,swap: function() {
 		this.__swapped = !this.__swapped;
 		if((this.__swapped?this.__texture1:this.__texture0) == null) this.set_renderTexture(new openfl__$internal_renderer_opengl_utils_RenderTexture(this.gl,this.width,this.height,this.smoothing,this.powerOfTwo));
 	}
@@ -23719,7 +24583,18 @@ var openfl__$internal_renderer_opengl_utils_RenderTexture = function(gl,width,he
 $hxClasses["openfl._internal.renderer.opengl.utils.RenderTexture"] = openfl__$internal_renderer_opengl_utils_RenderTexture;
 openfl__$internal_renderer_opengl_utils_RenderTexture.__name__ = ["openfl","_internal","renderer","opengl","utils","RenderTexture"];
 openfl__$internal_renderer_opengl_utils_RenderTexture.prototype = {
-	clear: function(r,g,b,a,mask) {
+	gl: null
+	,frameBuffer: null
+	,renderBuffer: null
+	,texture: null
+	,smoothing: null
+	,width: null
+	,height: null
+	,powerOfTwo: null
+	,__width: null
+	,__height: null
+	,__uvData: null
+	,clear: function(r,g,b,a,mask) {
 		if(a == null) a = 0;
 		if(b == null) b = 0;
 		if(g == null) g = 0;
@@ -23780,7 +24655,14 @@ var openfl__$internal_renderer_opengl_utils_ShaderManager = function(gl) {
 $hxClasses["openfl._internal.renderer.opengl.utils.ShaderManager"] = openfl__$internal_renderer_opengl_utils_ShaderManager;
 openfl__$internal_renderer_opengl_utils_ShaderManager.__name__ = ["openfl","_internal","renderer","opengl","utils","ShaderManager"];
 openfl__$internal_renderer_opengl_utils_ShaderManager.prototype = {
-	setContext: function(gl) {
+	gl: null
+	,currentShader: null
+	,defaultShader: null
+	,fillShader: null
+	,patternFillShader: null
+	,drawTrianglesShader: null
+	,primitiveShader: null
+	,setContext: function(gl) {
 		this.gl = gl;
 		this.defaultShader = new openfl__$internal_renderer_opengl_shaders2_DefaultShader(gl);
 		this.fillShader = new openfl__$internal_renderer_opengl_shaders2_FillShader(gl);
@@ -23875,7 +24757,33 @@ var openfl__$internal_renderer_opengl_utils_SpriteBatch = function(gl,maxSprites
 $hxClasses["openfl._internal.renderer.opengl.utils.SpriteBatch"] = openfl__$internal_renderer_opengl_utils_SpriteBatch;
 openfl__$internal_renderer_opengl_utils_SpriteBatch.__name__ = ["openfl","_internal","renderer","opengl","utils","SpriteBatch"];
 openfl__$internal_renderer_opengl_utils_SpriteBatch.prototype = {
-	destroy: function() {
+	gl: null
+	,renderSession: null
+	,states: null
+	,currentState: null
+	,vertexArray: null
+	,positions: null
+	,colors: null
+	,indexBuffer: null
+	,indices: null
+	,dirty: null
+	,drawing: null
+	,clipRect: null
+	,maxSprites: null
+	,batchedSprites: null
+	,vertexArraySize: null
+	,indexArraySize: null
+	,maxElementsPerVertex: null
+	,elementsPerVertex: null
+	,writtenVertexBytes: null
+	,shader: null
+	,attributes: null
+	,enableColor: null
+	,lastEnableColor: null
+	,matrix: null
+	,uvs: null
+	,colorTransform: null
+	,destroy: function() {
 		this.vertexArray.destroy();
 		this.vertexArray = null;
 		this.indices = null;
@@ -24428,7 +25336,15 @@ var openfl__$internal_renderer_opengl_utils__$SpriteBatch_State = function() {
 $hxClasses["openfl._internal.renderer.opengl.utils._SpriteBatch.State"] = openfl__$internal_renderer_opengl_utils__$SpriteBatch_State;
 openfl__$internal_renderer_opengl_utils__$SpriteBatch_State.__name__ = ["openfl","_internal","renderer","opengl","utils","_SpriteBatch","State"];
 openfl__$internal_renderer_opengl_utils__$SpriteBatch_State.prototype = {
-	equals: function(other) {
+	texture: null
+	,textureSmooth: null
+	,blendMode: null
+	,colorTransform: null
+	,skipColorTransform: null
+	,skipColorTransformAlpha: null
+	,shader: null
+	,shaderData: null
+	,equals: function(other) {
 		return (this.shader == null && other.shader == null || this.shader != null && other.shader != null && this.shader.ID == other.shader.ID) && this.texture == other.texture && this.textureSmooth == other.textureSmooth && this.blendMode == other.blendMode && (this.skipColorTransform && other.skipColorTransform || !this.skipColorTransform && !other.skipColorTransform && this.colorTransform.__equals(other.colorTransform,this.skipColorTransformAlpha));
 	}
 	,destroy: function() {
@@ -24447,7 +25363,12 @@ var openfl__$internal_renderer_opengl_utils_StencilManager = function(gl) {
 $hxClasses["openfl._internal.renderer.opengl.utils.StencilManager"] = openfl__$internal_renderer_opengl_utils_StencilManager;
 openfl__$internal_renderer_opengl_utils_StencilManager.__name__ = ["openfl","_internal","renderer","opengl","utils","StencilManager"];
 openfl__$internal_renderer_opengl_utils_StencilManager.prototype = {
-	prepareGraphics: function(fill,renderSession,translationMatrix) {
+	count: null
+	,gl: null
+	,reverse: null
+	,stencilStack: null
+	,stencilMask: null
+	,prepareGraphics: function(fill,renderSession,translationMatrix) {
 		var shader = renderSession.shaderManager.fillShader;
 		renderSession.shaderManager.setShader(shader);
 		this.gl.uniformMatrix3fv(shader.getUniformLocation("openfl_uTranslationMatrix"),false,translationMatrix);
@@ -24631,7 +25552,13 @@ var openfl__$internal_renderer_opengl_utils_VertexArray = function(attributes,si
 $hxClasses["openfl._internal.renderer.opengl.utils.VertexArray"] = openfl__$internal_renderer_opengl_utils_VertexArray;
 openfl__$internal_renderer_opengl_utils_VertexArray.__name__ = ["openfl","_internal","renderer","opengl","utils","VertexArray"];
 openfl__$internal_renderer_opengl_utils_VertexArray.prototype = {
-	bind: function() {
+	gl: null
+	,glBuffer: null
+	,attributes: null
+	,buffer: null
+	,size: null
+	,isStatic: null
+	,bind: function() {
 		this.gl.bindBuffer(this.gl.ARRAY_BUFFER,this.glBuffer);
 	}
 	,unbind: function() {
@@ -24739,7 +25666,62 @@ openfl__$internal_text_TextEngine.getFontInstance = function(format) {
 	return null;
 };
 openfl__$internal_text_TextEngine.prototype = {
-	getBounds: function() {
+	antiAliasType: null
+	,autoSize: null
+	,background: null
+	,backgroundColor: null
+	,border: null
+	,borderColor: null
+	,bottomScrollV: null
+	,bounds: null
+	,caretIndex: null
+	,displayAsPassword: null
+	,embedFonts: null
+	,gridFitType: null
+	,height: null
+	,layoutGroups: null
+	,lineAscents: null
+	,lineBreaks: null
+	,lineDescents: null
+	,lineLeadings: null
+	,lineHeights: null
+	,lineWidths: null
+	,maxChars: null
+	,maxScrollH: null
+	,maxScrollV: null
+	,multiline: null
+	,numLines: null
+	,restrict: null
+	,scrollH: null
+	,scrollV: null
+	,selectable: null
+	,sharpness: null
+	,text: null
+	,textHeight: null
+	,textFormatRanges: null
+	,textWidth: null
+	,type: null
+	,width: null
+	,wordWrap: null
+	,textField: null
+	,__cursorPosition: null
+	,__cursorTimer: null
+	,__hasFocus: null
+	,__isKeyDown: null
+	,__measuredHeight: null
+	,__measuredWidth: null
+	,__selectionStart: null
+	,__showCursor: null
+	,__textFormat: null
+	,__textLayout: null
+	,__texture: null
+	,__tileData: null
+	,__tileDataLength: null
+	,__tilesheets: null
+	,__cairoFont: null
+	,__font: null
+	,__hiddenInput: null
+	,getBounds: function() {
 		var padding;
 		if(this.border) padding = 1; else padding = 0;
 		this.bounds.width = this.width + padding;
@@ -25127,7 +26109,10 @@ var openfl__$internal_text_TextFormatRange = function(format,start,end) {
 $hxClasses["openfl._internal.text.TextFormatRange"] = openfl__$internal_text_TextFormatRange;
 openfl__$internal_text_TextFormatRange.__name__ = ["openfl","_internal","text","TextFormatRange"];
 openfl__$internal_text_TextFormatRange.prototype = {
-	__class__: openfl__$internal_text_TextFormatRange
+	end: null
+	,format: null
+	,start: null
+	,__class__: openfl__$internal_text_TextFormatRange
 };
 var openfl__$internal_text_TextLayoutGroup = function(format,startIndex,endIndex) {
 	this.format = format;
@@ -25137,7 +26122,19 @@ var openfl__$internal_text_TextLayoutGroup = function(format,startIndex,endIndex
 $hxClasses["openfl._internal.text.TextLayoutGroup"] = openfl__$internal_text_TextLayoutGroup;
 openfl__$internal_text_TextLayoutGroup.__name__ = ["openfl","_internal","text","TextLayoutGroup"];
 openfl__$internal_text_TextLayoutGroup.prototype = {
-	__class__: openfl__$internal_text_TextLayoutGroup
+	advances: null
+	,ascent: null
+	,descent: null
+	,endIndex: null
+	,format: null
+	,height: null
+	,leading: null
+	,lineIndex: null
+	,offsetX: null
+	,offsetY: null
+	,startIndex: null
+	,width: null
+	,__class__: openfl__$internal_text_TextLayoutGroup
 };
 var openfl_display_Application = function() {
 	lime_app_Application.call(this);
@@ -25180,7 +26177,11 @@ $hxClasses["openfl.display.Bitmap"] = openfl_display_Bitmap;
 openfl_display_Bitmap.__name__ = ["openfl","display","Bitmap"];
 openfl_display_Bitmap.__super__ = openfl_display_DisplayObject;
 openfl_display_Bitmap.prototype = $extend(openfl_display_DisplayObject.prototype,{
-	__getBounds: function(rect,matrix) {
+	bitmapData: null
+	,pixelSnapping: null
+	,smoothing: null
+	,__image: null
+	,__getBounds: function(rect,matrix) {
 		if(this.bitmapData != null) {
 			var bounds = openfl_geom_Rectangle.__temp;
 			bounds.setTo(0,0,this.bitmapData.width,this.bitmapData.height);
@@ -25248,6 +26249,7 @@ openfl_display_Bitmap.prototype = $extend(openfl_display_DisplayObject.prototype
 		if(this.__scrollRect != null) renderSession.maskManager.popRect();
 	}
 	,__updateMask: function(maskGraphics) {
+		if(this.bitmapData == null) return;
 		maskGraphics.__commands.overrideMatrix(this.__worldTransform);
 		maskGraphics.beginFill(0);
 		maskGraphics.drawRect(0,0,this.bitmapData.width,this.bitmapData.height);
@@ -25346,7 +26348,25 @@ openfl_display_BitmapData.__asRenderTexture = function(width,height) {
 	return b;
 };
 openfl_display_BitmapData.prototype = {
-	applyFilter: function(sourceBitmapData,sourceRect,destPoint,filter) {
+	height: null
+	,image: null
+	,rect: null
+	,transparent: null
+	,width: null
+	,__worldTransform: null
+	,__worldColorTransform: null
+	,__cacheAsBitmap: null
+	,__blendMode: null
+	,__shader: null
+	,__buffer: null
+	,__isValid: null
+	,__surface: null
+	,__texture: null
+	,__textureImage: null
+	,__pingPongTexture: null
+	,__usingPingPongTexture: null
+	,__uvData: null
+	,applyFilter: function(sourceBitmapData,sourceRect,destPoint,filter) {
 		if(!this.__isValid || sourceBitmapData == null || !sourceBitmapData.__isValid) return;
 		lime_graphics_utils_ImageCanvasUtil.convertToCanvas(this.image);
 		lime_graphics_utils_ImageCanvasUtil.createImageData(this.image);
@@ -26053,7 +27073,15 @@ var openfl_display_TextureUvs = function() {
 $hxClasses["openfl.display.TextureUvs"] = openfl_display_TextureUvs;
 openfl_display_TextureUvs.__name__ = ["openfl","display","TextureUvs"];
 openfl_display_TextureUvs.prototype = {
-	reset: function() {
+	x0: null
+	,x1: null
+	,x2: null
+	,x3: null
+	,y0: null
+	,y1: null
+	,y2: null
+	,y3: null
+	,reset: function() {
 		this.x0 = this.x1 = this.x2 = this.x3 = this.y0 = this.y1 = this.y2 = this.y3 = 0;
 	}
 	,__class__: openfl_display_TextureUvs
@@ -26168,7 +27196,8 @@ $hxClasses["openfl.display.DirectRenderer"] = openfl_display_DirectRenderer;
 openfl_display_DirectRenderer.__name__ = ["openfl","display","DirectRenderer"];
 openfl_display_DirectRenderer.__super__ = openfl_display_DisplayObject;
 openfl_display_DirectRenderer.prototype = $extend(openfl_display_DisplayObject.prototype,{
-	get_render: function() {
+	__render: null
+	,get_render: function() {
 		return this.__render;
 	}
 	,set_render: function(value) {
@@ -26186,7 +27215,11 @@ $hxClasses["openfl.display.FrameLabel"] = openfl_display_FrameLabel;
 openfl_display_FrameLabel.__name__ = ["openfl","display","FrameLabel"];
 openfl_display_FrameLabel.__super__ = openfl_events_EventDispatcher;
 openfl_display_FrameLabel.prototype = $extend(openfl_events_EventDispatcher.prototype,{
-	get_frame: function() {
+	frame: null
+	,name: null
+	,__frame: null
+	,__name: null
+	,get_frame: function() {
 		return this.__frame;
 	}
 	,get_name: function() {
@@ -26231,7 +27264,24 @@ var openfl_display_Graphics = function() {
 $hxClasses["openfl.display.Graphics"] = openfl_display_Graphics;
 openfl_display_Graphics.__name__ = ["openfl","display","Graphics"];
 openfl_display_Graphics.prototype = {
-	beginBitmapFill: function(bitmap,matrix,repeat,smooth) {
+	__hardware: null
+	,__bounds: null
+	,__commands: null
+	,__dirty: null
+	,__glStack: null
+	,__drawPaths: null
+	,__image: null
+	,__positionX: null
+	,__positionY: null
+	,__strokePadding: null
+	,__transformDirty: null
+	,__visible: null
+	,__cachedTexture: null
+	,__owner: null
+	,__canvas: null
+	,__context: null
+	,__bitmap: null
+	,beginBitmapFill: function(bitmap,matrix,repeat,smooth) {
 		if(smooth == null) smooth = false;
 		if(repeat == null) repeat = true;
 		this.__commands.beginBitmapFill(bitmap,matrix != null?matrix.clone():null,repeat,smooth);
@@ -26744,13 +27794,15 @@ var openfl_display_IGraphicsFill = function() { };
 $hxClasses["openfl.display.IGraphicsFill"] = openfl_display_IGraphicsFill;
 openfl_display_IGraphicsFill.__name__ = ["openfl","display","IGraphicsFill"];
 openfl_display_IGraphicsFill.prototype = {
-	__class__: openfl_display_IGraphicsFill
+	__graphicsFillType: null
+	,__class__: openfl_display_IGraphicsFill
 };
 var openfl_display_IGraphicsData = function() { };
 $hxClasses["openfl.display.IGraphicsData"] = openfl_display_IGraphicsData;
 openfl_display_IGraphicsData.__name__ = ["openfl","display","IGraphicsData"];
 openfl_display_IGraphicsData.prototype = {
-	__class__: openfl_display_IGraphicsData
+	__graphicsDataType: null
+	,__class__: openfl_display_IGraphicsData
 };
 var openfl_display_GraphicsBitmapFill = function(bitmapData,matrix,repeat,smooth) {
 	if(smooth == null) smooth = false;
@@ -26766,7 +27818,13 @@ $hxClasses["openfl.display.GraphicsBitmapFill"] = openfl_display_GraphicsBitmapF
 openfl_display_GraphicsBitmapFill.__name__ = ["openfl","display","GraphicsBitmapFill"];
 openfl_display_GraphicsBitmapFill.__interfaces__ = [openfl_display_IGraphicsFill,openfl_display_IGraphicsData];
 openfl_display_GraphicsBitmapFill.prototype = {
-	__class__: openfl_display_GraphicsBitmapFill
+	bitmapData: null
+	,matrix: null
+	,repeat: null
+	,smooth: null
+	,__graphicsDataType: null
+	,__graphicsFillType: null
+	,__class__: openfl_display_GraphicsBitmapFill
 };
 var openfl_display_GraphicsEndFill = function() {
 	this.__graphicsDataType = openfl_display_GraphicsDataType.END;
@@ -26776,7 +27834,9 @@ $hxClasses["openfl.display.GraphicsEndFill"] = openfl_display_GraphicsEndFill;
 openfl_display_GraphicsEndFill.__name__ = ["openfl","display","GraphicsEndFill"];
 openfl_display_GraphicsEndFill.__interfaces__ = [openfl_display_IGraphicsFill,openfl_display_IGraphicsData];
 openfl_display_GraphicsEndFill.prototype = {
-	__class__: openfl_display_GraphicsEndFill
+	__graphicsDataType: null
+	,__graphicsFillType: null
+	,__class__: openfl_display_GraphicsEndFill
 };
 var openfl_display_GraphicsGradientFill = function(type,colors,alphas,ratios,matrix,spreadMethod,interpolationMethod,focalPointRatio) {
 	if(focalPointRatio == null) focalPointRatio = 0;
@@ -26798,7 +27858,17 @@ $hxClasses["openfl.display.GraphicsGradientFill"] = openfl_display_GraphicsGradi
 openfl_display_GraphicsGradientFill.__name__ = ["openfl","display","GraphicsGradientFill"];
 openfl_display_GraphicsGradientFill.__interfaces__ = [openfl_display_IGraphicsFill,openfl_display_IGraphicsData];
 openfl_display_GraphicsGradientFill.prototype = {
-	__class__: openfl_display_GraphicsGradientFill
+	alphas: null
+	,colors: null
+	,focalPointRatio: null
+	,interpolationMethod: null
+	,matrix: null
+	,ratios: null
+	,spreadMethod: null
+	,type: null
+	,__graphicsDataType: null
+	,__graphicsFillType: null
+	,__class__: openfl_display_GraphicsGradientFill
 };
 var openfl_display_IGraphicsPath = function() { };
 $hxClasses["openfl.display.IGraphicsPath"] = openfl_display_IGraphicsPath;
@@ -26814,7 +27884,11 @@ $hxClasses["openfl.display.GraphicsPath"] = openfl_display_GraphicsPath;
 openfl_display_GraphicsPath.__name__ = ["openfl","display","GraphicsPath"];
 openfl_display_GraphicsPath.__interfaces__ = [openfl_display_IGraphicsPath,openfl_display_IGraphicsData];
 openfl_display_GraphicsPath.prototype = {
-	curveTo: function(controlX,controlY,anchorX,anchorY) {
+	commands: null
+	,data: null
+	,winding: null
+	,__graphicsDataType: null
+	,curveTo: function(controlX,controlY,anchorX,anchorY) {
 		if(this.commands != null && this.data != null) {
 			var this1 = this.commands;
 			if(!this1.fixed) {
@@ -27086,7 +28160,11 @@ $hxClasses["openfl.display.GraphicsSolidFill"] = openfl_display_GraphicsSolidFil
 openfl_display_GraphicsSolidFill.__name__ = ["openfl","display","GraphicsSolidFill"];
 openfl_display_GraphicsSolidFill.__interfaces__ = [openfl_display_IGraphicsFill,openfl_display_IGraphicsData];
 openfl_display_GraphicsSolidFill.prototype = {
-	__class__: openfl_display_GraphicsSolidFill
+	alpha: null
+	,color: null
+	,__graphicsDataType: null
+	,__graphicsFillType: null
+	,__class__: openfl_display_GraphicsSolidFill
 };
 var openfl_display_IGraphicsStroke = function() { };
 $hxClasses["openfl.display.IGraphicsStroke"] = openfl_display_IGraphicsStroke;
@@ -27108,9 +28186,17 @@ $hxClasses["openfl.display.GraphicsStroke"] = openfl_display_GraphicsStroke;
 openfl_display_GraphicsStroke.__name__ = ["openfl","display","GraphicsStroke"];
 openfl_display_GraphicsStroke.__interfaces__ = [openfl_display_IGraphicsStroke,openfl_display_IGraphicsData];
 openfl_display_GraphicsStroke.prototype = {
-	__class__: openfl_display_GraphicsStroke
+	caps: null
+	,fill: null
+	,joints: null
+	,miterLimit: null
+	,pixelHinting: null
+	,scaleMode: null
+	,thickness: null
+	,__graphicsDataType: null
+	,__class__: openfl_display_GraphicsStroke
 };
-var openfl_display_GraphicsDataType = $hxClasses["openfl.display.GraphicsDataType"] = { __ename__ : true, __constructs__ : ["STROKE","SOLID","GRADIENT","PATH","BITMAP","END"] };
+var openfl_display_GraphicsDataType = $hxClasses["openfl.display.GraphicsDataType"] = { __ename__ : ["openfl","display","GraphicsDataType"], __constructs__ : ["STROKE","SOLID","GRADIENT","PATH","BITMAP","END"] };
 openfl_display_GraphicsDataType.STROKE = ["STROKE",0];
 openfl_display_GraphicsDataType.STROKE.toString = $estr;
 openfl_display_GraphicsDataType.STROKE.__enum__ = openfl_display_GraphicsDataType;
@@ -27129,7 +28215,7 @@ openfl_display_GraphicsDataType.BITMAP.__enum__ = openfl_display_GraphicsDataTyp
 openfl_display_GraphicsDataType.END = ["END",5];
 openfl_display_GraphicsDataType.END.toString = $estr;
 openfl_display_GraphicsDataType.END.__enum__ = openfl_display_GraphicsDataType;
-var openfl_display_GraphicsFillType = $hxClasses["openfl.display.GraphicsFillType"] = { __ename__ : true, __constructs__ : ["SOLID_FILL","GRADIENT_FILL","BITMAP_FILL","END_FILL"] };
+var openfl_display_GraphicsFillType = $hxClasses["openfl.display.GraphicsFillType"] = { __ename__ : ["openfl","display","GraphicsFillType"], __constructs__ : ["SOLID_FILL","GRADIENT_FILL","BITMAP_FILL","END_FILL"] };
 openfl_display_GraphicsFillType.SOLID_FILL = ["SOLID_FILL",0];
 openfl_display_GraphicsFillType.SOLID_FILL.toString = $estr;
 openfl_display_GraphicsFillType.SOLID_FILL.__enum__ = openfl_display_GraphicsFillType;
@@ -27172,7 +28258,8 @@ var openfl_display_JPEGEncoderOptions = function(quality) {
 $hxClasses["openfl.display.JPEGEncoderOptions"] = openfl_display_JPEGEncoderOptions;
 openfl_display_JPEGEncoderOptions.__name__ = ["openfl","display","JPEGEncoderOptions"];
 openfl_display_JPEGEncoderOptions.prototype = {
-	__class__: openfl_display_JPEGEncoderOptions
+	quality: null
+	,__class__: openfl_display_JPEGEncoderOptions
 };
 var openfl_display__$JointStyle_JointStyle_$Impl_$ = {};
 $hxClasses["openfl.display._JointStyle.JointStyle_Impl_"] = openfl_display__$JointStyle_JointStyle_$Impl_$;
@@ -27240,7 +28327,11 @@ $hxClasses["openfl.display.Loader"] = openfl_display_Loader;
 openfl_display_Loader.__name__ = ["openfl","display","Loader"];
 openfl_display_Loader.__super__ = openfl_display_DisplayObjectContainer;
 openfl_display_Loader.prototype = $extend(openfl_display_DisplayObjectContainer.prototype,{
-	close: function() {
+	content: null
+	,contentLoaderInfo: null
+	,mImage: null
+	,mShape: null
+	,close: function() {
 		openfl_Lib.notImplemented("Loader.close");
 	}
 	,load: function(request,context) {
@@ -27250,7 +28341,7 @@ openfl_display_Loader.prototype = $extend(openfl_display_DisplayObjectContainer.
 		if(extension.indexOf("?") != -1) extension = extension.split("?")[0];
 		var transparent = true;
 		this.contentLoaderInfo.url = request.url;
-		if(request.contentType == null && request.contentType != "") switch(extension) {
+		if(request.contentType == null || request.contentType == "") switch(extension) {
 		case "swf":
 			this.contentLoaderInfo.contentType = "application/x-shockwave-flash";
 			break;
@@ -27344,7 +28435,9 @@ openfl_display_OpenGLView.get_isSupported = function() {
 };
 openfl_display_OpenGLView.__super__ = openfl_display_DirectRenderer;
 openfl_display_OpenGLView.prototype = $extend(openfl_display_DirectRenderer.prototype,{
-	__renderCanvas: function(renderSession) {
+	__added: null
+	,__initialized: null
+	,__renderCanvas: function(renderSession) {
 	}
 	,__renderDOM: function(renderSession) {
 		if(this.stage != null && this.__worldVisible && this.__renderable) {
@@ -27381,7 +28474,8 @@ var openfl_display_PNGEncoderOptions = function(fastCompression) {
 $hxClasses["openfl.display.PNGEncoderOptions"] = openfl_display_PNGEncoderOptions;
 openfl_display_PNGEncoderOptions.__name__ = ["openfl","display","PNGEncoderOptions"];
 openfl_display_PNGEncoderOptions.prototype = {
-	__class__: openfl_display_PNGEncoderOptions
+	fastCompression: null
+	,__class__: openfl_display_PNGEncoderOptions
 };
 var openfl_display__$PixelSnapping_PixelSnapping_$Impl_$ = {};
 $hxClasses["openfl.display._PixelSnapping.PixelSnapping_Impl_"] = openfl_display__$PixelSnapping_PixelSnapping_$Impl_$;
@@ -27422,7 +28516,9 @@ $hxClasses["openfl.display.Preloader"] = openfl_display_Preloader;
 openfl_display_Preloader.__name__ = ["openfl","display","Preloader"];
 openfl_display_Preloader.__super__ = lime_app_Preloader;
 openfl_display_Preloader.prototype = $extend(lime_app_Preloader.prototype,{
-	load: function(urls,types) {
+	display: null
+	,displayComplete: null
+	,load: function(urls,types) {
 		var sounds = [];
 		var url = null;
 		var _g1 = 0;
@@ -27495,7 +28591,17 @@ var openfl_display_Shader = function(precision) {
 $hxClasses["openfl.display.Shader"] = openfl_display_Shader;
 openfl_display_Shader.__name__ = ["openfl","display","Shader"];
 openfl_display_Shader.prototype = {
-	__init: function(gl) {
+	precision: null
+	,data: null
+	,repeatX: null
+	,repeatY: null
+	,smooth: null
+	,blendMode: null
+	,__dirty: null
+	,__fragmentCode: null
+	,__vertexCode: null
+	,__shader: null
+	,__init: function(gl) {
 		var dirty = this.__dirty;
 		if(dirty) {
 			if(this.__shader != null) this.__shader.destroy();
@@ -27577,7 +28683,17 @@ var openfl_display_GLShaderParameter = function(type,arraySize) {
 $hxClasses["openfl.display.GLShaderParameter"] = openfl_display_GLShaderParameter;
 openfl_display_GLShaderParameter.__name__ = ["openfl","display","GLShaderParameter"];
 openfl_display_GLShaderParameter.prototype = {
-	__init: function() {
+	type: null
+	,size: null
+	,arraySize: null
+	,value: null
+	,bitmap: null
+	,smooth: null
+	,repeatX: null
+	,repeatY: null
+	,transpose: null
+	,internalType: null
+	,__init: function() {
 		var _g = this.type;
 		var v = _g;
 		var m = _g;
@@ -27748,7 +28864,8 @@ $hxClasses["openfl.display.Shape"] = openfl_display_Shape;
 openfl_display_Shape.__name__ = ["openfl","display","Shape"];
 openfl_display_Shape.__super__ = openfl_display_DisplayObject;
 openfl_display_Shape.prototype = $extend(openfl_display_DisplayObject.prototype,{
-	get_graphics: function() {
+	graphics: null
+	,get_graphics: function() {
 		if(this.__graphics == null) {
 			this.__graphics = new openfl_display_Graphics();
 			this.__graphics.__owner = this;
@@ -27777,7 +28894,17 @@ $hxClasses["openfl.display.SimpleButton"] = openfl_display_SimpleButton;
 openfl_display_SimpleButton.__name__ = ["openfl","display","SimpleButton"];
 openfl_display_SimpleButton.__super__ = openfl_display_InteractiveObject;
 openfl_display_SimpleButton.prototype = $extend(openfl_display_InteractiveObject.prototype,{
-	__getBounds: function(rect,matrix) {
+	downState: null
+	,enabled: null
+	,hitTestState: null
+	,overState: null
+	,trackAsMenu: null
+	,upState: null
+	,useHandCursor: null
+	,__currentState: null
+	,__ignoreEvent: null
+	,__soundTransform: null
+	,__getBounds: function(rect,matrix) {
 		openfl_display_InteractiveObject.prototype.__getBounds.call(this,rect,matrix);
 		if(matrix != null) {
 			this.__updateTransforms(matrix);
@@ -28032,7 +29159,47 @@ openfl_display_Stage.__name__ = ["openfl","display","Stage"];
 openfl_display_Stage.__interfaces__ = [lime_app_IModule];
 openfl_display_Stage.__super__ = openfl_display_DisplayObjectContainer;
 openfl_display_Stage.prototype = $extend(openfl_display_DisplayObjectContainer.prototype,{
-	globalToLocal: function(pos) {
+	align: null
+	,allowsFullScreen: null
+	,allowsFullScreenInteractive: null
+	,application: null
+	,quality: null
+	,scaleMode: null
+	,stage3Ds: null
+	,stageFocusRect: null
+	,stageHeight: null
+	,stageWidth: null
+	,window: null
+	,__clearBeforeRender: null
+	,__color: null
+	,__colorSplit: null
+	,__colorString: null
+	,__deltaTime: null
+	,__dirty: null
+	,__displayState: null
+	,__dragBounds: null
+	,__dragObject: null
+	,__dragOffsetX: null
+	,__dragOffsetY: null
+	,__focus: null
+	,__fullscreen: null
+	,__invalidated: null
+	,__lastClickTime: null
+	,__macKeyboard: null
+	,__mouseDownLeft: null
+	,__mouseDownMiddle: null
+	,__mouseDownRight: null
+	,__mouseOutStack: null
+	,__mouseX: null
+	,__mouseY: null
+	,__originalWidth: null
+	,__originalHeight: null
+	,__renderer: null
+	,__rendering: null
+	,__stack: null
+	,__transparent: null
+	,__wasDirty: null
+	,globalToLocal: function(pos) {
 		return pos.clone();
 	}
 	,invalidate: function() {
@@ -28168,7 +29335,6 @@ openfl_display_Stage.prototype = $extend(openfl_display_DisplayObjectContainer.p
 			switch(_g[1]) {
 			case 0:
 				var gl = _g[2];
-				this.__renderer = new openfl__$internal_renderer_opengl_GLRenderer(this.stageWidth,this.stageHeight,gl);
 				break;
 			case 1:
 				var context = _g[2];
@@ -28176,15 +29342,12 @@ openfl_display_Stage.prototype = $extend(openfl_display_DisplayObjectContainer.p
 				break;
 			case 2:
 				var element = _g[2];
-				this.__renderer = new openfl__$internal_renderer_dom_DOMRenderer(this.stageWidth,this.stageHeight,element);
 				break;
 			case 4:
 				var cairo = _g[2];
-				this.__renderer = new openfl__$internal_renderer_cairo_CairoRenderer(this.stageWidth,this.stageHeight,cairo);
 				break;
 			case 5:
 				var ctx = _g[2];
-				this.__renderer = new openfl__$internal_renderer_console_ConsoleRenderer(this.stageWidth,this.stageHeight,ctx);
 				break;
 			default:
 			}
@@ -28194,6 +29357,8 @@ openfl_display_Stage.prototype = $extend(openfl_display_DisplayObjectContainer.p
 		if(this.window == null || this.window != window) return;
 		var event = new openfl_events_Event("deactivate");
 		this.__broadcast(event,true);
+	}
+	,onWindowDropFile: function(window,file) {
 	}
 	,onWindowEnter: function(window) {
 	}
@@ -28921,12 +30086,16 @@ openfl_display_Stage.prototype = $extend(openfl_display_DisplayObjectContainer.p
 		case 2:
 			if(this.window.__fullscreen) {
 				this.window.set_fullscreen(false);
+				this.stageWidth = this.window.__width * this.window.__scale | 0;
+				this.stageHeight = this.window.__height * this.window.__scale | 0;
 				this.dispatchEvent(new openfl_events_FullScreenEvent("fullScreen",false,false,false,true));
 			}
 			break;
 		default:
 			if(!this.window.__fullscreen) {
 				this.window.set_fullscreen(true);
+				this.stageWidth = this.window.__width * this.window.__scale | 0;
+				this.stageHeight = this.window.__height * this.window.__scale | 0;
 				this.dispatchEvent(new openfl_events_FullScreenEvent("fullScreen",false,false,true,true));
 			}
 		}
@@ -28974,7 +30143,11 @@ $hxClasses["openfl.display.Stage3D"] = openfl_display_Stage3D;
 openfl_display_Stage3D.__name__ = ["openfl","display","Stage3D"];
 openfl_display_Stage3D.__super__ = openfl_events_EventDispatcher;
 openfl_display_Stage3D.prototype = $extend(openfl_events_EventDispatcher.prototype,{
-	requestContext3D: function(context3DRenderMode) {
+	context3D: null
+	,visible: null
+	,x: null
+	,y: null
+	,requestContext3D: function(context3DRenderMode) {
 		if(context3DRenderMode == null) context3DRenderMode = "";
 		var _g = this;
 		if(openfl_display_OpenGLView.get_isSupported()) haxe_Timer.delay(function() {
@@ -29134,7 +30307,14 @@ var openfl_display_Tilesheet = function(image) {
 $hxClasses["openfl.display.Tilesheet"] = openfl_display_Tilesheet;
 openfl_display_Tilesheet.__name__ = ["openfl","display","Tilesheet"];
 openfl_display_Tilesheet.prototype = {
-	addTileRect: function(rectangle,centerPoint) {
+	__bitmap: null
+	,__centerPoints: null
+	,__tileRects: null
+	,__tileUVs: null
+	,__rectTile: null
+	,__rectUV: null
+	,__point: null
+	,addTileRect: function(rectangle,centerPoint) {
 		this.__tileRects.push(rectangle);
 		if(centerPoint == null) centerPoint = openfl_display_Tilesheet.__defaultPoint;
 		this.__centerPoints.push(centerPoint);
@@ -29232,7 +30412,35 @@ var openfl_display3D_Context3D = function() {
 $hxClasses["openfl.display3D.Context3D"] = openfl_display3D_Context3D;
 openfl_display3D_Context3D.__name__ = ["openfl","display3D","Context3D"];
 openfl_display3D_Context3D.prototype = {
-	clear: function(red,green,blue,alpha,depth,stencil,mask) {
+	driverInfo: null
+	,enableErrorChecking: null
+	,blendDestinationFactor: null
+	,blendEnabled: null
+	,blendSourceFactor: null
+	,currentProgram: null
+	,disposed: null
+	,drawing: null
+	,framebuffer: null
+	,indexBuffersCreated: null
+	,ogl: null
+	,programsCreated: null
+	,renderbuffer: null
+	,samplerParameters: null
+	,scrollRect: null
+	,stencilbuffer: null
+	,stencilCompareMode: null
+	,stencilRef: null
+	,stencilReadMask: null
+	,texturesCreated: null
+	,vertexBuffersCreated: null
+	,_yFlip: null
+	,backBufferDepthAndStencil: null
+	,rttDepthAndStencil: null
+	,scissorRectangle: null
+	,renderToTexture: null
+	,rttWidth: null
+	,rttHeight: null
+	,clear: function(red,green,blue,alpha,depth,stencil,mask) {
 		if(mask == null) mask = 17664;
 		if(stencil == null) stencil = 0;
 		if(depth == null) depth = 1;
@@ -29244,22 +30452,46 @@ openfl_display3D_Context3D.prototype = {
 			this.__updateBlendStatus();
 			this.drawing = true;
 		}
+		if(this.scissorRectangle != null) lime_graphics_opengl_GL.context.disable(3089);
 		lime_graphics_opengl_GL.context.clearColor(red,green,blue,alpha);
 		lime_graphics_opengl_GL.context.clearDepth(depth);
 		lime_graphics_opengl_GL.context.clearStencil(stencil);
 		lime_graphics_opengl_GL.context.clear(mask);
+		if(this.scissorRectangle != null) lime_graphics_opengl_GL.context.enable(3089);
 	}
 	,configureBackBuffer: function(width,height,antiAlias,enableDepthAndStencil) {
 		if(enableDepthAndStencil == null) enableDepthAndStencil = true;
-		if(enableDepthAndStencil) {
-			lime_graphics_opengl_GL.context.enable(2929);
-			lime_graphics_opengl_GL.context.enable(2960);
+		this.backBufferDepthAndStencil = enableDepthAndStencil;
+		this.updateDepthAndStencilState();
+		this.setBackBufferViewPort(null,null,width,height);
+		this.updateScissorRectangle();
+	}
+	,setBackBufferViewPort: function(x,y,width,height) {
+		if(x == null) x = this.scrollRect.x | 0;
+		if(y == null) y = this.scrollRect.y | 0;
+		if(width == null) width = this.scrollRect.width | 0;
+		if(height == null) height = this.scrollRect.height | 0;
+		this.scrollRect.x = x;
+		this.scrollRect.y = y;
+		this.scrollRect.width = width;
+		this.scrollRect.height = height;
+		this.ogl.set_width(x + width);
+		this.ogl.set_height(y + height);
+		this.updateBackBufferViewPort();
+	}
+	,updateBackBufferViewPort: function() {
+		if(!this.renderToTexture) lime_graphics_opengl_GL.context.viewport(this.scrollRect.x | 0,this.scrollRect.y | 0,this.scrollRect.width | 0,this.scrollRect.height | 0);
+	}
+	,updateDepthAndStencilState: function() {
+		var depthAndStencil;
+		if(this.renderToTexture) depthAndStencil = this.rttDepthAndStencil; else depthAndStencil = this.backBufferDepthAndStencil;
+		if(depthAndStencil) {
+			if(lime_app_Application.current.windows[0].config.depthBuffer) lime_graphics_opengl_GL.context.enable(2929);
+			if(lime_app_Application.current.windows[0].config.stencilBuffer) lime_graphics_opengl_GL.context.enable(2960);
+		} else {
+			lime_graphics_opengl_GL.context.disable(2929);
+			lime_graphics_opengl_GL.context.disable(2960);
 		}
-		this.ogl.set_scrollRect(new openfl_geom_Rectangle(0,0,width,height));
-		this.ogl.set_width(width);
-		this.ogl.set_height(height);
-		this.scrollRect = this.ogl.get_scrollRect().clone();
-		lime_graphics_opengl_GL.context.viewport(this.scrollRect.x | 0,this.scrollRect.y | 0,this.scrollRect.width | 0,this.scrollRect.height | 0);
 	}
 	,createCubeTexture: function(size,format,optimizeForRenderToTexture,streamingLevels) {
 		if(streamingLevels == null) streamingLevels = 0;
@@ -29521,6 +30753,7 @@ openfl_display3D_Context3D.prototype = {
 		if(bufferOffset == null) bufferOffset = 0;
 		var location;
 		if(this.currentProgram != null && this.currentProgram.glProgram != null) location = lime_graphics_opengl_GL.context.getAttribLocation(this.currentProgram.glProgram,locationName); else location = -1;
+		if(location == -1) return;
 		if(buffer == null) {
 			if(location > -1) lime_graphics_opengl_GL.context.disableVertexAttribArray(location);
 			return;
@@ -29602,9 +30835,13 @@ openfl_display3D_Context3D.prototype = {
 		lime_graphics_opengl_GL.context.disable(2929);
 		lime_graphics_opengl_GL.context.disable(2960);
 		lime_graphics_opengl_GL.context.disable(3089);
+		lime_graphics_opengl_GL.context.bindFramebuffer(36160,null);
 		if(this.framebuffer != null) lime_graphics_opengl_GL.context.bindFramebuffer(36160,null);
 		if(this.renderbuffer != null) lime_graphics_opengl_GL.context.bindRenderbuffer(36161,null);
-		lime_graphics_opengl_GL.context.viewport(this.scrollRect.x | 0,this.scrollRect.y | 0,this.scrollRect.width | 0,this.scrollRect.height | 0);
+		this.renderToTexture = false;
+		this.updateBackBufferViewPort();
+		this.updateScissorRectangle();
+		this.updateDepthAndStencilState();
 	}
 	,setRenderToTexture: function(texture,enableDepthAndStencil,antiAlias,surfaceSelector) {
 		if(surfaceSelector == null) surfaceSelector = 0;
@@ -29614,7 +30851,7 @@ openfl_display3D_Context3D.prototype = {
 		lime_graphics_opengl_GL.context.bindFramebuffer(36160,this.framebuffer);
 		if(this.renderbuffer == null) this.renderbuffer = lime_graphics_opengl_GL.context.createRenderbuffer();
 		lime_graphics_opengl_GL.context.bindRenderbuffer(36161,this.renderbuffer);
-		lime_graphics_opengl_GL.context.renderbufferStorage(36161,6408,texture.width,texture.height);
+		if(enableDepthAndStencil) lime_graphics_opengl_GL.context.renderbufferStorage(36161,34041,texture.width,texture.height);
 		lime_graphics_opengl_GL.context.framebufferTexture2D(36160,36064,3553,texture.glTexture,0);
 		lime_graphics_opengl_GL.context.renderbufferStorage(36161,34041,texture.width,texture.height);
 		lime_graphics_opengl_GL.context.framebufferRenderbuffer(36160,33306,36161,this.renderbuffer);
@@ -29627,6 +30864,12 @@ openfl_display3D_Context3D.prototype = {
 		lime_graphics_opengl_GL.context.texParameteri(3553,10240,9729);
 		lime_graphics_opengl_GL.context.texParameteri(3553,10241,9985);
 		lime_graphics_opengl_GL.context.viewport(0,0,texture.width,texture.height);
+		this.renderToTexture = true;
+		this.rttDepthAndStencil = enableDepthAndStencil;
+		this.rttWidth = texture.width;
+		this.rttHeight = texture.height;
+		this.updateScissorRectangle();
+		this.updateDepthAndStencilState();
 	}
 	,setSamplerStateAt: function(sampler,wrap,filter,mipfilter) {
 		if(0 <= sampler && sampler < openfl_display3D_Context3D.MAX_SAMPLERS) {
@@ -29636,12 +30879,19 @@ openfl_display3D_Context3D.prototype = {
 		} else throw new js__$Boot_HaxeError("Sampler is out of bounds.");
 	}
 	,setScissorRectangle: function(rectangle) {
+		this.scissorRectangle = rectangle;
 		if(rectangle == null) {
 			lime_graphics_opengl_GL.context.disable(3089);
 			return;
 		}
 		lime_graphics_opengl_GL.context.enable(3089);
-		lime_graphics_opengl_GL.context.scissor(rectangle.x | 0,rectangle.y | 0,rectangle.width | 0,rectangle.height | 0);
+		this.updateScissorRectangle();
+	}
+	,updateScissorRectangle: function() {
+		if(this.scissorRectangle == null) return;
+		var height;
+		if(this.renderToTexture) height = this.rttHeight; else height = this.scrollRect.height | 0;
+		lime_graphics_opengl_GL.context.scissor(this.scissorRectangle.x | 0,height - (this.scissorRectangle.y | 0) - (this.scissorRectangle.height | 0) | 0,this.scissorRectangle.width | 0,this.scissorRectangle.height | 0);
 	}
 	,setStencilActions: function(triangleFace,compareMode,actionOnBothPass,actionOnDepthFail,actionOnDepthPassStencilFail) {
 		this.stencilCompareMode = compareMode;
@@ -29821,9 +31071,12 @@ var openfl_display3D__$Context3D_SamplerState = function() {
 $hxClasses["openfl.display3D._Context3D.SamplerState"] = openfl_display3D__$Context3D_SamplerState;
 openfl_display3D__$Context3D_SamplerState.__name__ = ["openfl","display3D","_Context3D","SamplerState"];
 openfl_display3D__$Context3D_SamplerState.prototype = {
-	__class__: openfl_display3D__$Context3D_SamplerState
+	wrap: null
+	,filter: null
+	,mipfilter: null
+	,__class__: openfl_display3D__$Context3D_SamplerState
 };
-var openfl_display3D_Context3DBufferUsage = $hxClasses["openfl.display3D.Context3DBufferUsage"] = { __ename__ : true, __constructs__ : ["STATIC_DRAW","DYNAMIC_DRAW"] };
+var openfl_display3D_Context3DBufferUsage = $hxClasses["openfl.display3D.Context3DBufferUsage"] = { __ename__ : ["openfl","display3D","Context3DBufferUsage"], __constructs__ : ["STATIC_DRAW","DYNAMIC_DRAW"] };
 openfl_display3D_Context3DBufferUsage.STATIC_DRAW = ["STATIC_DRAW",0];
 openfl_display3D_Context3DBufferUsage.STATIC_DRAW.toString = $estr;
 openfl_display3D_Context3DBufferUsage.STATIC_DRAW.__enum__ = openfl_display3D_Context3DBufferUsage;
@@ -29845,7 +31098,7 @@ openfl_display3D__$Context3DCompareMode_Context3DCompareMode_$Impl_$.fromInt = f
 openfl_display3D__$Context3DCompareMode_Context3DCompareMode_$Impl_$.toInt = function(this1) {
 	return this1;
 };
-var openfl_display3D_Context3DMipFilter = $hxClasses["openfl.display3D.Context3DMipFilter"] = { __ename__ : true, __constructs__ : ["MIPLINEAR","MIPNEAREST","MIPNONE"] };
+var openfl_display3D_Context3DMipFilter = $hxClasses["openfl.display3D.Context3DMipFilter"] = { __ename__ : ["openfl","display3D","Context3DMipFilter"], __constructs__ : ["MIPLINEAR","MIPNEAREST","MIPNONE"] };
 openfl_display3D_Context3DMipFilter.MIPLINEAR = ["MIPLINEAR",0];
 openfl_display3D_Context3DMipFilter.MIPLINEAR.toString = $estr;
 openfl_display3D_Context3DMipFilter.MIPLINEAR.__enum__ = openfl_display3D_Context3DMipFilter;
@@ -29855,14 +31108,14 @@ openfl_display3D_Context3DMipFilter.MIPNEAREST.__enum__ = openfl_display3D_Conte
 openfl_display3D_Context3DMipFilter.MIPNONE = ["MIPNONE",2];
 openfl_display3D_Context3DMipFilter.MIPNONE.toString = $estr;
 openfl_display3D_Context3DMipFilter.MIPNONE.__enum__ = openfl_display3D_Context3DMipFilter;
-var openfl_display3D_Context3DProgramType = $hxClasses["openfl.display3D.Context3DProgramType"] = { __ename__ : true, __constructs__ : ["VERTEX","FRAGMENT"] };
+var openfl_display3D_Context3DProgramType = $hxClasses["openfl.display3D.Context3DProgramType"] = { __ename__ : ["openfl","display3D","Context3DProgramType"], __constructs__ : ["VERTEX","FRAGMENT"] };
 openfl_display3D_Context3DProgramType.VERTEX = ["VERTEX",0];
 openfl_display3D_Context3DProgramType.VERTEX.toString = $estr;
 openfl_display3D_Context3DProgramType.VERTEX.__enum__ = openfl_display3D_Context3DProgramType;
 openfl_display3D_Context3DProgramType.FRAGMENT = ["FRAGMENT",1];
 openfl_display3D_Context3DProgramType.FRAGMENT.toString = $estr;
 openfl_display3D_Context3DProgramType.FRAGMENT.__enum__ = openfl_display3D_Context3DProgramType;
-var openfl_display3D_Context3DTextureFilter = $hxClasses["openfl.display3D.Context3DTextureFilter"] = { __ename__ : true, __constructs__ : ["ANISOTROPIC2X","ANISOTROPIC4X","ANISOTROPIC8X","ANISOTROPIC16X","LINEAR","NEAREST"] };
+var openfl_display3D_Context3DTextureFilter = $hxClasses["openfl.display3D.Context3DTextureFilter"] = { __ename__ : ["openfl","display3D","Context3DTextureFilter"], __constructs__ : ["ANISOTROPIC2X","ANISOTROPIC4X","ANISOTROPIC8X","ANISOTROPIC16X","LINEAR","NEAREST"] };
 openfl_display3D_Context3DTextureFilter.ANISOTROPIC2X = ["ANISOTROPIC2X",0];
 openfl_display3D_Context3DTextureFilter.ANISOTROPIC2X.toString = $estr;
 openfl_display3D_Context3DTextureFilter.ANISOTROPIC2X.__enum__ = openfl_display3D_Context3DTextureFilter;
@@ -29881,7 +31134,7 @@ openfl_display3D_Context3DTextureFilter.LINEAR.__enum__ = openfl_display3D_Conte
 openfl_display3D_Context3DTextureFilter.NEAREST = ["NEAREST",5];
 openfl_display3D_Context3DTextureFilter.NEAREST.toString = $estr;
 openfl_display3D_Context3DTextureFilter.NEAREST.__enum__ = openfl_display3D_Context3DTextureFilter;
-var openfl_display3D_Context3DTextureFormat = $hxClasses["openfl.display3D.Context3DTextureFormat"] = { __ename__ : true, __constructs__ : ["BGRA","COMPRESSED","COMPRESSED_ALPHA"] };
+var openfl_display3D_Context3DTextureFormat = $hxClasses["openfl.display3D.Context3DTextureFormat"] = { __ename__ : ["openfl","display3D","Context3DTextureFormat"], __constructs__ : ["BGRA","COMPRESSED","COMPRESSED_ALPHA"] };
 openfl_display3D_Context3DTextureFormat.BGRA = ["BGRA",0];
 openfl_display3D_Context3DTextureFormat.BGRA.toString = $estr;
 openfl_display3D_Context3DTextureFormat.BGRA.__enum__ = openfl_display3D_Context3DTextureFormat;
@@ -29903,7 +31156,7 @@ openfl_display3D__$Context3DTriangleFace_Context3DTriangleFace_$Impl_$.fromInt =
 openfl_display3D__$Context3DTriangleFace_Context3DTriangleFace_$Impl_$.toInt = function(this1) {
 	return this1;
 };
-var openfl_display3D_Context3DVertexBufferFormat = $hxClasses["openfl.display3D.Context3DVertexBufferFormat"] = { __ename__ : true, __constructs__ : ["BYTES_4","FLOAT_1","FLOAT_2","FLOAT_3","FLOAT_4"] };
+var openfl_display3D_Context3DVertexBufferFormat = $hxClasses["openfl.display3D.Context3DVertexBufferFormat"] = { __ename__ : ["openfl","display3D","Context3DVertexBufferFormat"], __constructs__ : ["BYTES_4","FLOAT_1","FLOAT_2","FLOAT_3","FLOAT_4"] };
 openfl_display3D_Context3DVertexBufferFormat.BYTES_4 = ["BYTES_4",0];
 openfl_display3D_Context3DVertexBufferFormat.BYTES_4.toString = $estr;
 openfl_display3D_Context3DVertexBufferFormat.BYTES_4.__enum__ = openfl_display3D_Context3DVertexBufferFormat;
@@ -29919,7 +31172,7 @@ openfl_display3D_Context3DVertexBufferFormat.FLOAT_3.__enum__ = openfl_display3D
 openfl_display3D_Context3DVertexBufferFormat.FLOAT_4 = ["FLOAT_4",4];
 openfl_display3D_Context3DVertexBufferFormat.FLOAT_4.toString = $estr;
 openfl_display3D_Context3DVertexBufferFormat.FLOAT_4.__enum__ = openfl_display3D_Context3DVertexBufferFormat;
-var openfl_display3D_Context3DWrapMode = $hxClasses["openfl.display3D.Context3DWrapMode"] = { __ename__ : true, __constructs__ : ["CLAMP","REPEAT"] };
+var openfl_display3D_Context3DWrapMode = $hxClasses["openfl.display3D.Context3DWrapMode"] = { __ename__ : ["openfl","display3D","Context3DWrapMode"], __constructs__ : ["CLAMP","REPEAT"] };
 openfl_display3D_Context3DWrapMode.CLAMP = ["CLAMP",0];
 openfl_display3D_Context3DWrapMode.CLAMP.toString = $estr;
 openfl_display3D_Context3DWrapMode.CLAMP.__enum__ = openfl_display3D_Context3DWrapMode;
@@ -29935,7 +31188,11 @@ var openfl_display3D_IndexBuffer3D = function(context,glBuffer,numIndices,buffer
 $hxClasses["openfl.display3D.IndexBuffer3D"] = openfl_display3D_IndexBuffer3D;
 openfl_display3D_IndexBuffer3D.__name__ = ["openfl","display3D","IndexBuffer3D"];
 openfl_display3D_IndexBuffer3D.prototype = {
-	dispose: function() {
+	context: null
+	,glBuffer: null
+	,numIndices: null
+	,bufferUsage: null
+	,dispose: function() {
 		this.context.__deleteIndexBuffer(this);
 	}
 	,uploadFromByteArray: function(byteArray,byteArrayOffset,startOffset,count) {
@@ -29983,7 +31240,9 @@ var openfl_display3D_Program3D = function(context,program) {
 $hxClasses["openfl.display3D.Program3D"] = openfl_display3D_Program3D;
 openfl_display3D_Program3D.__name__ = ["openfl","display3D","Program3D"];
 openfl_display3D_Program3D.prototype = {
-	dispose: function() {
+	context: null
+	,glProgram: null
+	,dispose: function() {
 		this.context.__deleteProgram(this);
 	}
 	,upload: function(vertexShader,fragmentShader) {
@@ -30007,7 +31266,12 @@ var openfl_display3D_VertexBuffer3D = function(context,glBuffer,numVertices,data
 $hxClasses["openfl.display3D.VertexBuffer3D"] = openfl_display3D_VertexBuffer3D;
 openfl_display3D_VertexBuffer3D.__name__ = ["openfl","display3D","VertexBuffer3D"];
 openfl_display3D_VertexBuffer3D.prototype = {
-	dispose: function() {
+	context: null
+	,data32PerVertex: null
+	,glBuffer: null
+	,numVertices: null
+	,bufferUsage: null
+	,dispose: function() {
 		this.context.__deleteVertexBuffer(this);
 	}
 	,uploadFromByteArray: function(byteArray,byteArrayOffset,startOffset,count) {
@@ -30065,7 +31329,12 @@ $hxClasses["openfl.display3D.textures.TextureBase"] = openfl_display3D_textures_
 openfl_display3D_textures_TextureBase.__name__ = ["openfl","display3D","textures","TextureBase"];
 openfl_display3D_textures_TextureBase.__super__ = openfl_events_EventDispatcher;
 openfl_display3D_textures_TextureBase.prototype = $extend(openfl_events_EventDispatcher.prototype,{
-	dispose: function() {
+	context: null
+	,height: null
+	,frameBuffer: null
+	,glTexture: null
+	,width: null
+	,dispose: function() {
 		this.context.__deleteTexture(this);
 	}
 	,__class__: openfl_display3D_textures_TextureBase
@@ -30085,7 +31354,10 @@ $hxClasses["openfl.display3D.textures.CubeTexture"] = openfl_display3D_textures_
 openfl_display3D_textures_CubeTexture.__name__ = ["openfl","display3D","textures","CubeTexture"];
 openfl_display3D_textures_CubeTexture.__super__ = openfl_display3D_textures_TextureBase;
 openfl_display3D_textures_CubeTexture.prototype = $extend(openfl_display3D_textures_TextureBase.prototype,{
-	glTextureAt: function(index) {
+	size: null
+	,_textures: null
+	,mipmapsGenerated: null
+	,glTextureAt: function(index) {
 		return this._textures[index];
 	}
 	,uploadCompressedTextureFromByteArray: function(data,byteArrayOffset,async) {
@@ -30133,7 +31405,8 @@ $hxClasses["openfl.display3D.textures.RectangleTexture"] = openfl_display3D_text
 openfl_display3D_textures_RectangleTexture.__name__ = ["openfl","display3D","textures","RectangleTexture"];
 openfl_display3D_textures_RectangleTexture.__super__ = openfl_display3D_textures_TextureBase;
 openfl_display3D_textures_RectangleTexture.prototype = $extend(openfl_display3D_textures_TextureBase.prototype,{
-	uploadFromBitmapData: function(bitmapData,miplevel) {
+	optimizeForRenderToTexture: null
+	,uploadFromBitmapData: function(bitmapData,miplevel) {
 		if(miplevel == null) miplevel = 0;
 		var p = openfl_utils__$ByteArray_ByteArray_$Impl_$.fromArrayBuffer(bitmapData.image.get_data().buffer);
 		this.width = bitmapData.width;
@@ -30175,7 +31448,9 @@ $hxClasses["openfl.display3D.textures.Texture"] = openfl_display3D_textures_Text
 openfl_display3D_textures_Texture.__name__ = ["openfl","display3D","textures","Texture"];
 openfl_display3D_textures_Texture.__super__ = openfl_display3D_textures_TextureBase;
 openfl_display3D_textures_Texture.prototype = $extend(openfl_display3D_textures_TextureBase.prototype,{
-	uploadCompressedTextureFromByteArray: function(data,byteArrayOffset,async) {
+	optimizeForRenderToTexture: null
+	,mipmapsGenerated: null
+	,uploadCompressedTextureFromByteArray: function(data,byteArrayOffset,async) {
 		if(async == null) async = false;
 	}
 	,uploadFromBitmapData: function(bitmapData,miplevel) {
@@ -30230,7 +31505,10 @@ var openfl_errors_Error = function(message,id) {
 $hxClasses["openfl.errors.Error"] = openfl_errors_Error;
 openfl_errors_Error.__name__ = ["openfl","errors","Error"];
 openfl_errors_Error.prototype = {
-	getStackTrace: function() {
+	errorID: null
+	,message: null
+	,name: null
+	,getStackTrace: function() {
 		return haxe_CallStack.toString(haxe_CallStack.exceptionStack());
 	}
 	,toString: function() {
@@ -30304,7 +31582,16 @@ var openfl_events_Event = function(type,bubbles,cancelable) {
 $hxClasses["openfl.events.Event"] = openfl_events_Event;
 openfl_events_Event.__name__ = ["openfl","events","Event"];
 openfl_events_Event.prototype = {
-	clone: function() {
+	bubbles: null
+	,cancelable: null
+	,currentTarget: null
+	,eventPhase: null
+	,target: null
+	,type: null
+	,__isCanceled: null
+	,__isCanceledNow: null
+	,__preventDefault: null
+	,clone: function() {
 		var event = new openfl_events_Event(this.type,this.bubbles,this.cancelable);
 		event.eventPhase = this.eventPhase;
 		event.target = this.target;
@@ -30362,7 +31649,8 @@ $hxClasses["openfl.events.ActivityEvent"] = openfl_events_ActivityEvent;
 openfl_events_ActivityEvent.__name__ = ["openfl","events","ActivityEvent"];
 openfl_events_ActivityEvent.__super__ = openfl_events_Event;
 openfl_events_ActivityEvent.prototype = $extend(openfl_events_Event.prototype,{
-	clone: function() {
+	activating: null
+	,clone: function() {
 		var event = new openfl_events_ActivityEvent(this.type,this.bubbles,this.cancelable,this.activating);
 		event.target = this.target;
 		event.currentTarget = this.currentTarget;
@@ -30385,7 +31673,8 @@ $hxClasses["openfl.events.TextEvent"] = openfl_events_TextEvent;
 openfl_events_TextEvent.__name__ = ["openfl","events","TextEvent"];
 openfl_events_TextEvent.__super__ = openfl_events_Event;
 openfl_events_TextEvent.prototype = $extend(openfl_events_Event.prototype,{
-	clone: function() {
+	text: null
+	,clone: function() {
 		var event = new openfl_events_TextEvent(this.type,this.bubbles,this.cancelable,this.text);
 		event.target = this.target;
 		event.currentTarget = this.currentTarget;
@@ -30409,7 +31698,8 @@ $hxClasses["openfl.events.ErrorEvent"] = openfl_events_ErrorEvent;
 openfl_events_ErrorEvent.__name__ = ["openfl","events","ErrorEvent"];
 openfl_events_ErrorEvent.__super__ = openfl_events_TextEvent;
 openfl_events_ErrorEvent.prototype = $extend(openfl_events_TextEvent.prototype,{
-	clone: function() {
+	errorID: null
+	,clone: function() {
 		var event = new openfl_events_ErrorEvent(this.type,this.bubbles,this.cancelable,this.text,this.errorID);
 		event.target = this.target;
 		event.currentTarget = this.currentTarget;
@@ -30429,7 +31719,10 @@ var openfl_events__$EventDispatcher_Listener = function(callback,useCapture,prio
 $hxClasses["openfl.events._EventDispatcher.Listener"] = openfl_events__$EventDispatcher_Listener;
 openfl_events__$EventDispatcher_Listener.__name__ = ["openfl","events","_EventDispatcher","Listener"];
 openfl_events__$EventDispatcher_Listener.prototype = {
-	match: function(callback,useCapture) {
+	callback: null
+	,priority: null
+	,useCapture: null
+	,match: function(callback,useCapture) {
 		return Reflect.compareMethods(this.callback,callback) && this.useCapture == useCapture;
 	}
 	,__class__: openfl_events__$EventDispatcher_Listener
@@ -30448,7 +31741,10 @@ $hxClasses["openfl.events.FocusEvent"] = openfl_events_FocusEvent;
 openfl_events_FocusEvent.__name__ = ["openfl","events","FocusEvent"];
 openfl_events_FocusEvent.__super__ = openfl_events_Event;
 openfl_events_FocusEvent.prototype = $extend(openfl_events_Event.prototype,{
-	clone: function() {
+	keyCode: null
+	,relatedObject: null
+	,shiftKey: null
+	,clone: function() {
 		var event = new openfl_events_FocusEvent(this.type,this.bubbles,this.cancelable,this.relatedObject,this.shiftKey,this.keyCode);
 		event.target = this.target;
 		event.currentTarget = this.currentTarget;
@@ -30473,7 +31769,9 @@ $hxClasses["openfl.events.FullScreenEvent"] = openfl_events_FullScreenEvent;
 openfl_events_FullScreenEvent.__name__ = ["openfl","events","FullScreenEvent"];
 openfl_events_FullScreenEvent.__super__ = openfl_events_ActivityEvent;
 openfl_events_FullScreenEvent.prototype = $extend(openfl_events_ActivityEvent.prototype,{
-	clone: function() {
+	fullScreen: null
+	,interactive: null
+	,clone: function() {
 		var event = new openfl_events_FullScreenEvent(this.type,this.bubbles,this.cancelable,this.fullScreen,this.interactive);
 		event.target = this.target;
 		event.currentTarget = this.currentTarget;
@@ -30495,7 +31793,8 @@ $hxClasses["openfl.events.GameInputEvent"] = openfl_events_GameInputEvent;
 openfl_events_GameInputEvent.__name__ = ["openfl","events","GameInputEvent"];
 openfl_events_GameInputEvent.__super__ = openfl_events_Event;
 openfl_events_GameInputEvent.prototype = $extend(openfl_events_Event.prototype,{
-	clone: function() {
+	device: null
+	,clone: function() {
 		var event = new openfl_events_GameInputEvent(this.type,this.bubbles,this.cancelable,this.device);
 		event.target = this.target;
 		event.currentTarget = this.currentTarget;
@@ -30520,7 +31819,11 @@ $hxClasses["openfl.events.HTTPStatusEvent"] = openfl_events_HTTPStatusEvent;
 openfl_events_HTTPStatusEvent.__name__ = ["openfl","events","HTTPStatusEvent"];
 openfl_events_HTTPStatusEvent.__super__ = openfl_events_Event;
 openfl_events_HTTPStatusEvent.prototype = $extend(openfl_events_Event.prototype,{
-	clone: function() {
+	redirected: null
+	,responseHeaders: null
+	,responseURL: null
+	,status: null
+	,clone: function() {
 		var event = new openfl_events_HTTPStatusEvent(this.type,this.bubbles,null,this.status,this.redirected);
 		event.target = this.target;
 		event.currentTarget = this.currentTarget;
@@ -30579,7 +31882,15 @@ $hxClasses["openfl.events.KeyboardEvent"] = openfl_events_KeyboardEvent;
 openfl_events_KeyboardEvent.__name__ = ["openfl","events","KeyboardEvent"];
 openfl_events_KeyboardEvent.__super__ = openfl_events_Event;
 openfl_events_KeyboardEvent.prototype = $extend(openfl_events_Event.prototype,{
-	clone: function() {
+	altKey: null
+	,charCode: null
+	,ctrlKey: null
+	,commandKey: null
+	,controlKey: null
+	,keyCode: null
+	,keyLocation: null
+	,shiftKey: null
+	,clone: function() {
 		var event = new openfl_events_KeyboardEvent(this.type,this.bubbles,this.cancelable,this.charCode,this.keyCode,this.keyLocation,this.ctrlKey,this.altKey,this.shiftKey,this.controlKey,this.commandKey);
 		event.target = this.target;
 		event.currentTarget = this.currentTarget;
@@ -30642,7 +31953,19 @@ openfl_events_MouseEvent.__create = function(type,button,stageX,stageY,local,tar
 };
 openfl_events_MouseEvent.__super__ = openfl_events_Event;
 openfl_events_MouseEvent.prototype = $extend(openfl_events_Event.prototype,{
-	clone: function() {
+	altKey: null
+	,buttonDown: null
+	,commandKey: null
+	,clickCount: null
+	,ctrlKey: null
+	,delta: null
+	,localX: null
+	,localY: null
+	,relatedObject: null
+	,shiftKey: null
+	,stageX: null
+	,stageY: null
+	,clone: function() {
 		var event = new openfl_events_MouseEvent(this.type,this.bubbles,this.cancelable,this.localX,this.localY,this.relatedObject,this.ctrlKey,this.altKey,this.shiftKey,this.buttonDown,this.delta,this.commandKey,this.clickCount);
 		event.target = this.target;
 		event.currentTarget = this.currentTarget;
@@ -30669,7 +31992,9 @@ $hxClasses["openfl.events.ProgressEvent"] = openfl_events_ProgressEvent;
 openfl_events_ProgressEvent.__name__ = ["openfl","events","ProgressEvent"];
 openfl_events_ProgressEvent.__super__ = openfl_events_Event;
 openfl_events_ProgressEvent.prototype = $extend(openfl_events_Event.prototype,{
-	clone: function() {
+	bytesLoaded: null
+	,bytesTotal: null
+	,clone: function() {
 		var event = new openfl_events_ProgressEvent(this.type,this.bubbles,this.cancelable,this.bytesLoaded,this.bytesTotal);
 		event.target = this.target;
 		event.currentTarget = this.currentTarget;
@@ -30747,7 +32072,23 @@ openfl_events_TouchEvent.__create = function(type,touch,stageX,stageY,local,targ
 };
 openfl_events_TouchEvent.__super__ = openfl_events_Event;
 openfl_events_TouchEvent.prototype = $extend(openfl_events_Event.prototype,{
-	clone: function() {
+	altKey: null
+	,commandKey: null
+	,controlKey: null
+	,ctrlKey: null
+	,delta: null
+	,isPrimaryTouchPoint: null
+	,localX: null
+	,localY: null
+	,pressure: null
+	,relatedObject: null
+	,shiftKey: null
+	,sizeX: null
+	,sizeY: null
+	,stageX: null
+	,stageY: null
+	,touchPointID: null
+	,clone: function() {
 		var event = new openfl_events_TouchEvent(this.type,this.bubbles,this.cancelable,this.touchPointID,this.isPrimaryTouchPoint,this.localX,this.localY,this.sizeX,this.sizeY,this.pressure,this.relatedObject,this.ctrlKey,this.altKey,this.shiftKey,this.commandKey,this.controlKey);
 		event.target = this.target;
 		event.currentTarget = this.currentTarget;
@@ -30817,7 +32158,10 @@ openfl_filters_BitmapFilter.__expandBounds = function(filters,rect,matrix) {
 	rect.__expand(r.x,r.y,r.width,r.height);
 };
 openfl_filters_BitmapFilter.prototype = {
-	clone: function() {
+	__dirty: null
+	,__passes: null
+	,__saveLastFilter: null
+	,clone: function() {
 		return new openfl_filters_BitmapFilter();
 	}
 	,__applyFilter: function(sourceData,targetData,sourceRect,destPoint) {
@@ -31088,7 +32432,9 @@ openfl_geom_Matrix3D.__getAxisRotation = function(x,y,z,degrees) {
 	return m;
 };
 openfl_geom_Matrix3D.prototype = {
-	append: function(lhs) {
+	determinant: null
+	,rawData: null
+	,append: function(lhs) {
 		var m111 = this.rawData.data[0];
 		var m121 = this.rawData.data[4];
 		var m131 = this.rawData.data[8];
@@ -34077,7 +35423,13 @@ var openfl_geom_Transform = function(displayObject) {
 $hxClasses["openfl.geom.Transform"] = openfl_geom_Transform;
 openfl_geom_Transform.__name__ = ["openfl","geom","Transform"];
 openfl_geom_Transform.prototype = {
-	get_colorTransform: function() {
+	concatenatedColorTransform: null
+	,pixelBounds: null
+	,__colorTransform: null
+	,__displayObject: null
+	,__hasMatrix: null
+	,__hasMatrix3D: null
+	,get_colorTransform: function() {
 		return this.__colorTransform;
 	}
 	,set_colorTransform: function(value) {
@@ -34212,7 +35564,13 @@ openfl_geom_Vector3D.get_Z_AXIS = function() {
 	return new openfl_geom_Vector3D(0,0,1);
 };
 openfl_geom_Vector3D.prototype = {
-	add: function(a) {
+	length: null
+	,lengthSquared: null
+	,w: null
+	,x: null
+	,y: null
+	,z: null
+	,add: function(a) {
 		return new openfl_geom_Vector3D(this.x + a.x,this.y + a.y,this.z + a.z);
 	}
 	,clone: function() {
@@ -34296,7 +35654,14 @@ var openfl_media_ID3Info = function() {
 $hxClasses["openfl.media.ID3Info"] = openfl_media_ID3Info;
 openfl_media_ID3Info.__name__ = ["openfl","media","ID3Info"];
 openfl_media_ID3Info.prototype = {
-	__class__: openfl_media_ID3Info
+	album: null
+	,artist: null
+	,comment: null
+	,genre: null
+	,songName: null
+	,track: null
+	,year: null
+	,__class__: openfl_media_ID3Info
 };
 var openfl_media_Sound = function(stream,context) {
 	openfl_events_EventDispatcher.call(this,this);
@@ -34319,7 +35684,15 @@ openfl_media_Sound.fromFile = function(path) {
 };
 openfl_media_Sound.__super__ = openfl_events_EventDispatcher;
 openfl_media_Sound.prototype = $extend(openfl_events_EventDispatcher.prototype,{
-	close: function() {
+	bytesLoaded: null
+	,bytesTotal: null
+	,id3: null
+	,isBuffering: null
+	,url: null
+	,__buffer: null
+	,__sound: null
+	,__soundID: null
+	,close: function() {
 		if(openfl_media_Sound.__registeredSounds.exists(this.__soundID)) createjs.Sound.removeSound(this.__soundID);
 	}
 	,load: function(stream,context) {
@@ -34396,7 +35769,12 @@ $hxClasses["openfl.media.SoundChannel"] = openfl_media_SoundChannel;
 openfl_media_SoundChannel.__name__ = ["openfl","media","SoundChannel"];
 openfl_media_SoundChannel.__super__ = openfl_events_EventDispatcher;
 openfl_media_SoundChannel.prototype = $extend(openfl_events_EventDispatcher.prototype,{
-	stop: function() {
+	leftPeak: null
+	,rightPeak: null
+	,__isValid: null
+	,__source: null
+	,__soundInstance: null
+	,stop: function() {
 		if(!this.__isValid) return;
 		this.__soundInstance.stop();
 	}
@@ -34444,7 +35822,9 @@ var openfl_media_SoundLoaderContext = function(bufferTime,checkPolicyFile) {
 $hxClasses["openfl.media.SoundLoaderContext"] = openfl_media_SoundLoaderContext;
 openfl_media_SoundLoaderContext.__name__ = ["openfl","media","SoundLoaderContext"];
 openfl_media_SoundLoaderContext.prototype = {
-	__class__: openfl_media_SoundLoaderContext
+	bufferTime: null
+	,checkPolicyFile: null
+	,__class__: openfl_media_SoundLoaderContext
 };
 var openfl_media_SoundTransform = function(vol,panning) {
 	if(panning == null) panning = 0;
@@ -34459,7 +35839,13 @@ var openfl_media_SoundTransform = function(vol,panning) {
 $hxClasses["openfl.media.SoundTransform"] = openfl_media_SoundTransform;
 openfl_media_SoundTransform.__name__ = ["openfl","media","SoundTransform"];
 openfl_media_SoundTransform.prototype = {
-	clone: function() {
+	leftToLeft: null
+	,leftToRight: null
+	,pan: null
+	,rightToLeft: null
+	,rightToRight: null
+	,volume: null
+	,clone: function() {
 		return new openfl_media_SoundTransform(this.volume,this.pan);
 	}
 	,__class__: openfl_media_SoundTransform
@@ -34475,7 +35861,11 @@ $hxClasses["openfl.net.URLLoader"] = openfl_net_URLLoader;
 openfl_net_URLLoader.__name__ = ["openfl","net","URLLoader"];
 openfl_net_URLLoader.__super__ = openfl_events_EventDispatcher;
 openfl_net_URLLoader.prototype = $extend(openfl_events_EventDispatcher.prototype,{
-	close: function() {
+	bytesLoaded: null
+	,bytesTotal: null
+	,data: null
+	,dataFormat: null
+	,close: function() {
 	}
 	,getData: function() {
 		return null;
@@ -34646,7 +36036,13 @@ var openfl_net_URLRequest = function(inURL) {
 $hxClasses["openfl.net.URLRequest"] = openfl_net_URLRequest;
 openfl_net_URLRequest.__name__ = ["openfl","net","URLRequest"];
 openfl_net_URLRequest.prototype = {
-	formatRequestHeaders: function() {
+	contentType: null
+	,data: null
+	,method: null
+	,requestHeaders: null
+	,url: null
+	,userAgent: null
+	,formatRequestHeaders: function() {
 		var res = this.requestHeaders;
 		if(res == null) res = [];
 		if(openfl_net__$URLRequestMethod_URLRequestMethod_$Impl_$.fromString(this.method) == 1 || this.data == null) return res;
@@ -34667,7 +36063,9 @@ var openfl_net_URLRequestHeader = function(name,value) {
 $hxClasses["openfl.net.URLRequestHeader"] = openfl_net_URLRequestHeader;
 openfl_net_URLRequestHeader.__name__ = ["openfl","net","URLRequestHeader"];
 openfl_net_URLRequestHeader.prototype = {
-	__class__: openfl_net_URLRequestHeader
+	name: null
+	,value: null
+	,__class__: openfl_net_URLRequestHeader
 };
 var openfl_net__$URLRequestMethod_URLRequestMethod_$Impl_$ = {};
 $hxClasses["openfl.net._URLRequestMethod.URLRequestMethod_Impl_"] = openfl_net__$URLRequestMethod_URLRequestMethod_$Impl_$;
@@ -34755,7 +36153,12 @@ var openfl_system_LoaderContext = function(checkPolicyFile,applicationDomain,sec
 $hxClasses["openfl.system.LoaderContext"] = openfl_system_LoaderContext;
 openfl_system_LoaderContext.__name__ = ["openfl","system","LoaderContext"];
 openfl_system_LoaderContext.prototype = {
-	__class__: openfl_system_LoaderContext
+	allowCodeImport: null
+	,allowLoadBytesCodeExecution: null
+	,applicationDomain: null
+	,checkPolicyFile: null
+	,securityDomain: null
+	,__class__: openfl_system_LoaderContext
 };
 var openfl_system_SecurityDomain = function() {
 };
@@ -34819,7 +36222,9 @@ openfl_text_Font.__fromLimeFont = function(value) {
 };
 openfl_text_Font.__super__ = lime_text_Font;
 openfl_text_Font.prototype = $extend(lime_text_Font.prototype,{
-	get_fontName: function() {
+	fontStyle: null
+	,fontType: null
+	,get_fontName: function() {
 		return this.name;
 	}
 	,set_fontName: function(value) {
@@ -34936,7 +36341,29 @@ openfl_text_TextField.__name__ = ["openfl","text","TextField"];
 openfl_text_TextField.__defaultTextFormat = null;
 openfl_text_TextField.__super__ = openfl_display_InteractiveObject;
 openfl_text_TextField.prototype = $extend(openfl_display_InteractiveObject.prototype,{
-	appendText: function(text) {
+	bottomScrollV: null
+	,caretIndex: null
+	,length: null
+	,maxScrollH: null
+	,maxScrollV: null
+	,numLines: null
+	,selectionBeginIndex: null
+	,selectionEndIndex: null
+	,textHeight: null
+	,textWidth: null
+	,__bounds: null
+	,__caretIndex: null
+	,__cursorTimer: null
+	,__dirty: null
+	,__inputEnabled: null
+	,__isHTML: null
+	,__layoutDirty: null
+	,__selectionIndex: null
+	,__showCursor: null
+	,__textEngine: null
+	,__textFormat: null
+	,__div: null
+	,appendText: function(text) {
 		this.__textEngine.text += text;
 		this.__textEngine.textFormatRanges[this.__textEngine.textFormatRanges.length - 1].end = this.__textEngine.text.length;
 		this.__dirty = true;
@@ -35919,7 +37346,25 @@ var openfl_text_TextFormat = function(font,size,color,bold,italic,underline,url,
 $hxClasses["openfl.text.TextFormat"] = openfl_text_TextFormat;
 openfl_text_TextFormat.__name__ = ["openfl","text","TextFormat"];
 openfl_text_TextFormat.prototype = {
-	clone: function() {
+	align: null
+	,blockIndent: null
+	,bold: null
+	,bullet: null
+	,color: null
+	,font: null
+	,indent: null
+	,italic: null
+	,kerning: null
+	,leading: null
+	,leftMargin: null
+	,letterSpacing: null
+	,rightMargin: null
+	,size: null
+	,tabStops: null
+	,target: null
+	,underline: null
+	,url: null
+	,clone: function() {
 		var newFormat = new openfl_text_TextFormat(this.font,this.size,this.color,this.bold,this.italic,this.underline,this.url,this.target);
 		newFormat.align = this.align;
 		newFormat.leftMargin = this.leftMargin;
@@ -36005,7 +37450,13 @@ var openfl_text_TextLineMetrics = function(x,width,height,ascent,descent,leading
 $hxClasses["openfl.text.TextLineMetrics"] = openfl_text_TextLineMetrics;
 openfl_text_TextLineMetrics.__name__ = ["openfl","text","TextLineMetrics"];
 openfl_text_TextLineMetrics.prototype = {
-	__class__: openfl_text_TextLineMetrics
+	ascent: null
+	,descent: null
+	,height: null
+	,leading: null
+	,width: null
+	,x: null
+	,__class__: openfl_text_TextLineMetrics
 };
 var openfl_ui_GameInput = function() {
 	openfl_events_EventDispatcher.call(this);
@@ -36244,7 +37695,12 @@ $hxClasses["openfl.ui.GameInputControl"] = openfl_ui_GameInputControl;
 openfl_ui_GameInputControl.__name__ = ["openfl","ui","GameInputControl"];
 openfl_ui_GameInputControl.__super__ = openfl_events_EventDispatcher;
 openfl_ui_GameInputControl.prototype = $extend(openfl_events_EventDispatcher.prototype,{
-	__class__: openfl_ui_GameInputControl
+	device: null
+	,id: null
+	,maxValue: null
+	,minValue: null
+	,value: null
+	,__class__: openfl_ui_GameInputControl
 });
 var openfl_ui_GameInputDevice = function(id,name) {
 	this.__controls = [];
@@ -36271,7 +37727,15 @@ var openfl_ui_GameInputDevice = function(id,name) {
 $hxClasses["openfl.ui.GameInputDevice"] = openfl_ui_GameInputDevice;
 openfl_ui_GameInputDevice.__name__ = ["openfl","ui","GameInputDevice"];
 openfl_ui_GameInputDevice.prototype = {
-	getCachedSamples: function(data,append) {
+	enabled: null
+	,id: null
+	,name: null
+	,sampleInterval: null
+	,__axis: null
+	,__button: null
+	,__controls: null
+	,__gamepad: null
+	,getCachedSamples: function(data,append) {
 		if(append == null) append = false;
 		return 0;
 	}
@@ -36721,14 +38185,45 @@ var openfl_utils_IDataOutput = function() { };
 $hxClasses["openfl.utils.IDataOutput"] = openfl_utils_IDataOutput;
 openfl_utils_IDataOutput.__name__ = ["openfl","utils","IDataOutput"];
 openfl_utils_IDataOutput.prototype = {
-	__class__: openfl_utils_IDataOutput
+	get_endian: null
+	,set_endian: null
+	,objectEncoding: null
+	,writeBoolean: null
+	,writeByte: null
+	,writeBytes: null
+	,writeDouble: null
+	,writeFloat: null
+	,writeInt: null
+	,writeMultiByte: null
+	,writeShort: null
+	,writeUTF: null
+	,writeUTFBytes: null
+	,writeUnsignedInt: null
+	,__class__: openfl_utils_IDataOutput
 	,__properties__: {set_endian:"set_endian",get_endian:"get_endian"}
 };
 var openfl_utils_IDataInput = function() { };
 $hxClasses["openfl.utils.IDataInput"] = openfl_utils_IDataInput;
 openfl_utils_IDataInput.__name__ = ["openfl","utils","IDataInput"];
 openfl_utils_IDataInput.prototype = {
-	__class__: openfl_utils_IDataInput
+	get_bytesAvailable: null
+	,get_endian: null
+	,set_endian: null
+	,objectEncoding: null
+	,readBoolean: null
+	,readByte: null
+	,readBytes: null
+	,readDouble: null
+	,readFloat: null
+	,readInt: null
+	,readMultiByte: null
+	,readShort: null
+	,readUnsignedByte: null
+	,readUnsignedInt: null
+	,readUnsignedShort: null
+	,readUTF: null
+	,readUTFBytes: null
+	,__class__: openfl_utils_IDataInput
 	,__properties__: {set_endian:"set_endian",get_endian:"get_endian",get_bytesAvailable:"get_bytesAvailable"}
 };
 var openfl_utils_ByteArrayData = function(length) {
@@ -36749,7 +38244,11 @@ openfl_utils_ByteArrayData.fromBytes = function(bytes) {
 };
 openfl_utils_ByteArrayData.__super__ = haxe_io_Bytes;
 openfl_utils_ByteArrayData.prototype = $extend(haxe_io_Bytes.prototype,{
-	clear: function() {
+	objectEncoding: null
+	,position: null
+	,__endian: null
+	,__length: null
+	,clear: function() {
 		this.__length = 0;
 		this.position = 0;
 	}
@@ -37037,13 +38536,3438 @@ var haxe_lang_Iterator = function() { };
 $hxClasses["haxe.lang.Iterator"] = haxe_lang_Iterator;
 haxe_lang_Iterator.__name__ = ["haxe","lang","Iterator"];
 haxe_lang_Iterator.prototype = {
-	__class__: haxe_lang_Iterator
+	hasNext: null
+	,next: null
+	,__class__: haxe_lang_Iterator
 };
 var haxe_lang_Iterable = function() { };
 $hxClasses["haxe.lang.Iterable"] = haxe_lang_Iterable;
 haxe_lang_Iterable.__name__ = ["haxe","lang","Iterable"];
 haxe_lang_Iterable.prototype = {
-	__class__: haxe_lang_Iterable
+	iterator: null
+	,__class__: haxe_lang_Iterable
+};
+var thx_Arrays = function() { };
+$hxClasses["thx.Arrays"] = thx_Arrays;
+thx_Arrays.__name__ = ["thx","Arrays"];
+thx_Arrays.append = function(array,element) {
+	array.push(element);
+	return array;
+};
+thx_Arrays.appendIf = function(array,cond,element) {
+	if(cond) array.push(element);
+	return array;
+};
+thx_Arrays.after = function(array,element) {
+	return array.slice(HxOverrides.indexOf(array,element,0) + 1);
+};
+thx_Arrays.each = function(arr,effect) {
+	var $it0 = HxOverrides.iter(arr);
+	while( $it0.hasNext() ) {
+		var element = $it0.next();
+		effect(element);
+	}
+};
+thx_Arrays.eachi = function(arr,effect) {
+	var _g1 = 0;
+	var _g = arr.length;
+	while(_g1 < _g) {
+		var i = _g1++;
+		effect(arr[i],i);
+	}
+};
+thx_Arrays.all = function(arr,predicate) {
+	var $it0 = HxOverrides.iter(arr);
+	while( $it0.hasNext() ) {
+		var element = $it0.next();
+		if(!predicate(element)) return false;
+	}
+	return true;
+};
+thx_Arrays.any = function(arr,predicate) {
+	var $it0 = HxOverrides.iter(arr);
+	while( $it0.hasNext() ) {
+		var element = $it0.next();
+		if(predicate(element)) return true;
+	}
+	return false;
+};
+thx_Arrays.at = function(arr,indexes) {
+	return indexes.map(function(i) {
+		return arr[i];
+	});
+};
+thx_Arrays.before = function(array,element) {
+	return array.slice(0,HxOverrides.indexOf(array,element,0));
+};
+thx_Arrays.commonsFromStart = function(self,other,equality) {
+	if(null == equality) equality = thx_Functions.equality;
+	var count = 0;
+	var _g = 0;
+	var _g1 = thx_Arrays.zip(self,other);
+	while(_g < _g1.length) {
+		var pair = _g1[_g];
+		++_g;
+		if(equality(pair._0,pair._1)) count++; else break;
+	}
+	return self.slice(0,count);
+};
+thx_Arrays.compact = function(arr) {
+	return arr.filter(function(v) {
+		return null != v;
+	});
+};
+thx_Arrays.compare = function(a,b) {
+	var v;
+	if((v = a.length - b.length) != 0) return v;
+	var _g1 = 0;
+	var _g = a.length;
+	while(_g1 < _g) {
+		var i = _g1++;
+		if((v = thx_Dynamics.compare(a[i],b[i])) != 0) return v;
+	}
+	return 0;
+};
+thx_Arrays.contains = function(array,element,eq) {
+	if(null == eq) return HxOverrides.indexOf(array,element,0) >= 0; else {
+		var _g1 = 0;
+		var _g = array.length;
+		while(_g1 < _g) {
+			var i = _g1++;
+			if(eq(array[i],element)) return true;
+		}
+		return false;
+	}
+};
+thx_Arrays.containsAll = function(array,elements,eq) {
+	var $it0 = $iterator(elements)();
+	while( $it0.hasNext() ) {
+		var el = $it0.next();
+		if(!thx_Arrays.contains(array,el,eq)) return false;
+	}
+	return true;
+};
+thx_Arrays.containsAny = function(array,elements,eq) {
+	var $it0 = $iterator(elements)();
+	while( $it0.hasNext() ) {
+		var el = $it0.next();
+		if(thx_Arrays.contains(array,el,eq)) return true;
+	}
+	return false;
+};
+thx_Arrays.create = function(length,fillWith) {
+	var arr = new Array(length);
+	var _g = 0;
+	while(_g < length) {
+		var i = _g++;
+		arr[i] = fillWith;
+	}
+	return arr;
+};
+thx_Arrays.cross = function(a,b) {
+	var r = [];
+	var $it0 = HxOverrides.iter(a);
+	while( $it0.hasNext() ) {
+		var va = $it0.next();
+		var $it1 = HxOverrides.iter(b);
+		while( $it1.hasNext() ) {
+			var vb = $it1.next();
+			r.push([va,vb]);
+		}
+	}
+	return r;
+};
+thx_Arrays.crossMulti = function(array) {
+	var acopy = array.slice();
+	var result = acopy.shift().map(function(v) {
+		return [v];
+	});
+	while(acopy.length > 0) {
+		var array1 = acopy.shift();
+		var tresult = result;
+		result = [];
+		var $it0 = HxOverrides.iter(array1);
+		while( $it0.hasNext() ) {
+			var v1 = $it0.next();
+			var _g = 0;
+			while(_g < tresult.length) {
+				var ar = tresult[_g];
+				++_g;
+				var t = ar.slice();
+				t.push(v1);
+				result.push(t);
+			}
+		}
+	}
+	return result;
+};
+thx_Arrays.distinct = function(array,predicate) {
+	var result = [];
+	if(array.length <= 1) return array.slice();
+	if(null == predicate) predicate = thx_Functions.equality;
+	var $it0 = HxOverrides.iter(array);
+	while( $it0.hasNext() ) {
+		var v = $it0.next();
+		var v1 = [v];
+		var keep = !thx_Arrays.any(result,(function(v1) {
+			return function(r) {
+				return predicate(r,v1[0]);
+			};
+		})(v1));
+		if(keep) result.push(v1[0]);
+	}
+	return result;
+};
+thx_Arrays.eachPair = function(array,callback) {
+	var _g1 = 0;
+	var _g = array.length;
+	while(_g1 < _g) {
+		var i = _g1++;
+		var _g3 = i;
+		var _g2 = array.length;
+		while(_g3 < _g2) {
+			var j = _g3++;
+			if(!callback(array[i],array[j])) return;
+		}
+	}
+};
+thx_Arrays.equals = function(a,b,equality) {
+	if(a == null || b == null || a.length != b.length) return false;
+	if(null == equality) equality = thx_Functions.equality;
+	var _g1 = 0;
+	var _g = a.length;
+	while(_g1 < _g) {
+		var i = _g1++;
+		if(!equality(a[i],b[i])) return false;
+	}
+	return true;
+};
+thx_Arrays.extract = function(a,predicate) {
+	var _g1 = 0;
+	var _g = a.length;
+	while(_g1 < _g) {
+		var i = _g1++;
+		if(predicate(a[i])) return a.splice(i,1)[0];
+	}
+	return null;
+};
+thx_Arrays.filterNull = function(a) {
+	var arr = [];
+	var $it0 = HxOverrides.iter(a);
+	while( $it0.hasNext() ) {
+		var v = $it0.next();
+		if(null != v) arr.push(v);
+	}
+	return arr;
+};
+thx_Arrays.find = function(array,predicate) {
+	var $it0 = HxOverrides.iter(array);
+	while( $it0.hasNext() ) {
+		var element = $it0.next();
+		if(predicate(element)) return element;
+	}
+	return null;
+};
+thx_Arrays.findIndex = function(array,predicate) {
+	var _g1 = 0;
+	var _g = array.length;
+	while(_g1 < _g) {
+		var i = _g1++;
+		if(predicate(array[i])) return i;
+	}
+	return -1;
+};
+thx_Arrays.findLast = function(array,predicate) {
+	var len = array.length;
+	var j;
+	var _g = 0;
+	while(_g < len) {
+		var i = _g++;
+		j = len - i - 1;
+		if(predicate(array[j])) return array[j];
+	}
+	return null;
+};
+thx_Arrays.first = function(array) {
+	return array[0];
+};
+thx_Arrays.flatMap = function(array,callback) {
+	return thx_Arrays.flatten(array.map(callback));
+};
+thx_Arrays.flatten = function(array) {
+	return Array.prototype.concat.apply([],array);
+};
+thx_Arrays.from = function(array,element) {
+	return array.slice(HxOverrides.indexOf(array,element,0));
+};
+thx_Arrays.groupByAppend = function(arr,resolver,map) {
+	arr.map(function(v) {
+		var key = resolver(v);
+		var arr1 = map.get(key);
+		if(null == arr1) {
+			arr1 = [v];
+			map.set(key,arr1);
+		} else arr1.push(v);
+	});
+	return map;
+};
+thx_Arrays.spanByIndex = function(arr,spanKey) {
+	var acc = [];
+	var cur = null;
+	var j = -1;
+	var _g1 = 0;
+	var _g = arr.length;
+	while(_g1 < _g) {
+		var i = _g1++;
+		var k = spanKey(i);
+		if(k == null) throw new thx_Error("spanKey function returned null for index " + i,null,{ fileName : "Arrays.hx", lineNumber : 465, className : "thx.Arrays", methodName : "spanByIndex"});
+		if(cur == k) acc[j].push(arr[i]); else {
+			cur = k;
+			j++;
+			acc.push([arr[i]]);
+		}
+	}
+	return acc;
+};
+thx_Arrays.hasElements = function(array) {
+	return null != array && array.length > 0;
+};
+thx_Arrays.head = function(array) {
+	return array[0];
+};
+thx_Arrays.ifEmpty = function(array,alt) {
+	if(null != array && 0 != array.length) return array; else return alt;
+};
+thx_Arrays.initial = function(array) {
+	return array.slice(0,array.length - 1);
+};
+thx_Arrays.isEmpty = function(array) {
+	return null == array || array.length == 0;
+};
+thx_Arrays.last = function(array) {
+	return array[array.length - 1];
+};
+thx_Arrays.mapi = function(array,callback) {
+	return array.map(callback);
+};
+thx_Arrays.mapRight = function(array,callback) {
+	var i = array.length;
+	var result = [];
+	while(--i >= 0) result.push(callback(array[i]));
+	return result;
+};
+thx_Arrays.order = function(array,sort) {
+	var n = array.slice();
+	n.sort(sort);
+	return n;
+};
+thx_Arrays.pull = function(array,toRemove,equality) {
+	var $it0 = HxOverrides.iter(toRemove);
+	while( $it0.hasNext() ) {
+		var element = $it0.next();
+		thx_Arrays.removeAll(array,element,equality);
+	}
+};
+thx_Arrays.pushIf = function(array,condition,value) {
+	if(condition) array.push(value);
+	return array;
+};
+thx_Arrays.reduce = function(array,callback,initial) {
+	return array.reduce(callback,initial);
+};
+thx_Arrays.resize = function(array,length,fill) {
+	while(array.length < length) array.push(fill);
+	array.splice(length,array.length - length);
+	return array;
+};
+thx_Arrays.reducei = function(array,callback,initial) {
+	return array.reduce(callback,initial);
+};
+thx_Arrays.reduceRight = function(array,callback,initial) {
+	var i = array.length;
+	while(--i >= 0) initial = callback(initial,array[i]);
+	return initial;
+};
+thx_Arrays.removeAll = function(array,element,equality) {
+	if(null == equality) equality = thx_Functions.equality;
+	var i = array.length;
+	while(--i >= 0) if(equality(array[i],element)) array.splice(i,1);
+};
+thx_Arrays.rest = function(array) {
+	return array.slice(1);
+};
+thx_Arrays.reversed = function(array) {
+	var result = array.slice();
+	result.reverse();
+	return result;
+};
+thx_Arrays.sample = function(array,n) {
+	n = thx_Ints.min(n,array.length);
+	var copy = array.slice();
+	var result = [];
+	var _g = 0;
+	while(_g < n) {
+		var i = _g++;
+		result.push(copy.splice(Std.random(copy.length),1)[0]);
+	}
+	return result;
+};
+thx_Arrays.sampleOne = function(array) {
+	var index = Std.random(array.length);
+	return array[index];
+};
+thx_Arrays.string = function(arr) {
+	return "[" + arr.map(thx_Dynamics.string).join(", ") + "]";
+};
+thx_Arrays.shuffle = function(a) {
+	var t = thx_Ints.range(a.length);
+	var array = [];
+	while(t.length > 0) {
+		var pos = Std.random(t.length);
+		var index = t[pos];
+		t.splice(pos,1);
+		array.push(a[index]);
+	}
+	return array;
+};
+thx_Arrays.split = function(array,parts) {
+	var len = Math.ceil(array.length / parts);
+	return thx_Arrays.splitBy(array,len);
+};
+thx_Arrays.splitBy = function(array,len) {
+	var res = [];
+	len = thx_Ints.min(len,array.length);
+	var _g1 = 0;
+	var _g = Math.ceil(array.length / len);
+	while(_g1 < _g) {
+		var p = _g1++;
+		res.push(array.slice(p * len,(p + 1) * len));
+	}
+	return res;
+};
+thx_Arrays.splitByPad = function(arr,len,pad) {
+	var res = thx_Arrays.splitBy(arr,len);
+	while(res[res.length - 1].length < len) res[res.length - 1].push(pad);
+	return res;
+};
+thx_Arrays.take = function(arr,n) {
+	return arr.slice(0,n);
+};
+thx_Arrays.takeLast = function(arr,n) {
+	return arr.slice(arr.length - n);
+};
+thx_Arrays.traverseOption = function(arr,f) {
+	return thx_Arrays.reduce(arr,function(acc,t) {
+		return thx_Options.ap(f(t),thx_Options.map(acc,function(ux) {
+			return function(u) {
+				ux.push(u);
+				return ux;
+			};
+		}));
+	},haxe_ds_Option.Some([]));
+};
+thx_Arrays.traverseValidation = function(arr,f,s) {
+	return thx_Arrays.reduce(arr,function(acc,t) {
+		return thx__$Validation_Validation_$Impl_$.ap(f(t),thx__$Validation_Validation_$Impl_$.ap(acc,thx_Either.Right(function(ux) {
+			return function(u) {
+				ux.push(u);
+				return ux;
+			};
+		}),function(e1,e2) {
+			throw new js__$Boot_HaxeError("Unreachable");
+		}),s);
+	},thx_Either.Right([]));
+};
+thx_Arrays.rotate = function(arr) {
+	var result = [];
+	var _g1 = 0;
+	var _g = arr[0].length;
+	while(_g1 < _g) {
+		var i = _g1++;
+		var row = [];
+		result.push(row);
+		var _g3 = 0;
+		var _g2 = arr.length;
+		while(_g3 < _g2) {
+			var j = _g3++;
+			row.push(arr[j][i]);
+		}
+	}
+	return result;
+};
+thx_Arrays.sliding2 = function(arr,f) {
+	if(arr.length < 2) return []; else {
+		var result = [];
+		var _g1 = 0;
+		var _g = arr.length - 1;
+		while(_g1 < _g) {
+			var i = _g1++;
+			result.push(f(arr[i],arr[i + 1]));
+		}
+		return result;
+	}
+};
+thx_Arrays.unzip = function(array) {
+	var a1 = [];
+	var a2 = [];
+	array.map(function(t) {
+		a1.push(t._0);
+		a2.push(t._1);
+	});
+	return { _0 : a1, _1 : a2};
+};
+thx_Arrays.unzip3 = function(array) {
+	var a1 = [];
+	var a2 = [];
+	var a3 = [];
+	array.map(function(t) {
+		a1.push(t._0);
+		a2.push(t._1);
+		a3.push(t._2);
+	});
+	return { _0 : a1, _1 : a2, _2 : a3};
+};
+thx_Arrays.unzip4 = function(array) {
+	var a1 = [];
+	var a2 = [];
+	var a3 = [];
+	var a4 = [];
+	array.map(function(t) {
+		a1.push(t._0);
+		a2.push(t._1);
+		a3.push(t._2);
+		a4.push(t._3);
+	});
+	return { _0 : a1, _1 : a2, _2 : a3, _3 : a4};
+};
+thx_Arrays.unzip5 = function(array) {
+	var a1 = [];
+	var a2 = [];
+	var a3 = [];
+	var a4 = [];
+	var a5 = [];
+	array.map(function(t) {
+		a1.push(t._0);
+		a2.push(t._1);
+		a3.push(t._2);
+		a4.push(t._3);
+		a5.push(t._4);
+	});
+	return { _0 : a1, _1 : a2, _2 : a3, _3 : a4, _4 : a5};
+};
+thx_Arrays.zip = function(array1,array2) {
+	var length = thx_Ints.min(array1.length,array2.length);
+	var array = [];
+	var _g = 0;
+	while(_g < length) {
+		var i = _g++;
+		array.push({ _0 : array1[i], _1 : array2[i]});
+	}
+	return array;
+};
+thx_Arrays.withPrepend = function(arr,el) {
+	return [el].concat(arr);
+};
+thx_Arrays["with"] = function(arr,el) {
+	return arr.concat([el]);
+};
+thx_Arrays.withSlice = function(arr,other,start,length) {
+	if(length == null) length = 0;
+	return arr.slice(0,start).concat(other).concat(arr.slice(start + length));
+};
+thx_Arrays.withInsert = function(arr,el,pos) {
+	return arr.slice(0,pos).concat([el]).concat(arr.slice(pos));
+};
+thx_Arrays.zip3 = function(array1,array2,array3) {
+	var length = thx_ArrayInts.min([array1.length,array2.length,array3.length]);
+	var array = [];
+	var _g = 0;
+	while(_g < length) {
+		var i = _g++;
+		array.push({ _0 : array1[i], _1 : array2[i], _2 : array3[i]});
+	}
+	return array;
+};
+thx_Arrays.zip4 = function(array1,array2,array3,array4) {
+	var length = thx_ArrayInts.min([array1.length,array2.length,array3.length,array4.length]);
+	var array = [];
+	var _g = 0;
+	while(_g < length) {
+		var i = _g++;
+		array.push({ _0 : array1[i], _1 : array2[i], _2 : array3[i], _3 : array4[i]});
+	}
+	return array;
+};
+thx_Arrays.zip5 = function(array1,array2,array3,array4,array5) {
+	var length = thx_ArrayInts.min([array1.length,array2.length,array3.length,array4.length,array5.length]);
+	var array = [];
+	var _g = 0;
+	while(_g < length) {
+		var i = _g++;
+		array.push({ _0 : array1[i], _1 : array2[i], _2 : array3[i], _3 : array4[i], _4 : array5[i]});
+	}
+	return array;
+};
+var thx_ArrayFloats = function() { };
+$hxClasses["thx.ArrayFloats"] = thx_ArrayFloats;
+thx_ArrayFloats.__name__ = ["thx","ArrayFloats"];
+thx_ArrayFloats.average = function(arr) {
+	return thx_ArrayFloats.sum(arr) / arr.length;
+};
+thx_ArrayFloats.compact = function(arr) {
+	return arr.filter(function(v) {
+		return null != v && isFinite(v);
+	});
+};
+thx_ArrayFloats.max = function(arr) {
+	if(arr.length == 0) return null; else return arr.reduce(function(max,v) {
+		if(v > max) return v; else return max;
+	},arr[0]);
+};
+thx_ArrayFloats.min = function(arr) {
+	if(arr.length == 0) return null; else return arr.reduce(function(min,v) {
+		if(v < min) return v; else return min;
+	},arr[0]);
+};
+thx_ArrayFloats.resize = function(array,length,fill) {
+	if(fill == null) fill = 0.0;
+	while(array.length < length) array.push(fill);
+	array.splice(length,array.length - length);
+	return array;
+};
+thx_ArrayFloats.standardDeviation = function(array) {
+	if(array.length < 2) return 0.0;
+	var mean = thx_ArrayFloats.average(array);
+	var variance = array.reduce(function(acc,val) {
+		return acc + Math.pow(val - mean,2);
+	},0) / (array.length - 1);
+	return Math.sqrt(variance);
+};
+thx_ArrayFloats.sum = function(arr) {
+	return arr.reduce(function(tot,v) {
+		return tot + v;
+	},0.0);
+};
+var thx_ArrayInts = function() { };
+$hxClasses["thx.ArrayInts"] = thx_ArrayInts;
+thx_ArrayInts.__name__ = ["thx","ArrayInts"];
+thx_ArrayInts.average = function(arr) {
+	return thx_ArrayInts.sum(arr) / arr.length;
+};
+thx_ArrayInts.max = function(arr) {
+	if(arr.length == 0) return null; else return arr.reduce(function(max,v) {
+		if(v > max) return v; else return max;
+	},arr[0]);
+};
+thx_ArrayInts.min = function(arr) {
+	if(arr.length == 0) return null; else return arr.reduce(function(min,v) {
+		if(v < min) return v; else return min;
+	},arr[0]);
+};
+thx_ArrayInts.resize = function(array,length,fill) {
+	if(fill == null) fill = 0;
+	while(array.length < length) array.push(fill);
+	array.splice(length,array.length - length);
+	return array;
+};
+thx_ArrayInts.sum = function(arr) {
+	return arr.reduce(function(tot,v) {
+		return tot + v;
+	},0);
+};
+var thx_ArrayStrings = function() { };
+$hxClasses["thx.ArrayStrings"] = thx_ArrayStrings;
+thx_ArrayStrings.__name__ = ["thx","ArrayStrings"];
+thx_ArrayStrings.compact = function(arr) {
+	return arr.filter(function(v) {
+		return !thx_Strings.isEmpty(v);
+	});
+};
+thx_ArrayStrings.max = function(arr) {
+	if(arr.length == 0) return null; else return arr.reduce(function(max,v) {
+		if(v > max) return v; else return max;
+	},arr[0]);
+};
+thx_ArrayStrings.min = function(arr) {
+	if(arr.length == 0) return null; else return arr.reduce(function(min,v) {
+		if(v < min) return v; else return min;
+	},arr[0]);
+};
+var thx_IAssertBehavior = function() { };
+$hxClasses["thx.IAssertBehavior"] = thx_IAssertBehavior;
+thx_IAssertBehavior.__name__ = ["thx","IAssertBehavior"];
+thx_IAssertBehavior.prototype = {
+	success: null
+	,fail: null
+	,warn: null
+	,__class__: thx_IAssertBehavior
+};
+var thx_DefaultAssertBehavior = function() {
+};
+$hxClasses["thx.DefaultAssertBehavior"] = thx_DefaultAssertBehavior;
+thx_DefaultAssertBehavior.__name__ = ["thx","DefaultAssertBehavior"];
+thx_DefaultAssertBehavior.__interfaces__ = [thx_IAssertBehavior];
+thx_DefaultAssertBehavior.prototype = {
+	success: function(pos) {
+	}
+	,warn: function(message,pos) {
+		haxe_Log.trace(message,pos);
+	}
+	,fail: function(message,pos) {
+		throw new thx_error_AssertError(message,pos);
+	}
+	,__class__: thx_DefaultAssertBehavior
+};
+var thx_Assert = function() { };
+$hxClasses["thx.Assert"] = thx_Assert;
+thx_Assert.__name__ = ["thx","Assert"];
+thx_Assert.contains = function(possibilities,value,msg,pos) {
+	if(thx_Arrays.contains(possibilities,value)) thx_Assert.pass(msg,pos); else thx_Assert.fail(msg == null?"value " + Std.string(value) + " not found in the expected possibilities " + Std.string(possibilities):msg,pos);
+};
+thx_Assert.equals = function(expected,value,msg,pos) {
+	if(msg == null) msg = "expected " + Std.string(expected) + " but it is " + Std.string(value);
+	thx_Assert.isTrue(expected == value,msg,pos);
+};
+thx_Assert.excludes = function(match,values,msg,pos) {
+	if(!thx_Arrays.contains(values,match)) thx_Assert.pass(msg,pos); else thx_Assert.fail(msg == null?"values " + Std.string(values) + " do contain " + Std.string(match):msg,pos);
+};
+thx_Assert.fail = function(msg,pos) {
+	if(msg == null) msg = "failure expected";
+	thx_Assert.isTrue(false,msg,pos);
+};
+thx_Assert.isContainedIn = function(match,values,msg,pos) {
+	if(thx_Arrays.contains(values,match)) thx_Assert.pass(msg,pos); else thx_Assert.fail(msg == null?"values " + Std.string(values) + " do not contain " + Std.string(match):msg,pos);
+};
+thx_Assert.isFalse = function(value,msg,pos) {
+	if(null == msg) msg = "expected false";
+	thx_Assert.isTrue(value == false,msg,pos);
+};
+thx_Assert["is"] = function(value,type,msg,pos) {
+	if(msg == null) msg = "expected type " + (js_Boot.__instanceof(type,ValueType)?thx_Types.toString(type):js_Boot.__instanceof(type,Class)?Type.getClassName(type):js_Boot.__instanceof(type,Enum)?Type.getEnumName(type):thx_Types.valueTypeToString(type)) + " but it is " + thx_Types.valueTypeToString(value);
+	thx_Assert.isTrue(js_Boot.__instanceof(value,type),msg,pos);
+};
+thx_Assert.isNull = function(value,msg,pos) {
+	if(msg == null) msg = "expected null but it is " + Std.string(value);
+	thx_Assert.isTrue(value == null,msg,pos);
+};
+thx_Assert.isTrue = function(cond,msg,pos) {
+	if(cond) thx_Assert.behavior.success(pos); else thx_Assert.behavior.fail(msg,pos);
+};
+thx_Assert.matches = function(pattern,value,msg,pos) {
+	if(msg == null) msg = "the value " + Std.string(value) + " does not match the provided pattern";
+	thx_Assert.isTrue(pattern.match(value),msg,pos);
+};
+thx_Assert.nearEquals = function(expected,value,approx,msg,pos) {
+	if(msg == null) msg = "expected " + expected + " but it is " + value;
+	thx_Assert.isTrue(thx_Floats.nearEquals(expected,value,approx),msg,pos);
+	return;
+};
+thx_Assert.notEquals = function(expected,value,msg,pos) {
+	if(msg == null) msg = "expected " + Std.string(expected) + " and test value " + Std.string(value) + " should be different";
+	thx_Assert.isFalse(expected == value,msg,pos);
+};
+thx_Assert.notNull = function(value,msg,pos) {
+	if(null == msg) msg = "expected not null";
+	thx_Assert.isTrue(value != null,msg,pos);
+};
+thx_Assert.pass = function(msg,pos) {
+	if(msg == null) msg = "pass expected";
+	thx_Assert.isTrue(true,msg,pos);
+};
+thx_Assert.raises = function(method,type,msgNotThrown,msgWrongType,pos) {
+	try {
+		method();
+		if(null == msgNotThrown) {
+			var name;
+			if(null == type) name = "Dynamic"; else if(js_Boot.__instanceof(type,ValueType)) name = thx_Types.toString(type); else if(js_Boot.__instanceof(type,Class)) name = Type.getClassName(type); else if(js_Boot.__instanceof(type,Enum)) name = Type.getEnumName(type); else name = thx_Types.valueTypeToString(type);
+			msgNotThrown = "exception of type " + name + " not raised";
+		}
+		thx_Assert.fail(msgNotThrown,pos);
+	} catch( ex ) {
+		haxe_CallStack.lastException = ex;
+		if (ex instanceof js__$Boot_HaxeError) ex = ex.val;
+		if(null == type) thx_Assert.pass(null,pos); else {
+			if(null == msgWrongType) {
+				var name1;
+				if(js_Boot.__instanceof(type,ValueType)) name1 = thx_Types.toString(type); else if(js_Boot.__instanceof(type,Class)) name1 = Type.getClassName(type); else if(js_Boot.__instanceof(type,Enum)) name1 = Type.getEnumName(type); else name1 = thx_Types.valueTypeToString(type);
+				msgWrongType = "expected throw of type " + name1 + " but it is " + Std.string(ex);
+			}
+			thx_Assert.isTrue(js_Boot.__instanceof(ex,type),msgWrongType,pos);
+		}
+	}
+};
+thx_Assert.same = function(expected,value,recursive,msg,pos) {
+	if(recursive == null) recursive = true;
+	var status = { recursive : recursive, path : "", error : null};
+	if(thx_Assert.sameAs(expected,value,status)) thx_Assert.pass(msg,pos); else thx_Assert.fail(msg == null?status.error:msg,pos);
+};
+thx_Assert.stringContains = function(match,value,msg,pos) {
+	if(value != null && value.indexOf(match) >= 0) thx_Assert.pass(msg,pos); else thx_Assert.fail(msg == null?"value " + thx_Strings.quote(value) + " does not contain " + thx_Strings.quote(match):msg,pos);
+};
+thx_Assert.stringSequence = function(sequence,value,msg,pos) {
+	if(null == value) {
+		thx_Assert.fail(msg == null?"null argument value":msg,pos);
+		return;
+	}
+	var p = 0;
+	var _g = 0;
+	while(_g < sequence.length) {
+		var s = sequence[_g];
+		++_g;
+		var p2 = value.indexOf(s,p);
+		if(p2 < 0) {
+			if(msg == null) {
+				msg = "expected " + thx_Strings.quote(s) + " after ";
+				if(p > 0) msg += " " + thx_Strings.quote(thx_Strings.ellipsis(value,30)); else msg += " begin";
+			}
+			thx_Assert.fail(msg,pos);
+			return;
+		}
+		p = p2 + s.length;
+	}
+	thx_Assert.pass(msg,pos);
+};
+thx_Assert.warn = function(msg,pos) {
+	thx_Assert.behavior.warn(msg,pos);
+};
+thx_Assert.sameAs = function(expected,value,status) {
+	var withPath = function(msg) {
+		return msg + (thx_Strings.isEmpty(status.path)?"":" at " + status.path);
+	};
+	if(!thx_Types.sameType(expected,value)) {
+		var texpected = thx_Types.valueTypeToString(expected);
+		var tvalue = thx_Types.valueTypeToString(value);
+		status.error = withPath("expected type " + texpected + " but it is " + tvalue);
+		return false;
+	}
+	{
+		var _g = Type["typeof"](expected);
+		switch(_g[1]) {
+		case 2:
+			if(!thx_Floats.nearEquals(expected,value)) {
+				status.error = withPath("expected " + Std.string(expected) + " but it is " + Std.string(value));
+				return false;
+			}
+			return true;
+		case 0:case 1:case 3:
+			if(expected != value) {
+				status.error = withPath("expected " + Std.string(expected) + " but it is " + Std.string(value));
+				return false;
+			}
+			return true;
+		case 5:
+			if(!Reflect.compareMethods(expected,value)) {
+				status.error = withPath("expected same function reference");
+				return false;
+			}
+			return true;
+		case 6:
+			var c = _g[2];
+			if(typeof(expected) == "string" && expected != value) {
+				status.error = withPath("expected " + thx_Strings.quote(expected) + " but it is " + thx_Strings.quote(value));
+				return false;
+			}
+			if((expected instanceof Array) && expected.__enum__ == null) {
+				if(status.recursive || status.path == "") {
+					if(expected.length != value.length) {
+						status.error = withPath("expected " + Std.string(expected.length) + " elements but they are " + Std.string(value.length));
+						return false;
+					}
+					var path = status.path;
+					var _g2 = 0;
+					var _g1 = expected.length;
+					while(_g2 < _g1) {
+						var i = _g2++;
+						if(path == "") status.path = "array[" + i + "]"; else status.path = path + ("[" + i + "]");
+						if(!thx_Assert.sameAs(expected[i],value[i],status)) {
+							status.error = withPath("expected " + Std.string(expected[i]) + " but it is " + Std.string(value[i]));
+							return false;
+						}
+					}
+				}
+				return true;
+			}
+			if(js_Boot.__instanceof(expected,Date)) {
+				if(expected.getTime() != value.getTime()) {
+					status.error = withPath("expected " + Std.string(expected) + " but it is " + Std.string(value));
+					return false;
+				}
+				return true;
+			}
+			if(js_Boot.__instanceof(expected,haxe_io_Bytes)) {
+				if(status.recursive || status.path == "") {
+					var ebytes = expected;
+					var vbytes = value;
+					if(ebytes.length != vbytes.length) return false;
+					var _g21 = 0;
+					var _g11 = ebytes.length;
+					while(_g21 < _g11) {
+						var i1 = _g21++;
+						if(ebytes.b[i1] != vbytes.b[i1]) {
+							status.error = withPath("expected byte " + ebytes.b[i1] + " but it is " + vbytes.b[i1]);
+							return false;
+						}
+					}
+				}
+				return true;
+			}
+			if(js_Boot.__instanceof(expected,haxe_IMap)) {
+				if(status.recursive || status.path == "") {
+					var map;
+					map = js_Boot.__cast(expected , haxe_IMap);
+					var vmap;
+					vmap = js_Boot.__cast(value , haxe_IMap);
+					var keys;
+					var _g12 = [];
+					var $it0 = map.keys();
+					while( $it0.hasNext() ) {
+						var k = $it0.next();
+						_g12.push(k);
+					}
+					keys = _g12;
+					var vkeys;
+					var _g22 = [];
+					var $it1 = vmap.keys();
+					while( $it1.hasNext() ) {
+						var k1 = $it1.next();
+						_g22.push(k1);
+					}
+					vkeys = _g22;
+					if(keys.length != vkeys.length) {
+						status.error = withPath("expected " + keys.length + " keys but they are " + vkeys.length);
+						return false;
+					}
+					var path1 = status.path;
+					var _g3 = 0;
+					while(_g3 < keys.length) {
+						var key = keys[_g3];
+						++_g3;
+						if(path1 == "") status.path = "hash[" + Std.string(key) + "]"; else status.path = path1 + ("[" + Std.string(key) + "]");
+						if(!thx_Assert.sameAs(map.get(key),vmap.get(key),status)) {
+							status.error = withPath("expected " + Std.string(expected) + " but it is " + Std.string(value));
+							return false;
+						}
+					}
+				}
+				return true;
+			}
+			if(thx_Iterators.isIterator(expected)) {
+				if(status.recursive || status.path == "") {
+					var evalues = thx_Iterators.toArray(expected);
+					var vvalues = thx_Iterators.toArray(value);
+					if(evalues.length != vvalues.length) {
+						status.error = withPath("expected " + evalues.length + " values in Iterator but they are " + vvalues.length);
+						return false;
+					}
+					var path2 = status.path;
+					var _g23 = 0;
+					var _g13 = evalues.length;
+					while(_g23 < _g13) {
+						var i2 = _g23++;
+						if(path2 == "") status.path = "iterator[" + i2 + "]"; else status.path = path2 + ("" + path2 + "[" + i2 + "]");
+						if(!thx_Assert.sameAs(evalues[i2],vvalues[i2],status)) {
+							status.error = withPath("expected " + Std.string(expected) + " but it is " + Std.string(value));
+							return false;
+						}
+					}
+				}
+				return true;
+			}
+			if(thx_Iterables.isIterable(expected)) {
+				if(status.recursive || status.path == "") {
+					var evalues1 = thx_Iterables.toArray(expected);
+					var vvalues1 = thx_Iterables.toArray(value);
+					if(evalues1.length != vvalues1.length) {
+						status.error = withPath("expected " + evalues1.length + " values in Iterable but they are " + vvalues1.length);
+						return false;
+					}
+					var path3 = status.path;
+					var _g24 = 0;
+					var _g14 = evalues1.length;
+					while(_g24 < _g14) {
+						var i3 = _g24++;
+						if(path3 == "") status.path = "iterable[" + i3 + "]"; else status.path = path3 + ("[" + i3 + "]");
+						if(!thx_Assert.sameAs(evalues1[i3],vvalues1[i3],status)) return false;
+					}
+				}
+				return true;
+			}
+			if(status.recursive || status.path == "") {
+				var fields = Type.getInstanceFields(Type.getClass(expected));
+				var path4 = status.path;
+				var _g15 = 0;
+				while(_g15 < fields.length) {
+					var field = fields[_g15];
+					++_g15;
+					if(path4 == "") status.path = field; else status.path = "" + path4 + "." + field;
+					var e = Reflect.field(expected,field);
+					if(Reflect.isFunction(e)) continue;
+					var v = Reflect.field(value,field);
+					if(!thx_Assert.sameAs(e,v,status)) return false;
+				}
+			}
+			return true;
+		case 7:
+			var e1 = _g[2];
+			var eexpected = Type.getEnumName(e1);
+			var evalue = Type.getEnumName(Type.getEnum(value));
+			if(eexpected != evalue) {
+				status.error = withPath("expected enumeration of " + eexpected + " but it is " + evalue);
+				return false;
+			}
+			if(status.recursive || status.path == "") {
+				if(Type.enumIndex(expected) != Type.enumIndex(value)) {
+					status.error = withPath("expected " + Type.enumConstructor(expected) + " but it is " + Type.enumConstructor(value));
+					return false;
+				}
+				var eparams = Type.enumParameters(expected);
+				var vparams = Type.enumParameters(value);
+				var path5 = status.path;
+				var _g25 = 0;
+				var _g16 = eparams.length;
+				while(_g25 < _g16) {
+					var i4 = _g25++;
+					if(path5 == "") status.path = "enum[" + i4 + "]"; else status.path = path5 + ("[" + i4 + "]");
+					if(!thx_Assert.sameAs(eparams[i4],vparams[i4],status)) {
+						status.error = withPath("expected " + Std.string(expected) + " but it is " + Std.string(value));
+						return false;
+					}
+				}
+			}
+			return true;
+		case 4:
+			if(status.recursive || status.path == "") {
+				var tfields = Reflect.fields(value);
+				var fields1 = Reflect.fields(expected);
+				var path6 = status.path;
+				var _g17 = 0;
+				while(_g17 < fields1.length) {
+					var field1 = fields1[_g17];
+					++_g17;
+					HxOverrides.remove(tfields,field1);
+					if(path6 == "") status.path = field1; else status.path = "" + path6 + "." + field1;
+					if(!Object.prototype.hasOwnProperty.call(value,field1)) {
+						status.error = withPath("expected field " + status.path + " does not exist in " + Std.string(value));
+						return false;
+					}
+					var e2 = Reflect.field(expected,field1);
+					if(Reflect.isFunction(e2)) continue;
+					var v1 = Reflect.field(value,field1);
+					if(!thx_Assert.sameAs(e2,v1,status)) return false;
+				}
+				if(tfields.length > 0) {
+					status.error = withPath("the tested object has extra field(s) (" + tfields.join(", ") + ") not included in the expected ones");
+					return false;
+				}
+			}
+			if(thx_Iterators.isIterator(expected)) {
+				if(!thx_Iterators.isIterator(value)) {
+					status.error = withPath("expected an Iterable");
+					return false;
+				}
+				if(status.recursive || status.path == "") {
+					var evalues2 = thx_Iterators.toArray(expected);
+					var vvalues2 = thx_Iterators.toArray(value);
+					if(evalues2.length != vvalues2.length) {
+						status.error = withPath("expected " + evalues2.length + " values in Iterator but they are " + vvalues2.length);
+						return false;
+					}
+					var path7 = status.path;
+					var _g26 = 0;
+					var _g18 = evalues2.length;
+					while(_g26 < _g18) {
+						var i5 = _g26++;
+						if(path7 == "") status.path = "iterator[" + i5 + "]"; else status.path = path7 + ("[" + i5 + "]");
+						if(!thx_Assert.sameAs(evalues2[i5],vvalues2[i5],status)) {
+							status.error = withPath("expected " + Std.string(expected) + " but it is " + Std.string(value));
+							return false;
+						}
+					}
+				}
+				return true;
+			}
+			if(thx_Iterables.isIterable(expected)) {
+				if(!thx_Iterables.isIterable(value)) {
+					status.error = withPath("expected an Iterator");
+					return false;
+				}
+				if(status.recursive || status.path == "") {
+					var evalues3 = thx_Iterables.toArray(expected);
+					var vvalues3 = thx_Iterables.toArray(value);
+					if(evalues3.length != vvalues3.length) {
+						status.error = withPath("expected " + evalues3.length + " values in Iterable but they are " + vvalues3.length);
+						return false;
+					}
+					var path8 = status.path;
+					var _g27 = 0;
+					var _g19 = evalues3.length;
+					while(_g27 < _g19) {
+						var i6 = _g27++;
+						if(path8 == "") status.path = "iterable[" + i6 + "]"; else status.path = path8 + ("[" + i6 + "]");
+						if(!thx_Assert.sameAs(evalues3[i6],vvalues3[i6],status)) return false;
+					}
+				}
+				return true;
+			}
+			return true;
+		case 8:
+			throw new js__$Boot_HaxeError("Unable to compare two unknown types");
+			break;
+		}
+	}
+	throw new js__$Boot_HaxeError("Unable to compare values: " + Std.string(expected) + " and " + Std.string(value));
+};
+var thx_bigint_BigIntImpl = function() { };
+$hxClasses["thx.bigint.BigIntImpl"] = thx_bigint_BigIntImpl;
+thx_bigint_BigIntImpl.__name__ = ["thx","bigint","BigIntImpl"];
+thx_bigint_BigIntImpl.prototype = {
+	sign: null
+	,isSmall: null
+	,abs: null
+	,add: null
+	,subtract: null
+	,divide: null
+	,multiply: null
+	,modulo: null
+	,random: null
+	,negate: null
+	,next: null
+	,prev: null
+	,pow: null
+	,shiftLeft: null
+	,shiftRight: null
+	,square: null
+	,isEven: null
+	,isOdd: null
+	,isUnit: null
+	,isZero: null
+	,compareTo: null
+	,compareToAbs: null
+	,not: null
+	,and: null
+	,or: null
+	,xor: null
+	,toFloat: null
+	,toInt: null
+	,toString: null
+	,toStringWithBase: null
+	,divMod: null
+	,__class__: thx_bigint_BigIntImpl
+};
+var thx_bigint_Small = function(value) {
+	this.sign = value < 0;
+	this.value = value;
+	this.isSmall = true;
+};
+$hxClasses["thx.bigint.Small"] = thx_bigint_Small;
+thx_bigint_Small.__name__ = ["thx","bigint","Small"];
+thx_bigint_Small.__interfaces__ = [thx_bigint_BigIntImpl];
+thx_bigint_Small.prototype = {
+	value: null
+	,sign: null
+	,isSmall: null
+	,add: function(that) {
+		if(this.isZero()) return that;
+		if(that.isZero()) return this;
+		if(this.sign != that.sign) return this.subtract(that.negate());
+		if(that.isSmall) return this.addSmall(that); else return this.addBig(that);
+	}
+	,addSmall: function(small) {
+		if(thx_bigint_Bigs.isPrecise(this.value + small.value)) return new thx_bigint_Small(this.value + small.value); else return new thx_bigint_Big(thx_bigint_Bigs.addSmall(thx_bigint_Bigs.smallToArray(thx_Ints.abs(small.value)),thx_Ints.abs(this.value)),this.sign);
+	}
+	,addBig: function(big) {
+		return new thx_bigint_Big(thx_bigint_Bigs.addSmall(big.value,thx_Ints.abs(this.value)),this.sign);
+	}
+	,subtract: function(that) {
+		if(this.isZero()) return that.negate();
+		if(that.isZero()) return this;
+		if(this.sign != that.sign) return this.add(that.negate());
+		if(that.isSmall) return this.subtractSmall(that); else return this.subtractBig(that);
+	}
+	,subtractSmall: function(small) {
+		return new thx_bigint_Small(this.value - small.value);
+	}
+	,subtractBig: function(big) {
+		if(big.compareToAbsSmall(this) < 0) return new thx_bigint_Small(this.value - big.toInt());
+		return thx_bigint_Bigs.subtractSmall(big.value,thx_Ints.abs(this.value),this.value >= 0);
+	}
+	,divide: function(that) {
+		return this.divMod(that).quotient;
+	}
+	,divMod: function(that) {
+		if(that.isZero()) throw new thx_Error("division by zero",null,{ fileName : "Small.hx", lineNumber : 77, className : "thx.bigint.Small", methodName : "divMod"});
+		if(that.isSmall) return this.divModSmall(that); else return this.divModBig(that);
+	}
+	,divModSmall: function(small) {
+		return { quotient : new thx_bigint_Small(thx_Floats.trunc(this.value / small.value)), remainder : new thx_bigint_Small(this.value % small.value)};
+	}
+	,divModBig: function(big) {
+		return new thx_bigint_Big(thx_bigint_Bigs.smallToArray(thx_Ints.abs(this.value)),this.value < 0).divModBig(big);
+	}
+	,multiply: function(that) {
+		if(that.isSmall) return this.multiplySmall(that); else return this.multiplyBig(that);
+	}
+	,multiplySmall: function(small) {
+		if(thx_bigint_Bigs.isPrecise(this.value * small.value)) return new thx_bigint_Small(this.value * small.value);
+		var arr = thx_bigint_Bigs.smallToArray(thx_Ints.abs(small.value));
+		var abs = thx_Ints.abs(this.value);
+		if(abs < 10000000) return new thx_bigint_Big(thx_bigint_Bigs.multiplySmall(arr,abs),this.sign != small.sign); else return new thx_bigint_Big(thx_bigint_Bigs.multiplyLong(arr,thx_bigint_Bigs.smallToArray(abs)),this.sign != small.sign);
+	}
+	,multiplyBig: function(big) {
+		return new thx_bigint_Big(thx_bigint_Bigs.multiplyLong(big.value,thx_bigint_Bigs.smallToArray(thx_Ints.abs(this.value))),this.sign != big.sign);
+	}
+	,modulo: function(that) {
+		return this.divMod(that).remainder;
+	}
+	,random: function() {
+		return thx_bigint_Bigs.fromInt(Std["int"](Math.random() * this.value));
+	}
+	,abs: function() {
+		return new thx_bigint_Small(thx_Ints.abs(this.value));
+	}
+	,negate: function() {
+		return new thx_bigint_Small(-this.value);
+	}
+	,next: function() {
+		return this.addSmall(thx_bigint_Small.one);
+	}
+	,prev: function() {
+		return this.addSmall(thx_bigint_Small.negativeOne);
+	}
+	,pow: function(exp) {
+		if(this.isZero()) if(exp.isZero()) return thx_bigint_Small.one; else return this;
+		if(this.isUnit()) if(this.sign) {
+			if(exp.isEven()) return thx_bigint_Small.one; else return thx_bigint_Small.negativeOne;
+		} else return thx_bigint_Small.one;
+		if(exp.sign) return thx_bigint_Small.zero;
+		if(!exp.isSmall) throw new thx_Error("The exponent " + Std.string(exp) + " is too large.",null,{ fileName : "Small.hx", lineNumber : 141, className : "thx.bigint.Small", methodName : "pow"});
+		var b = exp.value;
+		if(thx_bigint_Bigs.canPower(this.value,b)) return new thx_bigint_Small(Std["int"](Math.pow(this.value,b)));
+		return new thx_bigint_Big(thx_bigint_Bigs.smallToArray(thx_Ints.abs(this.value)),this.sign).pow(exp);
+	}
+	,shiftLeft: function(n) {
+		if(n < 0) return this.shiftRight(-n);
+		if((n < 0?-n:n) > 10000000) return this.multiply(thx_bigint_Small.two.pow(thx_bigint_Bigs.fromInt(n)));
+		var result = this;
+		while(n >= thx_bigint_Bigs.powers2Length) {
+			result = result.multiply(thx_bigint_Bigs.bigHighestPower2);
+			n -= thx_bigint_Bigs.powers2Length - 1;
+		}
+		return result.multiply(thx_bigint_Bigs.bigPowersOfTwo[n]);
+	}
+	,shiftRight: function(n) {
+		if(n < 0) return this.shiftLeft(-n);
+		var remQuo;
+		if((n < 0?-n:n) > 10000000) {
+			remQuo = this.divMod(thx_bigint_Small.two.pow(thx_bigint_Bigs.fromInt(n)));
+			if(remQuo.remainder.sign) return remQuo.quotient.prev(); else return remQuo.quotient;
+		}
+		var result = this;
+		while(n >= thx_bigint_Bigs.powers2Length) {
+			if(result.isZero()) return result;
+			remQuo = result.divMod(thx_bigint_Bigs.bigHighestPower2);
+			if(remQuo.remainder.sign) result = remQuo.quotient.prev(); else result = remQuo.quotient;
+			n -= thx_bigint_Bigs.powers2Length - 1;
+		}
+		remQuo = result.divMod(thx_bigint_Bigs.bigPowersOfTwo[n]);
+		if(remQuo.remainder.sign) return remQuo.quotient.prev(); else return remQuo.quotient;
+	}
+	,square: function() {
+		if(thx_bigint_Bigs.isPrecise(this.value * this.value)) return new thx_bigint_Small(this.value * this.value);
+		return new thx_bigint_Big(thx_bigint_Bigs.square(thx_bigint_Bigs.smallToArray(thx_Ints.abs(this.value))),false);
+	}
+	,isEven: function() {
+		return (this.value & 1) == 0;
+	}
+	,isOdd: function() {
+		return (this.value & 1) == 1;
+	}
+	,isZero: function() {
+		return this.value == 0;
+	}
+	,isUnit: function() {
+		return thx_Ints.abs(this.value) == 1;
+	}
+	,compareTo: function(that) {
+		if(this.sign != that.sign) if(this.sign) return -1; else return 1;
+		if(that.isSmall) return this.compareToSmall(that); else return this.compareToBig(that);
+	}
+	,compareToSmall: function(small) {
+		return this.value - small.value;
+	}
+	,compareToBig: function(big) {
+		return thx_bigint_Bigs.compareToAbs(thx_bigint_Bigs.smallToArray(thx_Ints.abs(this.value)),big.value) * (this.sign?-1:1);
+	}
+	,compareToAbs: function(that) {
+		if(that.isSmall) return this.compareToAbsSmall(that); else return this.compareToAbsBig(that);
+	}
+	,compareToAbsSmall: function(small) {
+		return thx_Ints.compare(thx_Ints.abs(this.value),thx_Ints.abs(small.value));
+	}
+	,compareToAbsBig: function(big) {
+		return thx_bigint_Bigs.compareToAbs(thx_bigint_Bigs.smallToArray(thx_Ints.abs(this.value)),big.value);
+	}
+	,not: function() {
+		return this.negate().prev();
+	}
+	,and: function(that) {
+		return thx_bigint_Bigs.bitwise(this,that,function(a,b) {
+			return a & b;
+		});
+	}
+	,or: function(that) {
+		return thx_bigint_Bigs.bitwise(this,that,function(a,b) {
+			return a | b;
+		});
+	}
+	,xor: function(that) {
+		return thx_bigint_Bigs.bitwise(this,that,function(a,b) {
+			return a ^ b;
+		});
+	}
+	,toFloat: function() {
+		return this.value;
+	}
+	,toInt: function() {
+		return this.value;
+	}
+	,toString: function() {
+		return "" + this.value;
+	}
+	,toStringWithBase: function(base) {
+		return this.value.toString(base);
+	}
+	,__class__: thx_bigint_Small
+};
+var thx__$BigInt_BigInt_$Impl_$ = {};
+$hxClasses["thx._BigInt.BigInt_Impl_"] = thx__$BigInt_BigInt_$Impl_$;
+thx__$BigInt_BigInt_$Impl_$.__name__ = ["thx","_BigInt","BigInt_Impl_"];
+thx__$BigInt_BigInt_$Impl_$.fromInt = function(value) {
+	return thx_bigint_Bigs.fromInt(value);
+};
+thx__$BigInt_BigInt_$Impl_$.fromFloat = function(value) {
+	return thx_bigint_Bigs.fromFloat(value);
+};
+thx__$BigInt_BigInt_$Impl_$.fromInt64 = function(value) {
+	return thx_bigint_Bigs.fromInt64(value);
+};
+thx__$BigInt_BigInt_$Impl_$.fromString = function(value) {
+	return thx_bigint_Bigs.parseBase(value,10);
+};
+thx__$BigInt_BigInt_$Impl_$.fromStringWithBase = function(value,base) {
+	return thx_bigint_Bigs.parseBase(value,base);
+};
+thx__$BigInt_BigInt_$Impl_$.randomBetween = function(a,b) {
+	var low;
+	low = thx__$BigInt_BigInt_$Impl_$.less(a,b)?a:b;
+	var high;
+	high = thx__$BigInt_BigInt_$Impl_$.greater(a,b)?a:b;
+	var range = high.subtract(low);
+	var that = range.random();
+	return low.add(that);
+};
+thx__$BigInt_BigInt_$Impl_$.compare = function(a,b) {
+	return a.compareTo(b);
+};
+thx__$BigInt_BigInt_$Impl_$.isZero = function(this1) {
+	return this1.isZero();
+};
+thx__$BigInt_BigInt_$Impl_$.abs = function(this1) {
+	return this1.abs();
+};
+thx__$BigInt_BigInt_$Impl_$.compareTo = function(this1,that) {
+	return this1.compareTo(that);
+};
+thx__$BigInt_BigInt_$Impl_$.compareToAbs = function(this1,that) {
+	return this1.compareToAbs(that);
+};
+thx__$BigInt_BigInt_$Impl_$.next = function(this1) {
+	return this1.next();
+};
+thx__$BigInt_BigInt_$Impl_$.prev = function(this1) {
+	return this1.prev();
+};
+thx__$BigInt_BigInt_$Impl_$.square = function(this1) {
+	return this1.square();
+};
+thx__$BigInt_BigInt_$Impl_$.pow = function(this1,exp) {
+	return this1.pow(exp);
+};
+thx__$BigInt_BigInt_$Impl_$.isEven = function(this1) {
+	return this1.isEven();
+};
+thx__$BigInt_BigInt_$Impl_$.isOdd = function(this1) {
+	return this1.isOdd();
+};
+thx__$BigInt_BigInt_$Impl_$.isNegative = function(this1) {
+	return this1.sign;
+};
+thx__$BigInt_BigInt_$Impl_$.isPositive = function(this1) {
+	return this1.compareTo(thx__$BigInt_BigInt_$Impl_$.zero) > 0;
+};
+thx__$BigInt_BigInt_$Impl_$.isUnit = function(this1) {
+	return this1.isUnit();
+};
+thx__$BigInt_BigInt_$Impl_$.isDivisibleBy = function(this1,that) {
+	if(that.isZero()) return false;
+	if(that.isUnit()) return true;
+	if(thx__$BigInt_BigInt_$Impl_$.equals(that,thx__$BigInt_BigInt_$Impl_$.two)) return this1.isEven();
+	var this2 = this1.modulo(that);
+	return this2.isZero();
+};
+thx__$BigInt_BigInt_$Impl_$.isPrime = function(this1) {
+	var n = this1.abs();
+	var nPrev = n.prev();
+	if(n.isUnit()) return false;
+	if(thx__$BigInt_BigInt_$Impl_$.equals(n,thx_bigint_Bigs.fromInt(2)) || thx__$BigInt_BigInt_$Impl_$.equals(n,thx_bigint_Bigs.fromInt(3)) || thx__$BigInt_BigInt_$Impl_$.equals(n,thx_bigint_Bigs.fromInt(5))) return true;
+	if(n.isEven() || thx__$BigInt_BigInt_$Impl_$.isDivisibleBy(n,thx_bigint_Bigs.fromInt(3)) || thx__$BigInt_BigInt_$Impl_$.isDivisibleBy(n,thx_bigint_Bigs.fromInt(5))) return false;
+	if(thx__$BigInt_BigInt_$Impl_$.less(n,thx_bigint_Bigs.fromInt(25))) return true;
+	var a = [2,3,5,7,11,13,17,19];
+	var b = nPrev;
+	var d;
+	var t;
+	var i;
+	var x;
+	while(b.isEven()) {
+		var that = thx_bigint_Bigs.fromInt(2);
+		b = b.divide(that);
+	}
+	var _g1 = 0;
+	var _g = a.length;
+	while(_g1 < _g) {
+		var i1 = _g1++;
+		x = thx__$BigInt_BigInt_$Impl_$.modPow(thx_bigint_Bigs.fromInt(a[i1]),b,n);
+		if(thx__$BigInt_BigInt_$Impl_$.equals(x,thx__$BigInt_BigInt_$Impl_$.one) || thx__$BigInt_BigInt_$Impl_$.equals(x,nPrev)) continue;
+		t = true;
+		d = b;
+		while(t && thx__$BigInt_BigInt_$Impl_$.less(d,nPrev)) {
+			var this2 = x.square();
+			x = this2.modulo(n);
+			if(thx__$BigInt_BigInt_$Impl_$.equals(x,nPrev)) t = false;
+			var that1 = thx_bigint_Bigs.fromInt(2);
+			d = d.multiply(that1);
+		}
+		if(t) return false;
+	}
+	return false;
+};
+thx__$BigInt_BigInt_$Impl_$.modPow = function(this1,exp,mod) {
+	if(mod.isZero()) throw new thx_Error("Cannot take modPow with modulus 0",null,{ fileName : "BigInt.hx", lineNumber : 126, className : "thx._BigInt.BigInt_Impl_", methodName : "modPow"});
+	var r = thx_bigint_Small.one;
+	var base = this1.modulo(mod);
+	if(base.isZero()) return thx_bigint_Small.zero;
+	while(exp.compareTo(thx__$BigInt_BigInt_$Impl_$.zero) > 0) {
+		if(exp.isOdd()) r = r.multiply(base).modulo(mod);
+		exp = exp.divide(thx_bigint_Small.two);
+		var this2 = base.square();
+		base = this2.modulo(mod);
+	}
+	return r;
+};
+thx__$BigInt_BigInt_$Impl_$.euclideanModPow = function(this1,exp,mod) {
+	var x = thx__$BigInt_BigInt_$Impl_$.modPow(this1,exp,mod);
+	if(x.sign) return x.add(mod); else return x;
+};
+thx__$BigInt_BigInt_$Impl_$.max = function(this1,that) {
+	if(thx__$BigInt_BigInt_$Impl_$.greater(this1,that)) return this1; else return that;
+};
+thx__$BigInt_BigInt_$Impl_$.min = function(this1,that) {
+	if(thx__$BigInt_BigInt_$Impl_$.less(this1,that)) return this1; else return that;
+};
+thx__$BigInt_BigInt_$Impl_$.gcd = function(this1,that) {
+	var a = this1.abs();
+	var b = that.abs();
+	if(thx__$BigInt_BigInt_$Impl_$.equals(a,b) || a.isZero()) return b;
+	if(b.isZero()) return a;
+	if(a.isEven()) {
+		if(b.isOdd()) return thx__$BigInt_BigInt_$Impl_$.gcd(a.divide(thx_bigint_Small.two),b);
+		var this2 = thx__$BigInt_BigInt_$Impl_$.gcd(a.divide(thx_bigint_Small.two),b.divide(thx_bigint_Small.two));
+		return this2.multiply(thx_bigint_Small.two);
+	}
+	if(b.isEven()) return thx__$BigInt_BigInt_$Impl_$.gcd(a,b.divide(thx_bigint_Small.two));
+	if(thx__$BigInt_BigInt_$Impl_$.greater(a,b)) return thx__$BigInt_BigInt_$Impl_$.gcd((function($this) {
+		var $r;
+		var this3 = a.subtract(b);
+		$r = this3.divide(thx_bigint_Small.two);
+		return $r;
+	}(this)),b);
+	return thx__$BigInt_BigInt_$Impl_$.gcd((function($this) {
+		var $r;
+		var this4 = b.subtract(a);
+		$r = this4.divide(thx_bigint_Small.two);
+		return $r;
+	}(this)),a);
+};
+thx__$BigInt_BigInt_$Impl_$.lcm = function(this1,that) {
+	var a = this1.abs();
+	var b = that.abs();
+	var this2 = a.multiply(b);
+	var that1 = thx__$BigInt_BigInt_$Impl_$.gcd(a,b);
+	return this2.divide(that1);
+};
+thx__$BigInt_BigInt_$Impl_$.greaterThan = function(this1,that) {
+	return this1.compareTo(that) > 0;
+};
+thx__$BigInt_BigInt_$Impl_$.greater = function(self,that) {
+	return self.compareTo(that) > 0;
+};
+thx__$BigInt_BigInt_$Impl_$.greaterEqualsTo = function(this1,that) {
+	return this1.compareTo(that) >= 0;
+};
+thx__$BigInt_BigInt_$Impl_$.greaterEquals = function(self,that) {
+	return self.compareTo(that) >= 0;
+};
+thx__$BigInt_BigInt_$Impl_$.lessThan = function(this1,that) {
+	return this1.compareTo(that) < 0;
+};
+thx__$BigInt_BigInt_$Impl_$.less = function(self,that) {
+	return self.compareTo(that) < 0;
+};
+thx__$BigInt_BigInt_$Impl_$.lessEqualsTo = function(this1,that) {
+	return this1.compareTo(that) <= 0;
+};
+thx__$BigInt_BigInt_$Impl_$.lessEquals = function(self,that) {
+	return self.compareTo(that) <= 0;
+};
+thx__$BigInt_BigInt_$Impl_$.equalsTo = function(this1,that) {
+	return this1.compareTo(that) == 0;
+};
+thx__$BigInt_BigInt_$Impl_$.equals = function(self,that) {
+	return self.compareTo(that) == 0;
+};
+thx__$BigInt_BigInt_$Impl_$.notEqualsTo = function(this1,that) {
+	return this1.compareTo(that) != 0;
+};
+thx__$BigInt_BigInt_$Impl_$.notEquals = function(self,that) {
+	return self.compareTo(that) != 0;
+};
+thx__$BigInt_BigInt_$Impl_$.add = function(this1,that) {
+	return this1.add(that);
+};
+thx__$BigInt_BigInt_$Impl_$.subtract = function(this1,that) {
+	return this1.subtract(that);
+};
+thx__$BigInt_BigInt_$Impl_$.preIncrement = function(this1) {
+	return this1 = this1.add(thx_bigint_Small.one);
+};
+thx__$BigInt_BigInt_$Impl_$.postIncrement = function(this1) {
+	var v = this1;
+	this1 = this1.add(thx_bigint_Small.one);
+	return v;
+};
+thx__$BigInt_BigInt_$Impl_$.preDecrement = function(this1) {
+	return this1 = this1.subtract(thx_bigint_Small.one);
+};
+thx__$BigInt_BigInt_$Impl_$.postDecrement = function(this1) {
+	var v = this1;
+	this1 = this1.subtract(thx_bigint_Small.one);
+	return v;
+};
+thx__$BigInt_BigInt_$Impl_$.negate = function(this1) {
+	return this1.negate();
+};
+thx__$BigInt_BigInt_$Impl_$.multiply = function(this1,that) {
+	return this1.multiply(that);
+};
+thx__$BigInt_BigInt_$Impl_$.divide = function(this1,that) {
+	return this1.divide(that);
+};
+thx__$BigInt_BigInt_$Impl_$.modulo = function(this1,that) {
+	return this1.modulo(that);
+};
+thx__$BigInt_BigInt_$Impl_$.shiftLeft = function(this1,that) {
+	return this1.shiftLeft(that);
+};
+thx__$BigInt_BigInt_$Impl_$.shiftRight = function(this1,that) {
+	return this1.shiftRight(that);
+};
+thx__$BigInt_BigInt_$Impl_$.not = function(this1) {
+	return this1.not();
+};
+thx__$BigInt_BigInt_$Impl_$.and = function(this1,that) {
+	return this1.and(that);
+};
+thx__$BigInt_BigInt_$Impl_$.or = function(this1,that) {
+	return this1.or(that);
+};
+thx__$BigInt_BigInt_$Impl_$.xor = function(this1,that) {
+	return this1.xor(that);
+};
+thx__$BigInt_BigInt_$Impl_$.divMod = function(this1,that) {
+	return this1.divMod(that);
+};
+thx__$BigInt_BigInt_$Impl_$.toInt = function(this1) {
+	return this1.toInt();
+};
+thx__$BigInt_BigInt_$Impl_$.toFloat = function(this1) {
+	return this1.toFloat();
+};
+thx__$BigInt_BigInt_$Impl_$.toInt64 = function(this1) {
+	return thx_bigint_Bigs.toInt64(this1);
+};
+thx__$BigInt_BigInt_$Impl_$.toString = function(this1) {
+	return this1.toString();
+};
+thx__$BigInt_BigInt_$Impl_$.toStringWithBase = function(this1,base) {
+	return this1.toStringWithBase(base);
+};
+var thx_Bools = function() { };
+$hxClasses["thx.Bools"] = thx_Bools;
+thx_Bools.__name__ = ["thx","Bools"];
+thx_Bools.compare = function(a,b) {
+	if(a == b) return 0; else if(a) return -1; else return 1;
+};
+thx_Bools.toInt = function(v) {
+	if(v) return 1; else return 0;
+};
+thx_Bools.canParse = function(v) {
+	var _g = v.toLowerCase();
+	if(_g == null) return true; else switch(_g) {
+	case "true":case "false":case "0":case "1":case "on":case "off":
+		return true;
+	default:
+		return false;
+	}
+};
+thx_Bools.parse = function(v) {
+	var _g = v.toLowerCase();
+	var v1 = _g;
+	if(_g == null) return false; else switch(_g) {
+	case "true":case "1":case "on":
+		return true;
+	case "false":case "0":case "off":
+		return false;
+	default:
+		throw new js__$Boot_HaxeError("unable to parse \"" + v1 + "\"");
+	}
+};
+thx_Bools.xor = function(a,b) {
+	return a != b;
+};
+thx_Bools.option = function(cond,a) {
+	if(cond) return haxe_ds_Option.Some(a); else return haxe_ds_Option.None;
+};
+var thx_Dates = function() { };
+$hxClasses["thx.Dates"] = thx_Dates;
+thx_Dates.__name__ = ["thx","Dates"];
+thx_Dates.compare = function(a,b) {
+	return thx_Floats.compare(a.getTime(),b.getTime());
+};
+thx_Dates.create = function(year,month,day,hour,minute,second) {
+	if(second == null) second = 0;
+	if(minute == null) minute = 0;
+	if(hour == null) hour = 0;
+	if(day == null) day = 1;
+	if(month == null) month = 0;
+	minute += Math.floor(second / 60);
+	second = second % 60;
+	if(second < 0) second += 60;
+	hour += Math.floor(minute / 60);
+	minute = minute % 60;
+	if(minute < 0) minute += 60;
+	day += Math.floor(hour / 24);
+	hour = hour % 24;
+	if(hour < 0) hour += 24;
+	if(day == 0) {
+		month -= 1;
+		if(month < 0) {
+			month = 11;
+			year -= 1;
+		}
+		day = thx_Dates.daysInMonth(year,month);
+	}
+	year += Math.floor(month / 12);
+	month = month % 12;
+	if(month < 0) month += 12;
+	var days = thx_Dates.daysInMonth(year,month);
+	while(day > days) {
+		if(day > days) {
+			day -= days;
+			month++;
+		}
+		if(month > 11) {
+			month -= 12;
+			year++;
+		}
+		days = thx_Dates.daysInMonth(year,month);
+	}
+	return new Date(year,month,day,hour,minute,second);
+};
+thx_Dates.daysRange = function(start,end) {
+	if(thx_Dates.compare(end,start) < 0) return [];
+	var days = [];
+	while(!thx_Dates.sameDay(start,end)) {
+		days.push(start);
+		start = thx_Dates.jump(start,thx_TimePeriod.Day,1);
+	}
+	days.push(end);
+	return days;
+};
+thx_Dates.equals = function(self,other) {
+	return self.getTime() == other.getTime();
+};
+thx_Dates.nearEquals = function(self,other,units,period) {
+	if(units == null) units = 1;
+	if(null == period) period = thx_TimePeriod.Second;
+	if(units < 0) units = -units;
+	var min = thx_Dates.jump(self,period,-units);
+	var max = thx_Dates.jump(self,period,units);
+	return thx_Dates.compare(min,other) <= 0 && thx_Dates.compare(max,other) >= 0;
+};
+thx_Dates.greater = function(self,other) {
+	return thx_Dates.compare(self,other) > 0;
+};
+thx_Dates.more = function(self,other) {
+	return thx_Dates.compare(self,other) > 0;
+};
+thx_Dates.less = function(self,other) {
+	return thx_Dates.compare(self,other) < 0;
+};
+thx_Dates.greaterEquals = function(self,other) {
+	return thx_Dates.compare(self,other) >= 0;
+};
+thx_Dates.moreEqual = function(self,other) {
+	return thx_Dates.compare(self,other) >= 0;
+};
+thx_Dates.lessEquals = function(self,other) {
+	return thx_Dates.compare(self,other) <= 0;
+};
+thx_Dates.lessEqual = function(self,other) {
+	return thx_Dates.compare(self,other) <= 0;
+};
+thx_Dates.isLeapYear = function(year) {
+	if(year % 4 != 0) return false;
+	if(year % 100 == 0) return year % 400 == 0;
+	return true;
+};
+thx_Dates.isInLeapYear = function(d) {
+	return thx_Dates.isLeapYear(d.getFullYear());
+};
+thx_Dates.daysInMonth = function(year,month) {
+	switch(month) {
+	case 0:case 2:case 4:case 6:case 7:case 9:case 11:
+		return 31;
+	case 3:case 5:case 8:case 10:
+		return 30;
+	case 1:
+		if(thx_Dates.isLeapYear(year)) return 29; else return 28;
+		break;
+	default:
+		throw new js__$Boot_HaxeError("Invalid month \"" + month + "\".  Month should be a number, Jan=0, Dec=11");
+	}
+};
+thx_Dates.numDaysInMonth = function(month,year) {
+	return thx_Dates.daysInMonth(year,month);
+};
+thx_Dates.daysInThisMonth = function(d) {
+	return thx_Dates.daysInMonth(d.getFullYear(),d.getMonth());
+};
+thx_Dates.numDaysInThisMonth = function(d) {
+	return thx_Dates.daysInThisMonth(d);
+};
+thx_Dates.sameYear = function(self,other) {
+	return self.getFullYear() == other.getFullYear();
+};
+thx_Dates.sameMonth = function(self,other) {
+	return thx_Dates.sameYear(self,other) && self.getMonth() == other.getMonth();
+};
+thx_Dates.sameDay = function(self,other) {
+	return thx_Dates.sameMonth(self,other) && self.getDate() == other.getDate();
+};
+thx_Dates.sameHour = function(self,other) {
+	return thx_Dates.sameDay(self,other) && self.getHours() == other.getHours();
+};
+thx_Dates.sameMinute = function(self,other) {
+	return thx_Dates.sameHour(self,other) && self.getMinutes() == other.getMinutes();
+};
+thx_Dates.snapNext = function(date,period) {
+	{
+		var this1 = thx__$Timestamp_Timestamp_$Impl_$.snapNext(date.getTime(),period);
+		var d = new Date();
+		d.setTime(this1);
+		return d;
+	}
+};
+thx_Dates.snapPrev = function(date,period) {
+	{
+		var this1 = thx__$Timestamp_Timestamp_$Impl_$.snapPrev(date.getTime(),period);
+		var d = new Date();
+		d.setTime(this1);
+		return d;
+	}
+};
+thx_Dates.snapTo = function(date,period) {
+	{
+		var this1 = thx__$Timestamp_Timestamp_$Impl_$.snapTo(date.getTime(),period);
+		var d = new Date();
+		d.setTime(this1);
+		return d;
+	}
+};
+thx_Dates.jump = function(date,period,amount) {
+	var sec = date.getSeconds();
+	var min = date.getMinutes();
+	var hour = date.getHours();
+	var day = date.getDate();
+	var month = date.getMonth();
+	var year = date.getFullYear();
+	switch(period[1]) {
+	case 0:
+		sec += amount;
+		break;
+	case 1:
+		min += amount;
+		break;
+	case 2:
+		hour += amount;
+		break;
+	case 3:
+		day += amount;
+		break;
+	case 4:
+		day += amount * 7;
+		break;
+	case 5:
+		month += amount;
+		break;
+	case 6:
+		year += amount;
+		break;
+	}
+	return thx_Dates.create(year,month,day,hour,min,sec);
+};
+thx_Dates.max = function(self,other) {
+	if(self.getTime() > other.getTime()) return self; else return other;
+};
+thx_Dates.min = function(self,other) {
+	if(self.getTime() < other.getTime()) return self; else return other;
+};
+thx_Dates.snapToWeekDay = function(date,day,firstDayOfWk) {
+	if(firstDayOfWk == null) firstDayOfWk = 0;
+	var d = date.getDay();
+	var s = day;
+	if(s < firstDayOfWk) s = s + 7;
+	if(d < firstDayOfWk) d = d + 7;
+	return thx_Dates.jump(date,thx_TimePeriod.Day,s - d);
+};
+thx_Dates.snapNextWeekDay = function(date,day) {
+	var d = date.getDay();
+	var s = day;
+	if(s < d) s = s + 7;
+	return thx_Dates.jump(date,thx_TimePeriod.Day,s - d);
+};
+thx_Dates.snapPrevWeekDay = function(date,day) {
+	var d = date.getDay();
+	var s = day;
+	if(s > d) s = s - 7;
+	return thx_Dates.jump(date,thx_TimePeriod.Day,s - d);
+};
+thx_Dates.prevYear = function(d) {
+	return thx_Dates.jump(d,thx_TimePeriod.Year,-1);
+};
+thx_Dates.nextYear = function(d) {
+	return thx_Dates.jump(d,thx_TimePeriod.Year,1);
+};
+thx_Dates.prevMonth = function(d) {
+	return thx_Dates.jump(d,thx_TimePeriod.Month,-1);
+};
+thx_Dates.nextMonth = function(d) {
+	return thx_Dates.jump(d,thx_TimePeriod.Month,1);
+};
+thx_Dates.prevWeek = function(d) {
+	return thx_Dates.jump(d,thx_TimePeriod.Week,-1);
+};
+thx_Dates.nextWeek = function(d) {
+	return thx_Dates.jump(d,thx_TimePeriod.Week,1);
+};
+thx_Dates.prevDay = function(d) {
+	return thx_Dates.jump(d,thx_TimePeriod.Day,-1);
+};
+thx_Dates.nextDay = function(d) {
+	return thx_Dates.jump(d,thx_TimePeriod.Day,1);
+};
+thx_Dates.prevHour = function(d) {
+	return thx_Dates.jump(d,thx_TimePeriod.Hour,-1);
+};
+thx_Dates.nextHour = function(d) {
+	return thx_Dates.jump(d,thx_TimePeriod.Hour,1);
+};
+thx_Dates.prevMinute = function(d) {
+	return thx_Dates.jump(d,thx_TimePeriod.Minute,-1);
+};
+thx_Dates.nextMinute = function(d) {
+	return thx_Dates.jump(d,thx_TimePeriod.Minute,1);
+};
+thx_Dates.prevSecond = function(d) {
+	return thx_Dates.jump(d,thx_TimePeriod.Second,-1);
+};
+thx_Dates.nextSecond = function(d) {
+	return thx_Dates.jump(d,thx_TimePeriod.Second,1);
+};
+thx_Dates.withYear = function(date,year) {
+	return thx_Dates.create(year,date.getMonth(),date.getDate(),date.getHours(),date.getMinutes(),date.getSeconds());
+};
+thx_Dates.withMonth = function(date,month) {
+	return thx_Dates.create(date.getFullYear(),month,date.getDate(),date.getHours(),date.getMinutes(),date.getSeconds());
+};
+thx_Dates.withDay = function(date,day) {
+	return thx_Dates.create(date.getFullYear(),date.getMonth(),day,date.getHours(),date.getMinutes(),date.getSeconds());
+};
+thx_Dates.withHour = function(date,hour) {
+	return thx_Dates.create(date.getFullYear(),date.getMonth(),date.getDate(),hour,date.getMinutes(),date.getSeconds());
+};
+thx_Dates.withMinute = function(date,minute) {
+	return thx_Dates.create(date.getFullYear(),date.getMonth(),date.getDate(),date.getHours(),minute,date.getSeconds());
+};
+thx_Dates.withSecond = function(date,second) {
+	return thx_Dates.create(date.getFullYear(),date.getMonth(),date.getDate(),date.getHours(),date.getMinutes(),second);
+};
+var thx_bigint_Decimals = function() { };
+$hxClasses["thx.bigint.Decimals"] = thx_bigint_Decimals;
+thx_bigint_Decimals.__name__ = ["thx","bigint","Decimals"];
+thx_bigint_Decimals.fromInt = function(value) {
+	return new thx_bigint_DecimalImpl(thx_bigint_Bigs.fromInt(value),0);
+};
+thx_bigint_Decimals.fromFloat = function(value) {
+	if(!isFinite(value)) throw new js__$Boot_HaxeError("Value is not a finite Float: " + value);
+	return thx_bigint_Decimals.parse("" + value);
+};
+thx_bigint_Decimals.parse = function(value) {
+	value = value.toLowerCase();
+	var pose = value.indexOf("e");
+	if(pose > 0) {
+		var isNeg = false;
+		var f = value.substring(0,pose);
+		var e = value.substring(pose + 1);
+		if(e.substring(0,1) == "-") {
+			isNeg = true;
+			e = e.substring(1);
+		}
+		var p = thx_bigint_Bigs.parseBase(e,10);
+		var m = thx_bigint_Small.ten.pow(p);
+		if(isNeg) return thx_bigint_Decimals.parse(f).divideWithScale(thx__$Decimal_Decimal_$Impl_$.fromBigInt(m),Std.parseInt(e)); else return thx_bigint_Decimals.parse(f).multiply(thx__$Decimal_Decimal_$Impl_$.fromBigInt(m));
+	}
+	var pdec = value.indexOf(".");
+	if(pdec < 0) return new thx_bigint_DecimalImpl(thx_bigint_Bigs.parseBase(value,10),0);
+	var i = value.substring(0,pdec) + value.substring(pdec + 1);
+	return new thx_bigint_DecimalImpl(thx_bigint_Bigs.parseBase(i,10),value.length - pdec - 1);
+};
+var thx_bigint_Bigs = function() { };
+$hxClasses["thx.bigint.Bigs"] = thx_bigint_Bigs;
+thx_bigint_Bigs.__name__ = ["thx","bigint","Bigs"];
+thx_bigint_Bigs.isPrecise = function(value) {
+	return -thx_bigint_Bigs.MAX_INT < value && value < thx_bigint_Bigs.MAX_INT;
+};
+thx_bigint_Bigs.canMultiply = function(a,b) {
+	if(a == 0 || b == 0) return true;
+	var v = a * b;
+	if(a != v / b) return false;
+	return thx_bigint_Bigs.isPrecise(v);
+};
+thx_bigint_Bigs.canPower = function(a,b) {
+	if(a == 0 || b == 0) return true;
+	var a1 = Math.abs(a);
+	var b1 = Math.abs(b);
+	var v;
+	try {
+		v = Std["int"](Math.pow(a1,b1));
+	} catch( e ) {
+		haxe_CallStack.lastException = e;
+		if (e instanceof js__$Boot_HaxeError) e = e.val;
+		return false;
+	}
+	if(Std["int"](Math.pow(v,1.0 / b1)) != a1) return false;
+	return thx_bigint_Bigs.isPrecise(v);
+};
+thx_bigint_Bigs.canAdd = function(a,b) {
+	var v = a + b;
+	if(a > 0 && b > 0 && v < 0) return false;
+	return thx_bigint_Bigs.isPrecise(v);
+};
+thx_bigint_Bigs.smallToArray = function(n) {
+	thx_Assert.isTrue(n >= 0,"Bigs.smallToArray should always be non-negative: " + n,{ fileName : "Bigs.hx", lineNumber : 57, className : "thx.bigint.Bigs", methodName : "smallToArray"});
+	if(n < 10000000) return [n];
+	if(n < 100000000000000.0) return [n % 10000000,Math.floor(n / 10000000)];
+	return [n % 10000000,Math.floor(n / 10000000) % 10000000,Math.floor(n / 100000000000000.0)];
+};
+thx_bigint_Bigs.arrayToSmall = function(arr) {
+	thx_bigint_Bigs.trim(arr);
+	var length = arr.length;
+	if(length < 4 && thx_bigint_Bigs.compareToAbs(arr,thx_bigint_Bigs.MAX_INT_ARR) < 0) switch(length) {
+	case 0:
+		return 0;
+	case 1:
+		return arr[0];
+	case 2:
+		return arr[0] + arr[1] * 10000000;
+	default:
+		return arr[0] + (arr[1] + arr[2] * 10000000) * 10000000;
+	}
+	return null;
+};
+thx_bigint_Bigs.trim = function(v) {
+	while(v.length > 1) {
+		if(v[v.length - 1] != 0) break;
+		v.pop();
+	}
+};
+thx_bigint_Bigs.createArray = function(length) {
+	var x = new Array(length);
+	var _g = 0;
+	while(_g < length) {
+		var i = _g++;
+		x[i] = 0;
+	}
+	return x;
+};
+thx_bigint_Bigs.createFloatArray = function(length) {
+	var x = new Array(length);
+	var _g = 0;
+	while(_g < length) {
+		var i = _g++;
+		x[i] = 0.0;
+	}
+	return x;
+};
+thx_bigint_Bigs.add = function(a,b) {
+	var l_a = a.length;
+	var l_b = b.length;
+	var r = new Array(l_a);
+	var carry = 0;
+	var sum;
+	var i = 0;
+	while(i < l_b) {
+		sum = a[i] + b[i] + carry;
+		if(sum >= 10000000) carry = 1; else carry = 0;
+		r[i++] = sum - carry * 10000000;
+	}
+	while(i < l_a) {
+		sum = a[i] + carry;
+		if(sum == 10000000) carry = 1; else carry = 0;
+		r[i++] = sum - carry * 10000000;
+	}
+	if(carry > 0) r.push(carry);
+	return r;
+};
+thx_bigint_Bigs.addAny = function(a,b) {
+	if(a.length >= b.length) return thx_bigint_Bigs.add(a,b);
+	return thx_bigint_Bigs.add(b,a);
+};
+thx_bigint_Bigs.addSmall = function(a,carry) {
+	var l = a.length;
+	var r = new Array(l);
+	var sum;
+	var i = 0;
+	while(i < l) {
+		sum = a[i] - 10000000 + carry;
+		carry = Math.floor(sum / 10000000);
+		r[i++] = sum - carry * 10000000;
+		carry += 1;
+	}
+	while(carry > 0) {
+		r[i++] = carry % 10000000;
+		carry = Math.floor(carry / 10000000);
+	}
+	return r;
+};
+thx_bigint_Bigs.compareToAbs = function(a,b) {
+	if(a.length != b.length) if(a.length > b.length) return 1; else return -1;
+	var i = a.length;
+	while(--i >= 0) if(a[i] != b[i]) if(a[i] > b[i]) return 1; else return -1;
+	return 0;
+};
+thx_bigint_Bigs.subtract = function(a,b) {
+	var a_l = a.length;
+	var b_l = b.length;
+	var r = new Array(a_l);
+	var borrow = 0;
+	var i = 0;
+	var difference;
+	while(i < b_l) {
+		difference = a[i] - borrow - b[i];
+		if(difference < 0) {
+			difference += 10000000;
+			borrow = 1;
+		} else borrow = 0;
+		r[i++] = difference;
+	}
+	while(i < a_l) {
+		difference = a[i] - borrow;
+		if(difference < 0) difference += 10000000; else {
+			r[i++] = difference;
+			break;
+		}
+		r[i++] = difference;
+	}
+	while(i < a_l) {
+		r[i] = a[i];
+		i++;
+	}
+	thx_bigint_Bigs.trim(r);
+	return r;
+};
+thx_bigint_Bigs.subtractAny = function(a,b,sign) {
+	var value;
+	if(thx_bigint_Bigs.compareToAbs(a,b) >= 0) value = thx_bigint_Bigs.subtract(a,b); else {
+		value = thx_bigint_Bigs.subtract(b,a);
+		sign = !sign;
+	}
+	var n = thx_bigint_Bigs.arrayToSmall(value);
+	if(null != n) {
+		if(sign) n = -n;
+		return new thx_bigint_Small(n);
+	}
+	return new thx_bigint_Big(value,sign);
+};
+thx_bigint_Bigs.subtractSmall = function(a,b,sign) {
+	var l = a.length;
+	var r = new Array(l);
+	var carry = -b;
+	var i;
+	var difference;
+	var _g = 0;
+	while(_g < l) {
+		var i1 = _g++;
+		difference = a[i1] + carry;
+		carry = Math.floor(difference / 10000000);
+		if(difference < 0) r[i1] = difference % 10000000 + 10000000; else r[i1] = difference;
+	}
+	var n = thx_bigint_Bigs.arrayToSmall(r);
+	if(null != n) {
+		if(sign) n = -n;
+		return new thx_bigint_Small(n);
+	}
+	return new thx_bigint_Big(r,sign);
+};
+thx_bigint_Bigs.multiplyLong = function(a,b) {
+	var a_l = a.length;
+	var b_l = b.length;
+	var l = a_l + b_l;
+	var r = thx_bigint_Bigs.createFloatArray(l);
+	var product;
+	var carry;
+	var i;
+	var a_i;
+	var b_j;
+	var _g = 0;
+	while(_g < a_l) {
+		var i1 = _g++;
+		a_i = a[i1];
+		var _g1 = 0;
+		while(_g1 < b_l) {
+			var j = _g1++;
+			b_j = b[j];
+			product = a_i * b_j + r[i1 + j];
+			carry = thx_Floats.ftrunc(product / 10000000);
+			r[i1 + j] = thx_Floats.ftrunc(product - carry * 10000000);
+			r[i1 + j + 1] += carry;
+		}
+	}
+	var arr = r.map(function(v) {
+		return v | 0;
+	});
+	thx_bigint_Bigs.trim(arr);
+	return arr;
+};
+thx_bigint_Bigs.multiplySmall = function(a,b) {
+	var l = a.length;
+	var r = new Array(l);
+	var carry = 0.0;
+	var product;
+	var i = 0;
+	var a_i;
+	var bf = b;
+	while(i < l) {
+		a_i = a[i];
+		product = carry + a[i] * bf;
+		carry = thx_Floats.ftrunc(product / 10000000);
+		r[i++] = product - carry * 10000000;
+	}
+	while(carry > 0) {
+		r[i++] = carry % 10000000;
+		carry = thx_Floats.ftrunc(carry / 10000000);
+	}
+	var arr = r.map(function(v) {
+		return v | 0;
+	});
+	thx_bigint_Bigs.trim(arr);
+	return arr;
+};
+thx_bigint_Bigs.shiftLeft = function(x,n) {
+	var r = [];
+	while(n-- > 0) r.push(0);
+	return r.concat(x);
+};
+thx_bigint_Bigs.multiplyKaratsuba = function(x,y) {
+	var n = thx_Ints.max(x.length,y.length);
+	if(n <= 400) return thx_bigint_Bigs.multiplyLong(x,y);
+	n = Math.ceil(n / 2);
+	var b = x.slice(n);
+	var a = x.slice(0,n);
+	var d = y.slice(n);
+	var c = y.slice(0,n);
+	var ac = thx_bigint_Bigs.multiplyKaratsuba(a,c);
+	var bd = thx_bigint_Bigs.multiplyKaratsuba(b,d);
+	var abcd = thx_bigint_Bigs.multiplyKaratsuba(thx_bigint_Bigs.addAny(a,b),thx_bigint_Bigs.addAny(c,d));
+	return thx_bigint_Bigs.addAny(thx_bigint_Bigs.addAny(ac,thx_bigint_Bigs.shiftLeft(thx_bigint_Bigs.subtract(thx_bigint_Bigs.subtract(abcd,ac),bd),n)),thx_bigint_Bigs.shiftLeft(bd,2 * n));
+};
+thx_bigint_Bigs.fromInt = function(value) {
+	var abs;
+	if(value < 0) abs = -value; else abs = value;
+	if(abs < 10000000) return new thx_bigint_Small(value); else return new thx_bigint_Big(thx_bigint_Bigs.smallToArray(abs),value < 0);
+};
+thx_bigint_Bigs.fromInt64 = function(value) {
+	return thx_bigint_Bigs.parseBase(haxe__$Int64_Int64_$Impl_$.toString(value),10);
+};
+thx_bigint_Bigs.toInt64 = function(value) {
+	return thx_Int64s.parse(value.toString());
+};
+thx_bigint_Bigs.fromFloat = function(value) {
+	if(isNaN(value) || !isFinite(value)) throw new thx_Error("Conversion to BigInt failed. Number is NaN or Infinite",null,{ fileName : "Bigs.hx", lineNumber : 305, className : "thx.bigint.Bigs", methodName : "fromFloat"});
+	var noFractions = value - value % 1;
+	var result = thx_bigint_Small.zero;
+	var neg = noFractions < 0.0;
+	var rest;
+	if(neg) rest = -noFractions; else rest = noFractions;
+	var i = 0;
+	var curr;
+	while(rest >= 1) {
+		curr = rest % 2;
+		rest = rest / 2;
+		if(curr >= 1) result = result.add(thx_bigint_Small.one.shiftLeft(i));
+		i++;
+	}
+	if(neg) return result.negate(); else return result;
+};
+thx_bigint_Bigs.square = function(a) {
+	var l = a.length;
+	var r = thx_bigint_Bigs.createFloatArray(l + l);
+	var product;
+	var carry;
+	var i;
+	var a_i;
+	var a_j;
+	var _g = 0;
+	while(_g < l) {
+		var i1 = _g++;
+		a_i = a[i1];
+		var _g1 = 0;
+		while(_g1 < l) {
+			var j = _g1++;
+			a_j = a[j];
+			product = a_i * a_j + r[i1 + j];
+			carry = thx_Floats.ftrunc(product / 10000000);
+			r[i1 + j] = thx_Floats.ftrunc(product - carry * 10000000);
+			r[i1 + j + 1] += carry;
+		}
+	}
+	var arr = r.map(function(v) {
+		return v | 0;
+	});
+	thx_bigint_Bigs.trim(arr);
+	return arr;
+};
+thx_bigint_Bigs.divMod1 = function(a,b) {
+	var a_l = a.length;
+	var b_l = b.length;
+	var result = thx_bigint_Bigs.createFloatArray(b.length);
+	var divisorMostSignificantDigit = b[b_l - 1];
+	var lambda = Math.ceil(10000000 / (2 * divisorMostSignificantDigit));
+	var remainder = thx_bigint_Bigs.multiplySmall(a,lambda).map(function(v) {
+		return v;
+	});
+	var divisor = thx_bigint_Bigs.multiplySmall(b,lambda);
+	var quotientDigit;
+	var shift;
+	var carry;
+	var borrow;
+	var i;
+	var l;
+	var q;
+	if(remainder.length <= a_l) remainder.push(0.0);
+	divisor.push(0);
+	divisorMostSignificantDigit = divisor[b_l - 1];
+	shift = a_l - b_l;
+	while(shift >= 0) {
+		quotientDigit = 9999999.;
+		quotientDigit = Math.floor((remainder[shift + b_l] * 10000000 + remainder[shift + b_l - 1]) / divisorMostSignificantDigit);
+		carry = 0.0;
+		borrow = 0.0;
+		l = divisor.length;
+		var _g = 0;
+		while(_g < l) {
+			var i1 = _g++;
+			carry += quotientDigit * divisor[i1];
+			q = thx_Floats.ftrunc(carry / 10000000);
+			borrow += remainder[shift + i1] - (carry - q * 10000000);
+			carry = q;
+			if(borrow < 0.0) {
+				remainder[shift + i1] = borrow + 10000000;
+				borrow = -1.0;
+			} else {
+				remainder[shift + i1] = borrow;
+				borrow = 0.0;
+			}
+		}
+		while(borrow != 0) {
+			quotientDigit -= 1;
+			carry = 0;
+			var _g1 = 0;
+			while(_g1 < l) {
+				var i2 = _g1++;
+				carry += remainder[shift + i2] - 10000000 + divisor[i2];
+				if(carry < 0) {
+					remainder[shift + i2] = carry + 10000000;
+					carry = 0;
+				} else {
+					remainder[shift + i2] = carry;
+					carry = 1;
+				}
+			}
+			borrow += carry;
+		}
+		result[shift] = quotientDigit;
+		shift--;
+	}
+	var arr = remainder.map(function(v1) {
+		return v1 | 0;
+	});
+	var remainder1 = thx_bigint_Bigs.divModSmall(arr,lambda).q;
+	var arr1 = result.map(function(v2) {
+		return v2 | 0;
+	});
+	thx_bigint_Bigs.trim(arr1);
+	var q1 = { small : thx_bigint_Bigs.arrayToSmall(arr1), big : arr1};
+	var r = { small : thx_bigint_Bigs.arrayToSmall(remainder1), big : remainder1};
+	return [q1,r];
+};
+thx_bigint_Bigs.divMod2 = function(a,b) {
+	var a_l = a.length;
+	var b_l = b.length;
+	var result = [];
+	var part = [];
+	var guess;
+	var xlen;
+	var highx;
+	var highy;
+	var check;
+	while(a_l != 0) {
+		part.unshift(a[--a_l]);
+		if(thx_bigint_Bigs.compareToAbs(part,b) < 0) {
+			result.push(0);
+			continue;
+		}
+		xlen = part.length;
+		highx = part[xlen - 1] * 10000000 + part[xlen - 2];
+		highy = b[b_l - 1] * 10000000 + b[b_l - 2];
+		if(xlen > b_l) highx = (highx + 1) * 10000000;
+		guess = Math.ceil(highx / highy);
+		do {
+			check = thx_bigint_Bigs.multiplySmall(b,guess);
+			if(thx_bigint_Bigs.compareToAbs(check,part) <= 0) break;
+			guess--;
+		} while(guess != 0);
+		result.push(guess);
+		part = thx_bigint_Bigs.subtract(part,check);
+	}
+	result.reverse();
+	return [{ small : thx_bigint_Bigs.arrayToSmall(result), big : result},{ small : thx_bigint_Bigs.arrayToSmall(part), big : part}];
+};
+thx_bigint_Bigs.divModSmall = function(value,lambda) {
+	var length = value.length;
+	var quotient = thx_bigint_Bigs.createArray(length);
+	var i;
+	var q;
+	var remainder;
+	var divisor;
+	remainder = 0;
+	i = length - 1;
+	while(i >= 0) {
+		divisor = remainder * 10000000 + value[i];
+		q = thx_Floats.ftrunc(divisor / lambda);
+		remainder = divisor - q * lambda;
+		quotient[i--] = q | 0;
+	}
+	return { q : quotient, r : remainder < 0.0?Math.ceil(remainder):Math.floor(remainder)};
+};
+thx_bigint_Bigs.parseBase = function(text,base) {
+	var val = thx_bigint_Small.zero;
+	var pow = thx_bigint_Small.one;
+	var bigBase = new thx_bigint_Small(base);
+	var isNegative = text.substring(0,1) == "-";
+	if(2 > base || base > 36) throw new thx_Error("base (" + base + ") must be a number between 2 ad 36",null,{ fileName : "Bigs.hx", lineNumber : 475, className : "thx.bigint.Bigs", methodName : "parseBase"});
+	if(isNegative) text = text.substring(1);
+	text = thx_Strings.trimCharsLeft(text,"0").toLowerCase();
+	if(text.length == 0) text = "0";
+	var e;
+	if(base == 10 && (e = text.indexOf("e")) > 0) {
+		var sexp = text.substring(e + 1);
+		text = text.substring(0,e);
+		var exp;
+		if(StringTools.startsWith(sexp,"+")) exp = Std.parseInt(sexp.substring(1)); else exp = Std.parseInt(sexp);
+		var decimalPlace = text.indexOf(".");
+		if(decimalPlace >= 0) {
+			exp -= text.length - decimalPlace;
+			text = text.substring(0,decimalPlace) + text.substring(1 + decimalPlace);
+		}
+		text = thx_Strings.rpad(text,"0",text.length + exp);
+	}
+	var length = text.length;
+	if(length <= thx_bigint_Bigs.LOG_MAX_INT / Math.log(base)) return new thx_bigint_Small(thx_Ints.parse(text,base) * (isNegative?-1:1));
+	var digits = [];
+	var _g = 0;
+	while(_g < length) {
+		var i = _g++;
+		var charCode = HxOverrides.cca(text,i);
+		if(48 <= charCode && charCode <= 57) digits.push(new thx_bigint_Small(charCode - 48)); else if(97 <= charCode && charCode <= 122) digits.push(new thx_bigint_Small(charCode - 87)); else throw new thx_Error("" + text + " is not a valid string",null,{ fileName : "Bigs.hx", lineNumber : 509, className : "thx.bigint.Bigs", methodName : "parseBase"});
+	}
+	digits.reverse();
+	var mul;
+	var _g1 = 0;
+	var _g2 = digits.length;
+	while(_g1 < _g2) {
+		var i1 = _g1++;
+		mul = digits[i1].multiply(pow);
+		val = val.add(mul);
+		pow = pow.multiply(bigBase);
+	}
+	if(isNegative) return val.negate(); else return val;
+};
+thx_bigint_Bigs.bitwise = function(x,y,fn) {
+	var xSign = x.sign;
+	var ySign = y.sign;
+	var xRem;
+	if(xSign) xRem = x.not(); else xRem = x;
+	var yRem;
+	if(ySign) yRem = y.not(); else yRem = y;
+	var xBits = [];
+	var yBits = [];
+	var xStop = false;
+	var yStop = false;
+	while(!xStop || !yStop) {
+		if(xRem.isZero()) {
+			xStop = true;
+			xBits.push(xSign?1:0);
+		} else if(xSign) xBits.push(xRem.isEven()?1:0); else xBits.push(xRem.isEven()?0:1);
+		if(yRem.isZero()) {
+			yStop = true;
+			yBits.push(ySign?1:0);
+		} else if(ySign) yBits.push(yRem.isEven()?1:0); else yBits.push(yRem.isEven()?0:1);
+		xRem = xRem.divide(thx_bigint_Small.two);
+		yRem = yRem.divide(thx_bigint_Small.two);
+	}
+	var result = [];
+	var _g1 = 0;
+	var _g = xBits.length;
+	while(_g1 < _g) {
+		var i = _g1++;
+		result.push(fn(xBits[i],yBits[i]));
+	}
+	var a = thx_bigint_Bigs.fromInt(result.pop());
+	var p = thx_bigint_Small.two.pow(thx_bigint_Bigs.fromInt(result.length));
+	var sum = a.negate().multiply(p);
+	while(result.length > 0) {
+		a = thx_bigint_Bigs.fromInt(result.pop());
+		p = thx_bigint_Small.two.pow(thx_bigint_Bigs.fromInt(result.length));
+		sum = sum.add(a.multiply(p));
+	}
+	return sum;
+};
+var thx_bigint_Big = function(value,sign) {
+	this.sign = sign;
+	this.value = value;
+	this.isSmall = false;
+};
+$hxClasses["thx.bigint.Big"] = thx_bigint_Big;
+thx_bigint_Big.__name__ = ["thx","bigint","Big"];
+thx_bigint_Big.__interfaces__ = [thx_bigint_BigIntImpl];
+thx_bigint_Big.prototype = {
+	value: null
+	,sign: null
+	,isSmall: null
+	,add: function(that) {
+		if(that.isZero()) return this;
+		if(this.isZero()) return that;
+		if(this.sign != that.sign) return this.subtract(that.negate());
+		if(that.isSmall) return this.addSmall(that); else return this.addBig(that);
+	}
+	,addSmall: function(small) {
+		return new thx_bigint_Big(thx_bigint_Bigs.addSmall(this.value,thx_Ints.abs(small.value)),this.sign);
+	}
+	,addBig: function(big) {
+		return new thx_bigint_Big(thx_bigint_Bigs.addAny(this.value,big.value),this.sign);
+	}
+	,subtract: function(that) {
+		if(that.isZero()) return this;
+		if(this.isZero()) return that.negate();
+		if(this.sign != that.sign) return this.add(that.negate());
+		if(that.isSmall) return this.subtractSmall(that); else return this.subtractBig(that);
+	}
+	,subtractSmall: function(small) {
+		return thx_bigint_Bigs.subtractSmall(this.value,thx_Ints.abs(small.value),this.sign);
+	}
+	,subtractBig: function(big) {
+		return thx_bigint_Bigs.subtractAny(this.value,big.value,this.sign);
+	}
+	,divide: function(that) {
+		return this.divMod(that).quotient;
+	}
+	,divMod: function(that) {
+		if(that.isZero()) throw new thx_Error("division by zero",null,{ fileName : "Big.hx", lineNumber : 55, className : "thx.bigint.Big", methodName : "divMod"});
+		if(that.isSmall) return this.divModSmall(that); else return this.divModBig(that);
+	}
+	,divModSmall: function(small) {
+		var values = thx_bigint_Bigs.divModSmall(this.value,thx_Ints.abs(small.value));
+		var quotient = thx_bigint_Bigs.arrayToSmall(values.q);
+		var remainder = values.r;
+		if(this.sign) remainder = -remainder;
+		if(null != quotient) {
+			if(this.sign != small.sign) quotient = -quotient;
+			return { quotient : new thx_bigint_Small(quotient), remainder : new thx_bigint_Small(remainder)};
+		}
+		return { quotient : new thx_bigint_Big(values.q,this.sign != small.sign), remainder : new thx_bigint_Small(remainder)};
+	}
+	,divModBig: function(big) {
+		var comparison = thx_bigint_Bigs.compareToAbs(this.value,big.value);
+		if(comparison == -1) return { quotient : thx_bigint_Small.zero, remainder : this};
+		if(comparison == 0) return { quotient : this.sign == big.sign?thx_bigint_Small.one:thx_bigint_Small.negativeOne, remainder : thx_bigint_Small.zero};
+		var values;
+		if(this.value.length + big.value.length <= 200) values = thx_bigint_Bigs.divMod1(this.value,big.value); else values = thx_bigint_Bigs.divMod2(this.value,big.value);
+		var q = values[0].small;
+		var quotient;
+		var remainder;
+		var qSign = this.sign != big.sign;
+		var r = values[1].small;
+		var mSign = this.sign;
+		if(null != q) {
+			if(qSign) q = -q;
+			quotient = new thx_bigint_Small(q);
+		} else quotient = new thx_bigint_Big(values[0].big,qSign);
+		if(null != r) {
+			if(mSign) r = -r;
+			remainder = new thx_bigint_Small(r);
+		} else remainder = new thx_bigint_Big(values[1].big,mSign);
+		return { quotient : quotient, remainder : remainder};
+	}
+	,multiply: function(that) {
+		if(that.isZero()) return thx_bigint_Small.zero;
+		if(that.isSmall) return this.multiplySmall(that); else return this.multiplyBig(that);
+	}
+	,multiplySmall: function(small) {
+		return new thx_bigint_Big(thx_bigint_Bigs.multiplyLong(this.value,thx_bigint_Bigs.smallToArray(thx_Ints.abs(small.value))),this.sign != small.sign);
+	}
+	,multiplyBig: function(big) {
+		if(this.value.length + big.value.length > 4000) return new thx_bigint_Big(thx_bigint_Bigs.multiplyKaratsuba(this.value,big.value),this.sign != big.sign);
+		return new thx_bigint_Big(thx_bigint_Bigs.multiplyLong(this.value,big.value),this.sign != big.sign);
+	}
+	,modulo: function(that) {
+		return this.divMod(that).remainder;
+	}
+	,random: function() {
+		var length = this.value.length - 1;
+		var result = [];
+		var restricted = true;
+		var i = length;
+		var top;
+		var digit;
+		while(i >= 0) {
+			if(restricted) top = this.value[i]; else top = 10000000;
+			digit = thx_Floats.trunc(Math.random() * top);
+			result.unshift(digit);
+			if(digit < top) restricted = false;
+			i--;
+		}
+		var v = thx_bigint_Bigs.arrayToSmall(result);
+		if(null != v) return new thx_bigint_Small(v); else return new thx_bigint_Big(result,false);
+	}
+	,abs: function() {
+		return new thx_bigint_Big(this.value,false);
+	}
+	,negate: function() {
+		return new thx_bigint_Big(this.value,!this.sign);
+	}
+	,next: function() {
+		return this.add(thx_bigint_Small.one);
+	}
+	,prev: function() {
+		return this.subtract(thx_bigint_Small.one);
+	}
+	,pow: function(exp) {
+		if(this.isZero()) if(exp.isZero()) return thx_bigint_Small.one; else return this;
+		if(this.isUnit()) if(this.sign) {
+			if(exp.isEven()) return thx_bigint_Small.one; else return thx_bigint_Small.negativeOne;
+		} else return thx_bigint_Small.one;
+		if(exp.sign) return thx_bigint_Small.zero;
+		if(!exp.isSmall) throw new thx_Error("The exponent " + Std.string(exp) + " is too large.",null,{ fileName : "Big.hx", lineNumber : 174, className : "thx.bigint.Big", methodName : "pow"});
+		var b = exp.value;
+		var x = this;
+		var y = thx_bigint_Small.one;
+		while(true) {
+			if((b & 1) == 1) {
+				y = y.multiply(x);
+				--b;
+			}
+			if(b == 0) break;
+			b = b / 2 | 0;
+			x = x.square();
+		}
+		return y;
+	}
+	,shiftLeft: function(n) {
+		if(n < 0) return this.shiftRight(-n);
+		var result = this;
+		while(n >= thx_bigint_Bigs.powers2Length) {
+			result = result.multiply(thx_bigint_Bigs.bigHighestPower2);
+			n -= thx_bigint_Bigs.powers2Length - 1;
+		}
+		return result.multiply(thx_bigint_Bigs.bigPowersOfTwo[n]);
+	}
+	,shiftRight: function(n) {
+		if(n < 0) return this.shiftLeft(-n);
+		var result = this;
+		var remQuo;
+		while(n >= thx_bigint_Bigs.powers2Length) {
+			if(result.isZero()) return result;
+			remQuo = result.divMod(thx_bigint_Bigs.bigHighestPower2);
+			if(remQuo.remainder.sign) result = remQuo.quotient.prev(); else result = remQuo.quotient;
+			n -= thx_bigint_Bigs.powers2Length - 1;
+		}
+		remQuo = result.divMod(thx_bigint_Bigs.bigPowersOfTwo[n]);
+		if(remQuo.remainder.sign) return remQuo.quotient.prev(); else return remQuo.quotient;
+	}
+	,square: function() {
+		return new thx_bigint_Big(thx_bigint_Bigs.square(this.value),false);
+	}
+	,isEven: function() {
+		return (this.value[0] & 1) == 0;
+	}
+	,isOdd: function() {
+		return (this.value[0] & 1) == 1;
+	}
+	,isZero: function() {
+		return this.value.length == 0;
+	}
+	,isUnit: function() {
+		return false;
+	}
+	,compareTo: function(that) {
+		if(this.sign != that.sign) if(this.sign) return -1; else return 1;
+		if(that.isSmall) return this.compareToSmall(that); else return this.compareToBig(that);
+	}
+	,compareToSmall: function(small) {
+		return thx_bigint_Bigs.compareToAbs(this.value,thx_bigint_Bigs.smallToArray(thx_Ints.abs(small.value))) * (this.sign?-1:1);
+	}
+	,compareToBig: function(big) {
+		return thx_bigint_Bigs.compareToAbs(this.value,big.value) * (this.sign?-1:1);
+	}
+	,compareToAbs: function(that) {
+		if(that.isSmall) return this.compareToAbsSmall(that); else return this.compareToAbsBig(that);
+	}
+	,compareToAbsSmall: function(small) {
+		return thx_bigint_Bigs.compareToAbs(this.value,thx_bigint_Bigs.smallToArray(thx_Ints.abs(small.value)));
+	}
+	,compareToAbsBig: function(big) {
+		return thx_bigint_Bigs.compareToAbs(this.value,big.value);
+	}
+	,not: function() {
+		return this.negate().prev();
+	}
+	,and: function(that) {
+		return thx_bigint_Bigs.bitwise(this,that,function(a,b) {
+			return a & b;
+		});
+	}
+	,or: function(that) {
+		return thx_bigint_Bigs.bitwise(this,that,function(a,b) {
+			return a | b;
+		});
+	}
+	,xor: function(that) {
+		return thx_bigint_Bigs.bitwise(this,that,function(a,b) {
+			return a ^ b;
+		});
+	}
+	,toFloat: function() {
+		return Std.parseFloat(this.toString());
+	}
+	,toInt: function() {
+		var v = thx_bigint_Bigs.arrayToSmall(this.value);
+		if(null == v) throw new thx_Error("overflow",null,{ fileName : "Big.hx", lineNumber : 274, className : "thx.bigint.Big", methodName : "toInt"});
+		return (this.sign?-1:1) * v;
+	}
+	,toString: function() {
+		return this.toStringWithBase(10);
+	}
+	,toStringWithBase: function(base) {
+		if(this.isZero()) return "0";
+		if(base == 10) {
+			var l = this.value.length;
+			var out1 = "" + this.value[--l];
+			var zeros = "0000000";
+			var digit;
+			while(--l >= 0) {
+				digit = "" + this.value[l];
+				out1 += zeros.substring(digit.length) + digit;
+			}
+			return (this.sign?"-":"") + out1;
+		}
+		var out = [];
+		var baseBig = new thx_bigint_Small(base);
+		var left = this;
+		var divmod;
+		while(left.sign || left.compareToAbs(baseBig) >= 0) {
+			divmod = left.divMod(baseBig);
+			left = divmod.quotient;
+			var digit1 = divmod.remainder;
+			if(digit1.sign) {
+				digit1 = baseBig.subtract(digit1).abs();
+				left = left.next();
+			}
+			out.push(digit1.toStringWithBase(base));
+		}
+		out.push(left.toStringWithBase(base));
+		out.reverse();
+		return (this.sign?"-":"") + out.join("");
+	}
+	,__class__: thx_bigint_Big
+};
+var thx_bigint_DecimalImpl = function(value,scale) {
+	this.value = value;
+	this.scale = scale;
+};
+$hxClasses["thx.bigint.DecimalImpl"] = thx_bigint_DecimalImpl;
+thx_bigint_DecimalImpl.__name__ = ["thx","bigint","DecimalImpl"];
+thx_bigint_DecimalImpl.randomBetween = function(a,b) {
+	var lhs = a.matchScale(b);
+	var rhs = b.matchScale(a);
+	return new thx_bigint_DecimalImpl(thx__$BigInt_BigInt_$Impl_$.randomBetween(lhs.value,rhs.value),lhs.scale);
+};
+thx_bigint_DecimalImpl.prototype = {
+	value: null
+	,scale: null
+	,add: function(that) {
+		var lhs = this.matchScale(that);
+		var rhs = that.matchScale(this);
+		return new thx_bigint_DecimalImpl(lhs.value.add(rhs.value),lhs.scale);
+	}
+	,subtract: function(that) {
+		var lhs = this.matchScale(that);
+		var rhs = that.matchScale(this);
+		return new thx_bigint_DecimalImpl(lhs.value.subtract(rhs.value),lhs.scale);
+	}
+	,divide: function(that) {
+		return this.divideWithScale(that,thx_bigint_Decimals.divisionExtraScale);
+	}
+	,divideWithScale: function(that,scale) {
+		if(that.isZero()) throw new thx_Error("division by zero",null,{ fileName : "DecimalImpl.hx", lineNumber : 42, className : "thx.bigint.DecimalImpl", methodName : "divideWithScale"});
+		var lhs = this.matchScale(that);
+		var rhs = that.matchScale(this);
+		var pow = thx_bigint_Small.ten.pow(thx_bigint_Bigs.fromInt(rhs.scale + scale));
+		var qr = lhs.value.multiply(pow).divMod(rhs.value);
+		var nscale = rhs.scale + scale;
+		return new thx_bigint_DecimalImpl(qr.quotient,nscale).trim(nscale);
+	}
+	,moduloWithScale: function(that,scale) {
+		if(that.isZero()) throw new thx_Error("modulo by zero",null,{ fileName : "DecimalImpl.hx", lineNumber : 53, className : "thx.bigint.DecimalImpl", methodName : "moduloWithScale"});
+		var lhs = this.matchScale(that);
+		var rhs = that.matchScale(this);
+		var pow = thx_bigint_Small.ten.pow(thx_bigint_Bigs.fromInt(scale));
+		var qr = lhs.value.multiply(pow).divMod(rhs.value.multiply(pow));
+		var nscale = lhs.scale + scale;
+		return new thx_bigint_DecimalImpl(qr.remainder,nscale).trim(nscale);
+	}
+	,multiply: function(that) {
+		return new thx_bigint_DecimalImpl(this.value.multiply(that.value),this.scale + that.scale);
+	}
+	,modulo: function(that) {
+		return this.moduloWithScale(that,thx_bigint_Decimals.divisionExtraScale);
+	}
+	,abs: function() {
+		return new thx_bigint_DecimalImpl(this.value.abs(),this.scale);
+	}
+	,negate: function() {
+		return new thx_bigint_DecimalImpl(this.value.negate(),this.scale);
+	}
+	,next: function() {
+		return this.add(thx_bigint_DecimalImpl.one);
+	}
+	,prev: function() {
+		return this.subtract(thx_bigint_DecimalImpl.one);
+	}
+	,pow: function(exp) {
+		if(exp < 0) {
+			var i = this.value.pow(thx_bigint_Bigs.fromInt(-exp));
+			return thx__$Decimal_Decimal_$Impl_$.one.divideWithScale(thx__$Decimal_Decimal_$Impl_$.fromBigInt(i),(this.scale + 1) * -exp);
+		} else {
+			var i1 = this.value.pow(thx_bigint_Bigs.fromInt(exp));
+			return new thx_bigint_DecimalImpl(i1,this.scale * exp);
+		}
+	}
+	,ceilTo: function(newscale) {
+		if(this.isZero()) return this;
+		var scaled = this.scaleTo(newscale);
+		var f = (scaled.isZero()?thx_bigint_DecimalImpl.one:this.modulo(scaled)).multiply(thx_bigint_DecimalImpl.ten.pow(newscale)).toFloat();
+		if(f <= 0) return scaled; else return new thx_bigint_DecimalImpl(scaled.value.add(thx_bigint_Small.one),scaled.scale);
+	}
+	,floorTo: function(newscale) {
+		return this.scaleTo(newscale);
+	}
+	,roundTo: function(newscale) {
+		if(this.isZero()) return this;
+		var scaled = this.scaleTo(newscale);
+		var f = (scaled.isZero()?thx_bigint_DecimalImpl.one:this.modulo(scaled)).multiply(thx_bigint_DecimalImpl.ten.pow(newscale)).toFloat();
+		if(f < 0.5) return scaled; else return new thx_bigint_DecimalImpl(scaled.value.add(thx_bigint_Small.one),scaled.scale);
+	}
+	,scaleTo: function(newscale) {
+		if(newscale == this.scale) return this;
+		if(newscale > this.scale) {
+			var mul = thx_bigint_Small.ten.pow(thx_bigint_Bigs.fromInt(newscale - this.scale));
+			return new thx_bigint_DecimalImpl(this.value.multiply(mul),newscale);
+		} else {
+			var div = thx_bigint_Small.ten.pow(thx_bigint_Bigs.fromInt(this.scale - newscale));
+			return new thx_bigint_DecimalImpl(this.value.divide(div),newscale);
+		}
+	}
+	,square: function() {
+		return this.multiply(this);
+	}
+	,isNegative: function() {
+		return this.value.sign;
+	}
+	,isEven: function() {
+		return this.value.isEven();
+	}
+	,isOdd: function() {
+		return this.value.isOdd();
+	}
+	,isZero: function() {
+		return this.value.isZero();
+	}
+	,compareTo: function(that) {
+		var lhs = this.matchScale(that);
+		var rhs = that.matchScale(this);
+		return lhs.value.compareTo(rhs.value);
+	}
+	,compareToAbs: function(that) {
+		var lhs = this.matchScale(that);
+		var rhs = that.matchScale(this);
+		return lhs.value.compareToAbs(rhs.value);
+	}
+	,trim: function(min) {
+		if(min == null) min = 0;
+		if(this.scale == 0) return this;
+		var s = this.toString();
+		var parts = s.split(".");
+		var dec = thx_Strings.rpad(thx_Strings.trimCharsRight(parts[1],"0"),"0",min);
+		if(dec.length > 0) s = parts[0] + "." + dec; else s = parts[0];
+		return thx_bigint_Decimals.parse(s);
+	}
+	,toFloat: function() {
+		return Std.parseFloat(this.toString());
+	}
+	,toInt: function() {
+		var i = this.value.divide(thx_bigint_Small.ten.pow(thx_bigint_Bigs.fromInt(this.scale)));
+		return i.toInt();
+	}
+	,toString: function() {
+		var sign = this.value.sign;
+		var i = (sign?this.value.negate():this.value).toString();
+		var l = i.length;
+		if(this.scale == 0) return (sign?"-":"") + i; else if(i.length <= this.scale) return (sign?"-":"") + "0." + thx_Strings.lpad(i,"0",this.scale); else return (sign?"-":"") + i.substring(0,l - this.scale) + "." + i.substring(l - this.scale);
+	}
+	,matchScale: function(that) {
+		if(this.scale >= that.scale) return this;
+		return this.scaleTo(that.scale);
+	}
+	,__class__: thx_bigint_DecimalImpl
+};
+var thx__$Decimal_Decimal_$Impl_$ = {};
+$hxClasses["thx._Decimal.Decimal_Impl_"] = thx__$Decimal_Decimal_$Impl_$;
+thx__$Decimal_Decimal_$Impl_$.__name__ = ["thx","_Decimal","Decimal_Impl_"];
+thx__$Decimal_Decimal_$Impl_$.__properties__ = {set_divisionScale:"set_divisionScale",get_divisionScale:"get_divisionScale"}
+thx__$Decimal_Decimal_$Impl_$.fromInt64 = function(value) {
+	return new thx_bigint_DecimalImpl(thx_bigint_Bigs.fromInt64(value),0);
+};
+thx__$Decimal_Decimal_$Impl_$.fromBigInt = function(value) {
+	return new thx_bigint_DecimalImpl(value,0);
+};
+thx__$Decimal_Decimal_$Impl_$.fromInt = function(value) {
+	return thx_bigint_Decimals.fromInt(value);
+};
+thx__$Decimal_Decimal_$Impl_$.fromFloat = function(value) {
+	return thx_bigint_Decimals.fromFloat(value);
+};
+thx__$Decimal_Decimal_$Impl_$.fromString = function(value) {
+	return thx_bigint_Decimals.parse(value);
+};
+thx__$Decimal_Decimal_$Impl_$.randomBetween = function(a,b) {
+	return thx_bigint_DecimalImpl.randomBetween(a,b);
+};
+thx__$Decimal_Decimal_$Impl_$.compare = function(a,b) {
+	return a.compareTo(b);
+};
+thx__$Decimal_Decimal_$Impl_$.isZero = function(this1) {
+	return this1.isZero();
+};
+thx__$Decimal_Decimal_$Impl_$.abs = function(this1) {
+	return this1.abs();
+};
+thx__$Decimal_Decimal_$Impl_$.compareTo = function(this1,that) {
+	return this1.compareTo(that);
+};
+thx__$Decimal_Decimal_$Impl_$.compareAbs = function(this1,that) {
+	return this1.compareToAbs(that);
+};
+thx__$Decimal_Decimal_$Impl_$.next = function(this1) {
+	return this1.next();
+};
+thx__$Decimal_Decimal_$Impl_$.prev = function(this1) {
+	return this1.prev();
+};
+thx__$Decimal_Decimal_$Impl_$.square = function(this1) {
+	return this1.square();
+};
+thx__$Decimal_Decimal_$Impl_$.pow = function(this1,exp) {
+	return this1.pow(exp);
+};
+thx__$Decimal_Decimal_$Impl_$.isEven = function(this1) {
+	return this1.isEven();
+};
+thx__$Decimal_Decimal_$Impl_$.isOdd = function(this1) {
+	return this1.isOdd();
+};
+thx__$Decimal_Decimal_$Impl_$.isNegative = function(this1) {
+	return this1.isNegative();
+};
+thx__$Decimal_Decimal_$Impl_$.isPositive = function(this1) {
+	return this1.compareTo(thx__$Decimal_Decimal_$Impl_$.zero) > 0;
+};
+thx__$Decimal_Decimal_$Impl_$.max = function(this1,that) {
+	if(thx__$Decimal_Decimal_$Impl_$.greater(this1,that)) return this1; else return that;
+};
+thx__$Decimal_Decimal_$Impl_$.min = function(this1,that) {
+	if(thx__$Decimal_Decimal_$Impl_$.less(this1,that)) return this1; else return that;
+};
+thx__$Decimal_Decimal_$Impl_$.ceil = function(this1) {
+	return this1.ceilTo(0);
+};
+thx__$Decimal_Decimal_$Impl_$.ceilTo = function(this1,decimals) {
+	return this1.ceilTo(decimals);
+};
+thx__$Decimal_Decimal_$Impl_$.floor = function(this1) {
+	return this1.floorTo(0);
+};
+thx__$Decimal_Decimal_$Impl_$.floorTo = function(this1,decimals) {
+	return this1.floorTo(decimals);
+};
+thx__$Decimal_Decimal_$Impl_$.round = function(this1) {
+	return this1.roundTo(0);
+};
+thx__$Decimal_Decimal_$Impl_$.roundTo = function(this1,decimals) {
+	return this1.roundTo(decimals);
+};
+thx__$Decimal_Decimal_$Impl_$.scaleTo = function(this1,decimals) {
+	return this1.scaleTo(decimals);
+};
+thx__$Decimal_Decimal_$Impl_$.trim = function(this1,mindecimals) {
+	return this1.trim(mindecimals);
+};
+thx__$Decimal_Decimal_$Impl_$.greaterThan = function(this1,that) {
+	return this1.compareTo(that) > 0;
+};
+thx__$Decimal_Decimal_$Impl_$.greater = function(self,that) {
+	return self.compareTo(that) > 0;
+};
+thx__$Decimal_Decimal_$Impl_$.greaterEqualsTo = function(this1,that) {
+	return this1.compareTo(that) >= 0;
+};
+thx__$Decimal_Decimal_$Impl_$.greaterEquals = function(self,that) {
+	return self.compareTo(that) >= 0;
+};
+thx__$Decimal_Decimal_$Impl_$.lessThan = function(this1,that) {
+	return this1.compareTo(that) < 0;
+};
+thx__$Decimal_Decimal_$Impl_$.less = function(self,that) {
+	return self.compareTo(that) < 0;
+};
+thx__$Decimal_Decimal_$Impl_$.lessEqualsTo = function(this1,that) {
+	return this1.compareTo(that) <= 0;
+};
+thx__$Decimal_Decimal_$Impl_$.lessEquals = function(self,that) {
+	return self.compareTo(that) <= 0;
+};
+thx__$Decimal_Decimal_$Impl_$.equalsTo = function(this1,that) {
+	return this1.compareTo(that) == 0;
+};
+thx__$Decimal_Decimal_$Impl_$.equals = function(self,that) {
+	return self.compareTo(that) == 0;
+};
+thx__$Decimal_Decimal_$Impl_$.notEqualsTo = function(this1,that) {
+	return this1.compareTo(that) != 0;
+};
+thx__$Decimal_Decimal_$Impl_$.notEquals = function(self,that) {
+	return self.compareTo(that) != 0;
+};
+thx__$Decimal_Decimal_$Impl_$.add = function(this1,that) {
+	return this1.add(that);
+};
+thx__$Decimal_Decimal_$Impl_$.subtract = function(this1,that) {
+	return this1.subtract(that);
+};
+thx__$Decimal_Decimal_$Impl_$.negate = function(this1) {
+	return this1.negate();
+};
+thx__$Decimal_Decimal_$Impl_$.preIncrement = function(this1) {
+	return this1 = this1.add(thx__$Decimal_Decimal_$Impl_$.one);
+};
+thx__$Decimal_Decimal_$Impl_$.postIncrement = function(this1) {
+	var v = this1;
+	this1 = this1.add(thx__$Decimal_Decimal_$Impl_$.one);
+	return v;
+};
+thx__$Decimal_Decimal_$Impl_$.preDecrement = function(this1) {
+	return this1 = this1.subtract(thx__$Decimal_Decimal_$Impl_$.one);
+};
+thx__$Decimal_Decimal_$Impl_$.postDecrement = function(this1) {
+	var v = this1;
+	this1 = this1.subtract(thx__$Decimal_Decimal_$Impl_$.one);
+	return v;
+};
+thx__$Decimal_Decimal_$Impl_$.multiply = function(this1,that) {
+	return this1.multiply(that);
+};
+thx__$Decimal_Decimal_$Impl_$.divide = function(this1,that) {
+	return this1.divide(that);
+};
+thx__$Decimal_Decimal_$Impl_$.modulo = function(this1,that) {
+	return this1.modulo(that);
+};
+thx__$Decimal_Decimal_$Impl_$.toInt = function(this1) {
+	return this1.toInt();
+};
+thx__$Decimal_Decimal_$Impl_$.toInt64 = function(this1) {
+	var this2 = thx__$Decimal_Decimal_$Impl_$.toBigInt(this1);
+	return thx_bigint_Bigs.toInt64(this2);
+};
+thx__$Decimal_Decimal_$Impl_$.toBigInt = function(this1) {
+	return this1.value.divide(thx_bigint_Small.ten.pow(thx_bigint_Bigs.fromInt(this1.scale)));
+};
+thx__$Decimal_Decimal_$Impl_$.toFloat = function(this1) {
+	return this1.toFloat();
+};
+thx__$Decimal_Decimal_$Impl_$.toString = function(this1) {
+	return this1.toString();
+};
+thx__$Decimal_Decimal_$Impl_$.get_divisionScale = function() {
+	return thx_bigint_Decimals.divisionExtraScale;
+};
+thx__$Decimal_Decimal_$Impl_$.set_divisionScale = function(v) {
+	return thx_bigint_Decimals.divisionExtraScale = v;
+};
+var thx_Dynamics = function() { };
+$hxClasses["thx.Dynamics"] = thx_Dynamics;
+thx_Dynamics.__name__ = ["thx","Dynamics"];
+thx_Dynamics.equals = function(a,b) {
+	if(!thx_Types.sameType(a,b)) return false;
+	if(a == b) return true;
+	{
+		var _g = Type["typeof"](a);
+		switch(_g[1]) {
+		case 2:case 0:case 1:case 3:
+			return false;
+		case 5:
+			return Reflect.compareMethods(a,b);
+		case 6:
+			var c = _g[2];
+			var ca = Type.getClassName(c);
+			var cb = Type.getClassName(b == null?null:js_Boot.getClass(b));
+			if(ca != cb) return false;
+			if(typeof(a) == "string") return false;
+			if((a instanceof Array) && a.__enum__ == null) {
+				var aa = a;
+				var ab = b;
+				if(aa.length != ab.length) return false;
+				var _g2 = 0;
+				var _g1 = aa.length;
+				while(_g2 < _g1) {
+					var i = _g2++;
+					if(!thx_Dynamics.equals(aa[i],ab[i])) return false;
+				}
+				return true;
+			}
+			if(js_Boot.__instanceof(a,Date)) return a.getTime() == b.getTime();
+			if(js_Boot.__instanceof(a,haxe_IMap)) {
+				var ha = a;
+				var hb = b;
+				var ka = thx_Iterators.toArray(ha.keys());
+				var kb = thx_Iterators.toArray(hb.keys());
+				if(ka.length != kb.length) return false;
+				var _g11 = 0;
+				while(_g11 < ka.length) {
+					var key = ka[_g11];
+					++_g11;
+					if(!hb.exists(key) || !thx_Dynamics.equals(ha.get(key),hb.get(key))) return false;
+				}
+				return true;
+			}
+			var t = false;
+			if((t = thx_Iterators.isIterator(a)) || thx_Iterables.isIterable(a)) {
+				var va;
+				if(t) va = thx_Iterators.toArray(a); else va = thx_Iterators.toArray($iterator(a)());
+				var vb;
+				if(t) vb = thx_Iterators.toArray(b); else vb = thx_Iterators.toArray($iterator(b)());
+				if(va.length != vb.length) return false;
+				var _g21 = 0;
+				var _g12 = va.length;
+				while(_g21 < _g12) {
+					var i1 = _g21++;
+					if(!thx_Dynamics.equals(va[i1],vb[i1])) return false;
+				}
+				return true;
+			}
+			var f = null;
+			if(Object.prototype.hasOwnProperty.call(a,"equals") && Reflect.isFunction(f = Reflect.field(a,"equals"))) return f.apply(a,[b]);
+			var fields = Type.getInstanceFields(a == null?null:js_Boot.getClass(a));
+			var _g13 = 0;
+			while(_g13 < fields.length) {
+				var field = fields[_g13];
+				++_g13;
+				var va1 = Reflect.field(a,field);
+				if(Reflect.isFunction(va1)) continue;
+				var vb1 = Reflect.field(b,field);
+				if(!thx_Dynamics.equals(va1,vb1)) return false;
+			}
+			return true;
+		case 7:
+			var e = _g[2];
+			var ea = Type.getEnumName(e);
+			var teb = Type.getEnum(b);
+			var eb = Type.getEnumName(teb);
+			if(ea != eb) return false;
+			if(a[1] != b[1]) return false;
+			var pa = a.slice(2);
+			var pb = b.slice(2);
+			var _g22 = 0;
+			var _g14 = pa.length;
+			while(_g22 < _g14) {
+				var i2 = _g22++;
+				if(!thx_Dynamics.equals(pa[i2],pb[i2])) return false;
+			}
+			return true;
+		case 4:
+			var fa = Reflect.fields(a);
+			var fb = Reflect.fields(b);
+			var _g15 = 0;
+			while(_g15 < fa.length) {
+				var field1 = fa[_g15];
+				++_g15;
+				HxOverrides.remove(fb,field1);
+				if(!Object.prototype.hasOwnProperty.call(b,field1)) return false;
+				var va2 = Reflect.field(a,field1);
+				if(Reflect.isFunction(va2)) continue;
+				var vb2 = Reflect.field(b,field1);
+				if(!thx_Dynamics.equals(va2,vb2)) return false;
+			}
+			if(fb.length > 0) return false;
+			var t1 = false;
+			if((t1 = thx_Iterators.isIterator(a)) || thx_Iterables.isIterable(a)) {
+				if(t1 && !thx_Iterators.isIterator(b)) return false;
+				if(!t1 && !thx_Iterables.isIterable(b)) return false;
+				var aa1;
+				if(t1) aa1 = thx_Iterators.toArray(a); else aa1 = thx_Iterators.toArray($iterator(a)());
+				var ab1;
+				if(t1) ab1 = thx_Iterators.toArray(b); else ab1 = thx_Iterators.toArray($iterator(b)());
+				if(aa1.length != ab1.length) return false;
+				var _g23 = 0;
+				var _g16 = aa1.length;
+				while(_g23 < _g16) {
+					var i3 = _g23++;
+					if(!thx_Dynamics.equals(aa1[i3],ab1[i3])) return false;
+				}
+				return true;
+			}
+			return true;
+		case 8:
+			throw new js__$Boot_HaxeError("Unable to compare two unknown types");
+			break;
+		}
+	}
+	throw new thx_Error("Unable to compare values: " + Std.string(a) + " and " + Std.string(b),null,{ fileName : "Dynamics.hx", lineNumber : 153, className : "thx.Dynamics", methodName : "equals"});
+};
+thx_Dynamics.clone = function(v,cloneInstances) {
+	if(cloneInstances == null) cloneInstances = false;
+	{
+		var _g = Type["typeof"](v);
+		switch(_g[1]) {
+		case 0:
+			return null;
+		case 1:case 2:case 3:case 7:case 8:case 5:
+			return v;
+		case 4:
+			return thx_Objects.copyTo(v,{ });
+		case 6:
+			var c = _g[2];
+			var name = Type.getClassName(c);
+			switch(name) {
+			case "Array":
+				return v.map(function(v1) {
+					return thx_Dynamics.clone(v1,cloneInstances);
+				});
+			case "String":case "Date":
+				return v;
+			default:
+				if(cloneInstances) {
+					var o = Type.createEmptyInstance(c);
+					var _g1 = 0;
+					var _g2 = Type.getInstanceFields(c);
+					while(_g1 < _g2.length) {
+						var field = _g2[_g1];
+						++_g1;
+						Reflect.setField(o,field,thx_Dynamics.clone(Reflect.field(v,field),cloneInstances));
+					}
+					return o;
+				} else return v;
+			}
+			break;
+		}
+	}
+};
+thx_Dynamics.compare = function(a,b) {
+	if(null == a && null == b) return 0;
+	if(null == a) return -1;
+	if(null == b) return 1;
+	if(!thx_Types.sameType(a,b)) return thx_Strings.compare(thx_Types.valueTypeToString(a),thx_Types.valueTypeToString(b));
+	{
+		var _g = Type["typeof"](a);
+		switch(_g[1]) {
+		case 1:
+			return thx_Ints.compare(a,b);
+		case 2:
+			return thx_Floats.compare(a,b);
+		case 3:
+			return thx_Bools.compare(a,b);
+		case 4:
+			return thx_Objects.compare(a,b);
+		case 6:
+			var c = _g[2];
+			var name = Type.getClassName(c);
+			switch(name) {
+			case "Array":
+				return thx_Arrays.compare(a,b);
+			case "String":
+				return thx_Strings.compare(a,b);
+			case "Date":
+				return thx_Dates.compare(a,b);
+			default:
+				if(Object.prototype.hasOwnProperty.call(a,"compare")) return Reflect.callMethod(a,Reflect.field(a,"compare"),[b]); else return haxe_Utf8.compare(Std.string(a),Std.string(b));
+			}
+			break;
+		case 7:
+			var e = _g[2];
+			return thx_Enums.compare(a,b);
+		default:
+			return 0;
+		}
+	}
+};
+thx_Dynamics.string = function(v) {
+	{
+		var _g = Type["typeof"](v);
+		switch(_g[1]) {
+		case 0:
+			return "null";
+		case 1:case 2:case 3:
+			return "" + Std.string(v);
+		case 4:
+			return thx_Objects.string(v);
+		case 6:
+			var c = _g[2];
+			var _g1 = Type.getClassName(c);
+			switch(_g1) {
+			case "Array":
+				return thx_Arrays.string(v);
+			case "String":
+				return v;
+			case "Date":
+				return HxOverrides.dateStr(v);
+			default:
+				if(js_Boot.__instanceof(v,haxe_IMap)) return thx_Maps.string(v); else return Std.string(v);
+			}
+			break;
+		case 7:
+			var e = _g[2];
+			return thx_Enums.string(v);
+		case 8:
+			return "<unknown>";
+		case 5:
+			return "<function>";
+		}
+	}
+};
+var thx_DynamicsT = function() { };
+$hxClasses["thx.DynamicsT"] = thx_DynamicsT;
+thx_DynamicsT.__name__ = ["thx","DynamicsT"];
+thx_DynamicsT.isEmpty = function(o) {
+	return Reflect.fields(o).length == 0;
+};
+thx_DynamicsT.exists = function(o,name) {
+	return Object.prototype.hasOwnProperty.call(o,name);
+};
+thx_DynamicsT.fields = function(o) {
+	return Reflect.fields(o);
+};
+thx_DynamicsT.merge = function(to,from,replacef) {
+	if(null == replacef) replacef = function(field,oldv,newv) {
+		return newv;
+	};
+	var _g = 0;
+	var _g1 = Reflect.fields(from);
+	while(_g < _g1.length) {
+		var field1 = _g1[_g];
+		++_g;
+		var newv1 = Reflect.field(from,field1);
+		if(Object.prototype.hasOwnProperty.call(to,field1)) Reflect.setField(to,field1,replacef(field1,Reflect.field(to,field1),newv1)); else to[field1] = newv1;
+	}
+	return to;
+};
+thx_DynamicsT.size = function(o) {
+	return Reflect.fields(o).length;
+};
+thx_DynamicsT.values = function(o) {
+	return Reflect.fields(o).map(function(key) {
+		return Reflect.field(o,key);
+	});
+};
+thx_DynamicsT.tuples = function(o) {
+	return Reflect.fields(o).map(function(key) {
+		var _1 = Reflect.field(o,key);
+		return { _0 : key, _1 : _1};
+	});
+};
+var thx_Either = $hxClasses["thx.Either"] = { __ename__ : ["thx","Either"], __constructs__ : ["Left","Right"] };
+thx_Either.Left = function(value) { var $x = ["Left",0,value]; $x.__enum__ = thx_Either; $x.toString = $estr; return $x; };
+thx_Either.Right = function(value) { var $x = ["Right",1,value]; $x.__enum__ = thx_Either; $x.toString = $estr; return $x; };
+var thx_Eithers = function() { };
+$hxClasses["thx.Eithers"] = thx_Eithers;
+thx_Eithers.__name__ = ["thx","Eithers"];
+thx_Eithers.isLeft = function(either) {
+	switch(either[1]) {
+	case 0:
+		return true;
+	case 1:
+		return false;
+	}
+};
+thx_Eithers.isRight = function(either) {
+	switch(either[1]) {
+	case 0:
+		return false;
+	case 1:
+		return true;
+	}
+};
+thx_Eithers.toLeft = function(either) {
+	switch(either[1]) {
+	case 0:
+		var v = either[2];
+		return haxe_ds_Option.Some(v);
+	case 1:
+		return haxe_ds_Option.None;
+	}
+};
+thx_Eithers.toRight = function(either) {
+	switch(either[1]) {
+	case 0:
+		return haxe_ds_Option.None;
+	case 1:
+		var v = either[2];
+		return haxe_ds_Option.Some(v);
+	}
+};
+thx_Eithers.toLeftUnsafe = function(either) {
+	switch(either[1]) {
+	case 0:
+		var v = either[2];
+		return v;
+	case 1:
+		return null;
+	}
+};
+thx_Eithers.toRightUnsafe = function(either) {
+	switch(either[1]) {
+	case 0:
+		return null;
+	case 1:
+		var v = either[2];
+		return v;
+	}
+};
+thx_Eithers.map = function(either,f) {
+	switch(either[1]) {
+	case 0:
+		var v = either[2];
+		return thx_Either.Left(v);
+	case 1:
+		var v1 = either[2];
+		return thx_Either.Right(f(v1));
+	}
+};
+thx_Eithers.flatMap = function(either,f) {
+	switch(either[1]) {
+	case 0:
+		var v = either[2];
+		return thx_Either.Left(v);
+	case 1:
+		var v1 = either[2];
+		return f(v1);
+	}
+};
+thx_Eithers.leftMap = function(either,f) {
+	switch(either[1]) {
+	case 0:
+		var v = either[2];
+		return thx_Either.Left(f(v));
+	case 1:
+		var v1 = either[2];
+		return thx_Either.Right(v1);
+	}
+};
+thx_Eithers.orThrow = function(either,message) {
+	switch(either[1]) {
+	case 0:
+		var v = either[2];
+		throw new thx_Error("" + message + ": " + Std.string(v),null,{ fileName : "Eithers.hx", lineNumber : 93, className : "thx.Eithers", methodName : "orThrow"});
+		break;
+	case 1:
+		var v1 = either[2];
+		return v1;
+	}
+};
+var thx_Enums = function() { };
+$hxClasses["thx.Enums"] = thx_Enums;
+thx_Enums.__name__ = ["thx","Enums"];
+thx_Enums.string = function(e) {
+	var cons = e[0];
+	var params = [];
+	var _g = 0;
+	var _g1 = e.slice(2);
+	while(_g < _g1.length) {
+		var param = _g1[_g];
+		++_g;
+		params.push(thx_Dynamics.string(param));
+	}
+	return cons + (params.length == 0?"":"(" + params.join(", ") + ")");
+};
+thx_Enums.compare = function(a,b) {
+	var v = a[1] - b[1];
+	if(v != 0) return v;
+	return thx_Arrays.compare(a.slice(2),b.slice(2));
+};
+thx_Enums.min = function(a,b) {
+	if(thx_Enums.compare(a,b) < 0) return a; else return b;
+};
+thx_Enums.max = function(a,b) {
+	if(thx_Enums.compare(a,b) > 0) return a; else return b;
 };
 var thx_Error = function(message,stack,pos) {
 	Error.call(this,message);
@@ -37075,11 +41999,348 @@ thx_Error.fromDynamic = function(err,pos) {
 };
 thx_Error.__super__ = Error;
 thx_Error.prototype = $extend(Error.prototype,{
-	toString: function() {
+	pos: null
+	,stackItems: null
+	,toString: function() {
 		return this.message + "\nfrom: " + this.pos.className + "." + this.pos.methodName + "() at " + this.pos.lineNumber + "\n\n" + haxe_CallStack.toString(this.stackItems);
 	}
 	,__class__: thx_Error
 });
+var thx_Floats = function() { };
+$hxClasses["thx.Floats"] = thx_Floats;
+thx_Floats.__name__ = ["thx","Floats"];
+thx_Floats.angleDifference = function(a,b,turn) {
+	if(turn == null) turn = 360.0;
+	var r = (b - a) % turn;
+	if(r < 0) r += turn;
+	if(r > turn / 2) r -= turn;
+	return r;
+};
+thx_Floats.ceilTo = function(f,decimals) {
+	var p = Math.pow(10,decimals);
+	return Math.ceil(f * p) / p;
+};
+thx_Floats.canParse = function(s) {
+	return thx_Floats.pattern_parse.match(s);
+};
+thx_Floats.clamp = function(v,min,max) {
+	if(v < min) return min; else if(v > max) return max; else return v;
+};
+thx_Floats.clampSym = function(v,max) {
+	return thx_Floats.clamp(v,-max,max);
+};
+thx_Floats.compare = function(a,b) {
+	if(a < b) return -1; else if(a > b) return 1; else return 0;
+};
+thx_Floats.floorTo = function(f,decimals) {
+	var p = Math.pow(10,decimals);
+	return Math.floor(f * p) / p;
+};
+thx_Floats.interpolate = function(f,a,b) {
+	return (b - a) * f + a;
+};
+thx_Floats.interpolateAngle = function(f,a,b,turn) {
+	if(turn == null) turn = 360;
+	return thx_Floats.wrapCircular(thx_Floats.interpolate(f,a,a + thx_Floats.angleDifference(a,b,turn)),turn);
+};
+thx_Floats.interpolateAngleWidest = function(f,a,b,turn) {
+	if(turn == null) turn = 360;
+	return thx_Floats.wrapCircular(thx_Floats.interpolateAngle(f,a,b,turn) - turn / 2,turn);
+};
+thx_Floats.interpolateAngleCW = function(f,a,b,turn) {
+	if(turn == null) turn = 360;
+	a = thx_Floats.wrapCircular(a,turn);
+	b = thx_Floats.wrapCircular(b,turn);
+	if(b < a) b += turn;
+	return thx_Floats.wrapCircular(thx_Floats.interpolate(f,a,b),turn);
+};
+thx_Floats.interpolateAngleCCW = function(f,a,b,turn) {
+	if(turn == null) turn = 360;
+	a = thx_Floats.wrapCircular(a,turn);
+	b = thx_Floats.wrapCircular(b,turn);
+	if(b > a) b -= turn;
+	return thx_Floats.wrapCircular(thx_Floats.interpolate(f,a,b),turn);
+};
+thx_Floats.max = function(a,b) {
+	if(a > b) return a; else return b;
+};
+thx_Floats.min = function(a,b) {
+	if(a < b) return a; else return b;
+};
+thx_Floats.nearEquals = function(a,b,tollerance) {
+	if(tollerance == null) tollerance = 1e-9;
+	if(isFinite(a)) return Math.abs(a - b) <= tollerance;
+	if(isNaN(a)) return isNaN(b);
+	if(isNaN(b)) return false;
+	if(!isFinite(b)) return a > 0 == b > 0;
+	return false;
+};
+thx_Floats.nearEqualAngles = function(a,b,turn,tollerance) {
+	if(tollerance == null) tollerance = 1e-9;
+	if(turn == null) turn = 360.0;
+	return Math.abs(thx_Floats.angleDifference(a,b,turn)) <= tollerance;
+};
+thx_Floats.nearZero = function(n,tollerance) {
+	if(tollerance == null) tollerance = 1e-9;
+	return Math.abs(n) <= tollerance;
+};
+thx_Floats.normalize = function(v) {
+	if(v < 0) return 0; else if(v > 1) return 1; else return v;
+};
+thx_Floats.parse = function(s) {
+	if(s.substring(0,1) == "+") s = s.substring(1);
+	return parseFloat(s);
+};
+thx_Floats.root = function(base,index) {
+	return Math.pow(base,1 / index);
+};
+thx_Floats.roundTo = function(f,decimals) {
+	var p = Math.pow(10,decimals);
+	return Math.round(f * p) / p;
+};
+thx_Floats.sign = function(value) {
+	if(value < 0) return -1; else return 1;
+};
+thx_Floats.toString = function(v) {
+	return "" + v;
+};
+thx_Floats.toFloat = function(s) {
+	return thx_Floats.parse(s);
+};
+thx_Floats.trunc = function(value) {
+	if(value < 0.0) return Math.ceil(value); else return Math.floor(value);
+};
+thx_Floats.ftrunc = function(value) {
+	if(value < 0.0) return Math.ceil(value); else return Math.floor(value);
+};
+thx_Floats.wrap = function(v,min,max) {
+	var range = max - min + 1;
+	if(v < min) v += range * ((min - v) / range + 1);
+	return min + (v - min) % range;
+};
+thx_Floats.wrapCircular = function(v,max) {
+	v = v % max;
+	if(v < 0) v += max;
+	return v;
+};
+var thx_Functions0 = function() { };
+$hxClasses["thx.Functions0"] = thx_Functions0;
+thx_Functions0.__name__ = ["thx","Functions0"];
+thx_Functions0.after = function(callback,n) {
+	return function() {
+		if(--n == 0) callback();
+	};
+};
+thx_Functions0.join = function(fa,fb) {
+	return function() {
+		fa();
+		fb();
+	};
+};
+thx_Functions0.once = function(f) {
+	return function() {
+		var t = f;
+		f = thx_Functions.noop;
+		t();
+	};
+};
+thx_Functions0.negate = function(callback) {
+	return function() {
+		return !callback();
+	};
+};
+thx_Functions0.times = function(n,callback) {
+	return function() {
+		return thx_Ints.range(n).map(function(_) {
+			return callback();
+		});
+	};
+};
+thx_Functions0.timesi = function(n,callback) {
+	return function() {
+		return thx_Ints.range(n).map(function(i) {
+			return callback(i);
+		});
+	};
+};
+var thx_Functions1 = function() { };
+$hxClasses["thx.Functions1"] = thx_Functions1;
+thx_Functions1.__name__ = ["thx","Functions1"];
+thx_Functions1.compose = function(fa,fb) {
+	return function(v) {
+		return fa(fb(v));
+	};
+};
+thx_Functions1.join = function(fa,fb) {
+	return function(v) {
+		fa(v);
+		fb(v);
+	};
+};
+thx_Functions1.memoize = function(callback,resolver) {
+	if(null == resolver) resolver = function(v) {
+		return "" + Std.string(v);
+	};
+	var map = new haxe_ds_StringMap();
+	return function(v1) {
+		var key = resolver(v1);
+		if(__map_reserved[key] != null?map.existsReserved(key):map.h.hasOwnProperty(key)) return __map_reserved[key] != null?map.getReserved(key):map.h[key];
+		var result = callback(v1);
+		if(__map_reserved[key] != null) map.setReserved(key,result); else map.h[key] = result;
+		return result;
+	};
+};
+thx_Functions1.negate = function(callback) {
+	return function(v) {
+		return !callback(v);
+	};
+};
+thx_Functions1.noop = function(_) {
+};
+thx_Functions1.times = function(n,callback) {
+	return function(value) {
+		return thx_Ints.range(n).map(function(_) {
+			return callback(value);
+		});
+	};
+};
+thx_Functions1.timesi = function(n,callback) {
+	return function(value) {
+		return thx_Ints.range(n).map(function(i) {
+			return callback(value,i);
+		});
+	};
+};
+thx_Functions1.swapArguments = function(callback) {
+	return function(a2,a1) {
+		return callback(a1,a2);
+	};
+};
+var thx_Functions2 = function() { };
+$hxClasses["thx.Functions2"] = thx_Functions2;
+thx_Functions2.__name__ = ["thx","Functions2"];
+thx_Functions2.memoize = function(callback,resolver) {
+	if(null == resolver) resolver = function(v1,v2) {
+		return "" + Std.string(v1) + ":" + Std.string(v2);
+	};
+	var map = new haxe_ds_StringMap();
+	return function(v11,v21) {
+		var key = resolver(v11,v21);
+		if(__map_reserved[key] != null?map.existsReserved(key):map.h.hasOwnProperty(key)) return __map_reserved[key] != null?map.getReserved(key):map.h[key];
+		var result = callback(v11,v21);
+		if(__map_reserved[key] != null) map.setReserved(key,result); else map.h[key] = result;
+		return result;
+	};
+};
+thx_Functions2.curry = function(f) {
+	return function(a) {
+		return function(b) {
+			return f(a,b);
+		};
+	};
+};
+thx_Functions2.negate = function(callback) {
+	return function(v1,v2) {
+		return !callback(v1,v2);
+	};
+};
+var thx_Functions3 = function() { };
+$hxClasses["thx.Functions3"] = thx_Functions3;
+thx_Functions3.__name__ = ["thx","Functions3"];
+thx_Functions3.memoize = function(callback,resolver) {
+	if(null == resolver) resolver = function(v1,v2,v3) {
+		return "" + Std.string(v1) + ":" + Std.string(v2) + ":" + Std.string(v3);
+	};
+	var map = new haxe_ds_StringMap();
+	return function(v11,v21,v31) {
+		var key = resolver(v11,v21,v31);
+		if(__map_reserved[key] != null?map.existsReserved(key):map.h.hasOwnProperty(key)) return __map_reserved[key] != null?map.getReserved(key):map.h[key];
+		var result = callback(v11,v21,v31);
+		if(__map_reserved[key] != null) map.setReserved(key,result); else map.h[key] = result;
+		return result;
+	};
+};
+thx_Functions3.negate = function(callback) {
+	return function(v1,v2,v3) {
+		return !callback(v1,v2,v3);
+	};
+};
+thx_Functions3.curry = function(f) {
+	return function(a,b) {
+		return function(c) {
+			return f(a,b,c);
+		};
+	};
+};
+var thx_Functions4 = function() { };
+$hxClasses["thx.Functions4"] = thx_Functions4;
+thx_Functions4.__name__ = ["thx","Functions4"];
+thx_Functions4.curry = function(f) {
+	return function(a,b,c) {
+		return function(d) {
+			return f(a,b,c,d);
+		};
+	};
+};
+var thx_Functions5 = function() { };
+$hxClasses["thx.Functions5"] = thx_Functions5;
+thx_Functions5.__name__ = ["thx","Functions5"];
+thx_Functions5.curry = function(f) {
+	return function(a,b,c,d) {
+		return function(e) {
+			return f(a,b,c,d,e);
+		};
+	};
+};
+var thx_Functions6 = function() { };
+$hxClasses["thx.Functions6"] = thx_Functions6;
+thx_Functions6.__name__ = ["thx","Functions6"];
+thx_Functions6.curry = function(f) {
+	return function(a,b,c,d,e) {
+		return function(f0) {
+			return f(a,b,c,d,e,f0);
+		};
+	};
+};
+var thx_Functions7 = function() { };
+$hxClasses["thx.Functions7"] = thx_Functions7;
+thx_Functions7.__name__ = ["thx","Functions7"];
+thx_Functions7.curry = function(f) {
+	return function(a,b,c,d,e,f0) {
+		return function(g) {
+			return f(a,b,c,d,e,f0,g);
+		};
+	};
+};
+var thx_Functions8 = function() { };
+$hxClasses["thx.Functions8"] = thx_Functions8;
+thx_Functions8.__name__ = ["thx","Functions8"];
+thx_Functions8.curry = function(f) {
+	return function(a,b,c,d,e,f0,g) {
+		return function(h) {
+			return f(a,b,c,d,e,f0,g,h);
+		};
+	};
+};
+var thx__$Functions_Reader_$Impl_$ = {};
+$hxClasses["thx._Functions.Reader_Impl_"] = thx__$Functions_Reader_$Impl_$;
+thx__$Functions_Reader_$Impl_$.__name__ = ["thx","_Functions","Reader_Impl_"];
+thx__$Functions_Reader_$Impl_$.flatMap = function(this1,f) {
+	return function(a) {
+		return (f(this1(a)))(a);
+	};
+};
+var thx_Functions = function() { };
+$hxClasses["thx.Functions"] = thx_Functions;
+thx_Functions.__name__ = ["thx","Functions"];
+thx_Functions.equality = function(a,b) {
+	return a == b;
+};
+thx_Functions.identity = function(value) {
+	return value;
+};
+thx_Functions.noop = function() {
+};
 var thx_Int64s = function() { };
 $hxClasses["thx.Int64s"] = thx_Int64s;
 thx_Int64s.__name__ = ["thx","Int64s"];
@@ -37589,6 +42850,2206 @@ thx_Int64s.fromFloat = function(f) {
 		return x5;
 	} else return result;
 };
+var thx_OrderingImpl = $hxClasses["thx.OrderingImpl"] = { __ename__ : ["thx","OrderingImpl"], __constructs__ : ["LT","GT","EQ"] };
+thx_OrderingImpl.LT = ["LT",0];
+thx_OrderingImpl.LT.toString = $estr;
+thx_OrderingImpl.LT.__enum__ = thx_OrderingImpl;
+thx_OrderingImpl.GT = ["GT",1];
+thx_OrderingImpl.GT.toString = $estr;
+thx_OrderingImpl.GT.__enum__ = thx_OrderingImpl;
+thx_OrderingImpl.EQ = ["EQ",2];
+thx_OrderingImpl.EQ.toString = $estr;
+thx_OrderingImpl.EQ.__enum__ = thx_OrderingImpl;
+var thx_Ints = function() { };
+$hxClasses["thx.Ints"] = thx_Ints;
+thx_Ints.__name__ = ["thx","Ints"];
+thx_Ints.abs = function(v) {
+	if(v < 0) return -v; else return v;
+};
+thx_Ints.canParse = function(s) {
+	return thx_Ints.pattern_parse.match(s);
+};
+thx_Ints.clamp = function(v,min,max) {
+	if(v < min) return min; else if(v > max) return max; else return v;
+};
+thx_Ints.clampSym = function(v,max) {
+	return thx_Ints.clamp(v,-max,max);
+};
+thx_Ints.compare = function(a,b) {
+	return a - b;
+};
+thx_Ints.gcd = function(m,n) {
+	if(m < 0) m = -m; else m = m;
+	if(n < 0) n = -n; else n = n;
+	if(n == 0) return m;
+	return thx_Ints.gcd(n,m % n);
+};
+thx_Ints.interpolate = function(f,a,b) {
+	return Math.round(a + (b - a) * f);
+};
+thx_Ints.isEven = function(v) {
+	return v % 2 == 0;
+};
+thx_Ints.isOdd = function(v) {
+	return v % 2 != 0;
+};
+thx_Ints.lpad = function(v,pad,len) {
+	if(pad == null) pad = "0";
+	var neg = false;
+	if(v < 0) {
+		neg = true;
+		v = -v;
+	}
+	return (neg?"-":"") + StringTools.lpad("" + v,pad,len);
+};
+thx_Ints.lcm = function(m,n) {
+	if(m < 0) m = -m; else m = m;
+	if(n < 0) n = -n; else n = n;
+	if(n == 0) return m;
+	return m * Std["int"](n / thx_Ints.gcd(m,n));
+};
+thx_Ints.rpad = function(v,pad,len) {
+	if(pad == null) pad = "0";
+	return StringTools.rpad("" + v,pad,len);
+};
+thx_Ints.max = function(a,b) {
+	if(a > b) return a; else return b;
+};
+thx_Ints.min = function(a,b) {
+	if(a < b) return a; else return b;
+};
+thx_Ints.parse = function(s,base) {
+	if(null == base) {
+		if(s.substring(0,2) == "0x") base = 16; else base = 10;
+	}
+	var v = parseInt(s,base);
+	if(isNaN(v)) return null; else return v;
+};
+thx_Ints.random = function(min,max) {
+	if(min == null) min = 0;
+	return Std.random(max + 1) + min;
+};
+thx_Ints.range = function(start,stop,step) {
+	if(step == null) step = 1;
+	if(null == stop) {
+		stop = start;
+		start = 0;
+	}
+	if((stop - start) / step == Infinity) throw new js__$Boot_HaxeError("infinite range");
+	var range = [];
+	var i = -1;
+	var j;
+	if(step < 0) while((j = start + step * ++i) > stop) range.push(j); else while((j = start + step * ++i) < stop) range.push(j);
+	return range;
+};
+thx_Ints.rangeIter = function(start,stop,step) {
+	if(step == null) step = 1;
+	return new thx_RangeIterator(start,stop,step);
+};
+thx_Ints.toString = function(value,base) {
+	return value.toString(base);
+};
+thx_Ints.toBase = function(value,base) {
+	return value.toString(base);
+};
+thx_Ints.toBool = function(v) {
+	return v != 0;
+};
+thx_Ints.toInt = function(s,base) {
+	return thx_Ints.parse(s,base);
+};
+thx_Ints.sign = function(value) {
+	if(value < 0) return -1; else return 1;
+};
+thx_Ints.wrapCircular = function(v,max) {
+	v = v % max;
+	if(v < 0) v += max;
+	return v;
+};
+var thx_RangeIterator = function(start,stop,step) {
+	if(step == null) step = 1;
+	this.current = start;
+	this.stop = stop;
+	this.step = step;
+};
+$hxClasses["thx.RangeIterator"] = thx_RangeIterator;
+thx_RangeIterator.__name__ = ["thx","RangeIterator"];
+thx_RangeIterator.prototype = {
+	current: null
+	,stop: null
+	,step: null
+	,hasNext: function() {
+		return this.stop == null || this.step >= 0 && this.current < this.stop || this.step < 0 && this.current > this.stop;
+	}
+	,next: function() {
+		var result = this.current;
+		this.current += this.step;
+		return result;
+	}
+	,__class__: thx_RangeIterator
+};
+var thx_Iterables = function() { };
+$hxClasses["thx.Iterables"] = thx_Iterables;
+thx_Iterables.__name__ = ["thx","Iterables"];
+thx_Iterables.all = function(it,predicate) {
+	return thx_Iterators.all($iterator(it)(),predicate);
+};
+thx_Iterables.any = function(it,predicate) {
+	return thx_Iterators.any($iterator(it)(),predicate);
+};
+thx_Iterables.eachPair = function(it,handler) {
+	thx_Iterators.eachPair($iterator(it)(),handler);
+	return;
+};
+thx_Iterables.equals = function(a,b,equality) {
+	return thx_Iterators.equals($iterator(a)(),$iterator(b)(),equality);
+};
+thx_Iterables.filter = function(it,predicate) {
+	return thx_Iterators.filter($iterator(it)(),predicate);
+};
+thx_Iterables.find = function(it,predicate) {
+	return thx_Iterators.find($iterator(it)(),predicate);
+};
+thx_Iterables.first = function(it) {
+	return thx_Iterators.first($iterator(it)());
+};
+thx_Iterables.get = function(it,index) {
+	return thx_Iterators.get($iterator(it)(),index);
+};
+thx_Iterables.last = function(it) {
+	return thx_Iterators.last($iterator(it)());
+};
+thx_Iterables.hasElements = function(it) {
+	return thx_Iterators.hasElements($iterator(it)());
+};
+thx_Iterables.indexOf = function(it,element) {
+	return thx_Iterators.indexOf($iterator(it)(),element);
+};
+thx_Iterables.isEmpty = function(it) {
+	return thx_Iterators.isEmpty($iterator(it)());
+};
+thx_Iterables.isIterable = function(v) {
+	var fields;
+	if(Reflect.isObject(v) && null == Type.getClass(v)) fields = Reflect.fields(v); else fields = Type.getInstanceFields(Type.getClass(v));
+	if(!Lambda.has(fields,"iterator")) return false;
+	return Reflect.isFunction(Reflect.field(v,"iterator"));
+};
+thx_Iterables.map = function(it,f) {
+	return thx_Iterators.map($iterator(it)(),f);
+};
+thx_Iterables.mapi = function(it,f) {
+	return thx_Iterators.mapi($iterator(it)(),f);
+};
+thx_Iterables.order = function(it,sort) {
+	return thx_Iterators.order($iterator(it)(),sort);
+};
+thx_Iterables.reduce = function(it,callback,initial) {
+	return thx_Iterators.reduce($iterator(it)(),callback,initial);
+};
+thx_Iterables.reducei = function(it,callback,initial) {
+	return thx_Iterators.reducei($iterator(it)(),callback,initial);
+};
+thx_Iterables.toArray = function(it) {
+	return thx_Iterators.toArray($iterator(it)());
+};
+thx_Iterables.minBy = function(it,f,ord) {
+	var found = haxe_ds_Option.None;
+	var $it0 = $iterator(it)();
+	while( $it0.hasNext() ) {
+		var a = $it0.next();
+		var a1 = [a];
+		if(thx_Options.any(found,(function(a1) {
+			return function(a0) {
+				return ord(f(a0),f(a1[0])) == thx_OrderingImpl.LT;
+			};
+		})(a1))) found = found; else found = haxe_ds_Option.Some(a1[0]);
+	}
+	return found;
+};
+thx_Iterables.maxBy = function(it,f,ord) {
+	return thx_Iterables.minBy(it,f,thx__$Ord_Ord_$Impl_$.inverse(ord));
+};
+thx_Iterables.min = function(it,ord) {
+	return thx_Iterables.minBy(it,thx_Functions.identity,ord);
+};
+thx_Iterables.max = function(it,ord) {
+	return thx_Iterables.min(it,thx__$Ord_Ord_$Impl_$.inverse(ord));
+};
+thx_Iterables.extremaBy = function(it,f,ord) {
+	var found = haxe_ds_Option.None;
+	var $it0 = $iterator(it)();
+	while( $it0.hasNext() ) {
+		var a = $it0.next();
+		switch(found[1]) {
+		case 1:
+			found = haxe_ds_Option.Some({ _0 : a, _1 : a});
+			break;
+		case 0:
+			var t = found[2];
+			if(ord(f(a),f(t._0)) == thx_OrderingImpl.LT) found = haxe_ds_Option.Some({ _0 : a, _1 : t._1}); else {
+				var t1 = found[2];
+				if(ord(f(a),f(t1._1)) == thx_OrderingImpl.GT) found = haxe_ds_Option.Some({ _0 : t1._0, _1 : a}); else found = found;
+			}
+			break;
+		default:
+			found = found;
+		}
+	}
+	return found;
+};
+thx_Iterables.extrema = function(it,ord) {
+	return thx_Iterables.extremaBy(it,thx_Functions.identity,ord);
+};
+thx_Iterables.unzip = function(it) {
+	return thx_Iterators.unzip($iterator(it)());
+};
+thx_Iterables.unzip3 = function(it) {
+	return thx_Iterators.unzip3($iterator(it)());
+};
+thx_Iterables.unzip4 = function(it) {
+	return thx_Iterators.unzip4($iterator(it)());
+};
+thx_Iterables.unzip5 = function(it) {
+	return thx_Iterators.unzip5($iterator(it)());
+};
+thx_Iterables.zip = function(it1,it2) {
+	return thx_Iterators.zip($iterator(it1)(),$iterator(it2)());
+};
+thx_Iterables.zip3 = function(it1,it2,it3) {
+	return thx_Iterators.zip3($iterator(it1)(),$iterator(it2)(),$iterator(it3)());
+};
+thx_Iterables.zip4 = function(it1,it2,it3,it4) {
+	return thx_Iterators.zip4($iterator(it1)(),$iterator(it2)(),$iterator(it3)(),$iterator(it4)());
+};
+thx_Iterables.zip5 = function(it1,it2,it3,it4,it5) {
+	return thx_Iterators.zip5($iterator(it1)(),$iterator(it2)(),$iterator(it3)(),$iterator(it4)(),$iterator(it5)());
+};
+var thx_Iterators = function() { };
+$hxClasses["thx.Iterators"] = thx_Iterators;
+thx_Iterators.__name__ = ["thx","Iterators"];
+thx_Iterators.all = function(it,predicate) {
+	while( it.hasNext() ) {
+		var element = it.next();
+		if(!predicate(element)) return false;
+	}
+	return true;
+};
+thx_Iterators.any = function(it,predicate) {
+	while( it.hasNext() ) {
+		var element = it.next();
+		if(predicate(element)) return true;
+	}
+	return false;
+};
+thx_Iterators.equals = function(a,b,equality) {
+	if(null == equality) equality = thx_Functions.equality;
+	var ae;
+	var be;
+	var an;
+	var bn;
+	while(true) {
+		an = a.hasNext();
+		bn = b.hasNext();
+		if(!an && !bn) return true;
+		if(!an || !bn) return false;
+		if(!equality(a.next(),b.next())) return false;
+	}
+	return true;
+};
+thx_Iterators.get = function(it,index) {
+	var pos = 0;
+	while( it.hasNext() ) {
+		var i = it.next();
+		if(pos++ == index) return i;
+	}
+	return null;
+};
+thx_Iterators.eachPair = function(it,handler) {
+	thx_Arrays.eachPair(thx_Iterators.toArray(it),handler);
+};
+thx_Iterators.filter = function(it,predicate) {
+	return thx_Iterators.reduce(it,function(acc,element) {
+		if(predicate(element)) acc.push(element);
+		return acc;
+	},[]);
+};
+thx_Iterators.find = function(it,f) {
+	while( it.hasNext() ) {
+		var element = it.next();
+		if(f(element)) return element;
+	}
+	return null;
+};
+thx_Iterators.first = function(it) {
+	if(it.hasNext()) return it.next(); else return null;
+};
+thx_Iterators.hasElements = function(it) {
+	return it.hasNext();
+};
+thx_Iterators.indexOf = function(it,element) {
+	var pos = 0;
+	while( it.hasNext() ) {
+		var v = it.next();
+		if(element == v) return pos;
+		pos++;
+	}
+	return -1;
+};
+thx_Iterators.isEmpty = function(it) {
+	return !it.hasNext();
+};
+thx_Iterators.isIterator = function(v) {
+	var fields;
+	if(Reflect.isObject(v) && null == Type.getClass(v)) fields = Reflect.fields(v); else fields = Type.getInstanceFields(Type.getClass(v));
+	if(!Lambda.has(fields,"next") || !Lambda.has(fields,"hasNext")) return false;
+	return Reflect.isFunction(Reflect.field(v,"next")) && Reflect.isFunction(Reflect.field(v,"hasNext"));
+};
+thx_Iterators.last = function(it) {
+	var buf = null;
+	while(it.hasNext()) buf = it.next();
+	return buf;
+};
+thx_Iterators.map = function(it,f) {
+	var acc = [];
+	while( it.hasNext() ) {
+		var v = it.next();
+		acc.push(f(v));
+	}
+	return acc;
+};
+thx_Iterators.mapi = function(it,f) {
+	var acc = [];
+	var i = 0;
+	while( it.hasNext() ) {
+		var v = it.next();
+		acc.push(f(v,i++));
+	}
+	return acc;
+};
+thx_Iterators.order = function(it,sort) {
+	var n = thx_Iterators.toArray(it);
+	n.sort(sort);
+	return n;
+};
+thx_Iterators.reduce = function(it,callback,initial) {
+	thx_Iterators.map(it,function(v) {
+		initial = callback(initial,v);
+	});
+	return initial;
+};
+thx_Iterators.reducei = function(it,callback,initial) {
+	thx_Iterators.mapi(it,function(v,i) {
+		initial = callback(initial,v,i);
+	});
+	return initial;
+};
+thx_Iterators.toArray = function(it) {
+	var elements = [];
+	while( it.hasNext() ) {
+		var element = it.next();
+		elements.push(element);
+	}
+	return elements;
+};
+thx_Iterators.unzip = function(it) {
+	var a1 = [];
+	var a2 = [];
+	thx_Iterators.map(it,function(t) {
+		a1.push(t._0);
+		a2.push(t._1);
+	});
+	return { _0 : a1, _1 : a2};
+};
+thx_Iterators.unzip3 = function(it) {
+	var a1 = [];
+	var a2 = [];
+	var a3 = [];
+	thx_Iterators.map(it,function(t) {
+		a1.push(t._0);
+		a2.push(t._1);
+		a3.push(t._2);
+	});
+	return { _0 : a1, _1 : a2, _2 : a3};
+};
+thx_Iterators.unzip4 = function(it) {
+	var a1 = [];
+	var a2 = [];
+	var a3 = [];
+	var a4 = [];
+	thx_Iterators.map(it,function(t) {
+		a1.push(t._0);
+		a2.push(t._1);
+		a3.push(t._2);
+		a4.push(t._3);
+	});
+	return { _0 : a1, _1 : a2, _2 : a3, _3 : a4};
+};
+thx_Iterators.unzip5 = function(it) {
+	var a1 = [];
+	var a2 = [];
+	var a3 = [];
+	var a4 = [];
+	var a5 = [];
+	thx_Iterators.map(it,function(t) {
+		a1.push(t._0);
+		a2.push(t._1);
+		a3.push(t._2);
+		a4.push(t._3);
+		a5.push(t._4);
+	});
+	return { _0 : a1, _1 : a2, _2 : a3, _3 : a4, _4 : a5};
+};
+thx_Iterators.zip = function(it1,it2) {
+	var array = [];
+	while(it1.hasNext() && it2.hasNext()) array.push((function($this) {
+		var $r;
+		var _0 = it1.next();
+		var _1 = it2.next();
+		$r = { _0 : _0, _1 : _1};
+		return $r;
+	}(this)));
+	return array;
+};
+thx_Iterators.zip3 = function(it1,it2,it3) {
+	var array = [];
+	while(it1.hasNext() && it2.hasNext() && it3.hasNext()) array.push((function($this) {
+		var $r;
+		var _0 = it1.next();
+		var _1 = it2.next();
+		var _2 = it3.next();
+		$r = { _0 : _0, _1 : _1, _2 : _2};
+		return $r;
+	}(this)));
+	return array;
+};
+thx_Iterators.zip4 = function(it1,it2,it3,it4) {
+	var array = [];
+	while(it1.hasNext() && it2.hasNext() && it3.hasNext() && it4.hasNext()) array.push((function($this) {
+		var $r;
+		var _0 = it1.next();
+		var _1 = it2.next();
+		var _2 = it3.next();
+		var _3 = it4.next();
+		$r = { _0 : _0, _1 : _1, _2 : _2, _3 : _3};
+		return $r;
+	}(this)));
+	return array;
+};
+thx_Iterators.zip5 = function(it1,it2,it3,it4,it5) {
+	var array = [];
+	while(it1.hasNext() && it2.hasNext() && it3.hasNext() && it4.hasNext() && it5.hasNext()) array.push((function($this) {
+		var $r;
+		var _0 = it1.next();
+		var _1 = it2.next();
+		var _2 = it3.next();
+		var _3 = it4.next();
+		var _4 = it5.next();
+		$r = { _0 : _0, _1 : _1, _2 : _2, _3 : _3, _4 : _4};
+		return $r;
+	}(this)));
+	return array;
+};
+var thx_Maps = function() { };
+$hxClasses["thx.Maps"] = thx_Maps;
+thx_Maps.__name__ = ["thx","Maps"];
+thx_Maps.copyTo = function(src,dst) {
+	var $it0 = src.keys();
+	while( $it0.hasNext() ) {
+		var key = $it0.next();
+		dst.set(key,src.get(key));
+	}
+	return dst;
+};
+thx_Maps.tuples = function(map) {
+	return thx_Iterators.map(map.keys(),function(key) {
+		var _1 = map.get(key);
+		return { _0 : key, _1 : _1};
+	});
+};
+thx_Maps.mapValues = function(map,f,acc) {
+	return thx_Maps.reduce(map,function(m,t) {
+		var value = f(t._1);
+		m.set(t._0,value);
+		return m;
+	},acc);
+};
+thx_Maps.reduce = function(map,f,acc) {
+	return thx_Arrays.reduce(thx_Maps.tuples(map),f,acc);
+};
+thx_Maps.values = function(map) {
+	return thx_Iterators.map(map.keys(),function(key) {
+		return map.get(key);
+	});
+};
+thx_Maps.getOption = function(map,key) {
+	return thx_Options.ofValue(map.get(key));
+};
+thx_Maps.toObject = function(map) {
+	return thx_Arrays.reduce(thx_Maps.tuples(map),function(o,t) {
+		o[t._0] = t._1;
+		return o;
+	},{ });
+};
+thx_Maps.getAlt = function(map,key,alt) {
+	var v = map.get(key);
+	if(null == v) return alt; else return v;
+};
+thx_Maps.isMap = function(v) {
+	return js_Boot.__instanceof(v,haxe_IMap);
+};
+thx_Maps.string = function(m) {
+	return "[" + thx_Maps.tuples(m).map(function(t) {
+		return thx_Dynamics.string(t._0) + " => " + thx_Dynamics.string(t._1);
+	}).join(", ") + "]";
+};
+thx_Maps.merge = function(dest,sources) {
+	return sources.reduce(function(result,source) {
+		return thx_Iterators.reduce(source.keys(),function(result1,key) {
+			result1.set(key,source.get(key));
+			return result1;
+		},result);
+	},dest);
+};
+var thx__$Monoid_Monoid_$Impl_$ = {};
+$hxClasses["thx._Monoid.Monoid_Impl_"] = thx__$Monoid_Monoid_$Impl_$;
+thx__$Monoid_Monoid_$Impl_$.__name__ = ["thx","_Monoid","Monoid_Impl_"];
+thx__$Monoid_Monoid_$Impl_$.__properties__ = {get_zero:"get_zero",get_semigroup:"get_semigroup"}
+thx__$Monoid_Monoid_$Impl_$.get_semigroup = function(this1) {
+	return this1.append;
+};
+thx__$Monoid_Monoid_$Impl_$.get_zero = function(this1) {
+	return this1.zero;
+};
+thx__$Monoid_Monoid_$Impl_$.append = function(this1,a0,a1) {
+	return this1.append(a0,a1);
+};
+var thx__$Nel_Nel_$Impl_$ = {};
+$hxClasses["thx._Nel.Nel_Impl_"] = thx__$Nel_Nel_$Impl_$;
+thx__$Nel_Nel_$Impl_$.__name__ = ["thx","_Nel","Nel_Impl_"];
+thx__$Nel_Nel_$Impl_$.nel = function(hd,tl) {
+	{
+		var _g = thx__$Nel_Nel_$Impl_$.fromArray(tl);
+		switch(_g[1]) {
+		case 0:
+			var nel = _g[2];
+			return thx__$Nel_Nel_$Impl_$.cons(hd,nel);
+		case 1:
+			return thx__$Nel_Nel_$Impl_$.pure(hd);
+		}
+	}
+};
+thx__$Nel_Nel_$Impl_$.pure = function(a) {
+	return thx_NonEmptyList.Single(a);
+};
+thx__$Nel_Nel_$Impl_$.cons = function(a,nl) {
+	return thx_NonEmptyList.ConsNel(a,nl);
+};
+thx__$Nel_Nel_$Impl_$.fromArray = function(arr) {
+	if(arr.length == 0) return haxe_ds_Option.None; else {
+		var res = thx_NonEmptyList.Single(arr[arr.length - 1]);
+		var $it0 = thx_Ints.rangeIter(arr.length - 2,-1,-1);
+		while( $it0.hasNext() ) {
+			var i = $it0.next();
+			res = thx_NonEmptyList.ConsNel(arr[i],res);
+		}
+		return haxe_ds_Option.Some(res);
+	}
+};
+thx__$Nel_Nel_$Impl_$.map = function(this1,f) {
+	return thx__$Nel_Nel_$Impl_$.flatMap(this1,thx_Functions1.compose(thx__$Nel_Nel_$Impl_$.pure,f));
+};
+thx__$Nel_Nel_$Impl_$.flatMap = function(this1,f) {
+	switch(this1[1]) {
+	case 0:
+		var x = this1[2];
+		return f(x);
+	case 1:
+		var xs = this1[3];
+		var x1 = this1[2];
+		return thx__$Nel_Nel_$Impl_$.append(f(x1),thx__$Nel_Nel_$Impl_$.flatMap(xs,f));
+	}
+};
+thx__$Nel_Nel_$Impl_$.append = function(this1,nel) {
+	switch(this1[1]) {
+	case 0:
+		var x = this1[2];
+		return thx_NonEmptyList.ConsNel(x,nel);
+	case 1:
+		var xs = this1[3];
+		var x1 = this1[2];
+		return thx_NonEmptyList.ConsNel(x1,thx__$Nel_Nel_$Impl_$.append(xs,nel));
+	}
+};
+thx__$Nel_Nel_$Impl_$.toArray = function(this1) {
+	var go;
+	var go1 = null;
+	go1 = function(acc,xs) {
+		switch(xs[1]) {
+		case 0:
+			var x = xs[2];
+			return thx_Arrays.append(acc,x);
+		case 1:
+			var xs1 = xs[3];
+			var x1 = xs[2];
+			return go1(thx_Arrays.append(acc,x1),xs1);
+		}
+	};
+	go = go1;
+	return thx_Arrays.reversed(go([],this1));
+};
+thx__$Nel_Nel_$Impl_$.semigroup = function() {
+	return function(nl,nr) {
+		return thx__$Nel_Nel_$Impl_$.append(nl,nr);
+	};
+};
+var thx_NonEmptyList = $hxClasses["thx.NonEmptyList"] = { __ename__ : ["thx","NonEmptyList"], __constructs__ : ["Single","ConsNel"] };
+thx_NonEmptyList.Single = function(x) { var $x = ["Single",0,x]; $x.__enum__ = thx_NonEmptyList; $x.toString = $estr; return $x; };
+thx_NonEmptyList.ConsNel = function(x,xs) { var $x = ["ConsNel",1,x,xs]; $x.__enum__ = thx_NonEmptyList; $x.toString = $estr; return $x; };
+var thx_Nil = $hxClasses["thx.Nil"] = { __ename__ : ["thx","Nil"], __constructs__ : ["nil"] };
+thx_Nil.nil = ["nil",0];
+thx_Nil.nil.toString = $estr;
+thx_Nil.nil.__enum__ = thx_Nil;
+var thx_Objects = function() { };
+$hxClasses["thx.Objects"] = thx_Objects;
+thx_Objects.__name__ = ["thx","Objects"];
+thx_Objects.compare = function(a,b) {
+	var v;
+	var fields;
+	if((v = thx_Arrays.compare(fields = Reflect.fields(a),Reflect.fields(b))) != 0) return v;
+	var _g = 0;
+	while(_g < fields.length) {
+		var field = fields[_g];
+		++_g;
+		if((v = thx_Dynamics.compare(Reflect.field(a,field),Reflect.field(b,field))) != 0) return v;
+	}
+	return 0;
+};
+thx_Objects.isEmpty = function(o) {
+	return Reflect.fields(o).length == 0;
+};
+thx_Objects.exists = function(o,name) {
+	return Object.prototype.hasOwnProperty.call(o,name);
+};
+thx_Objects.fields = function(o) {
+	return Reflect.fields(o);
+};
+thx_Objects.combine = function(first,second) {
+	var to = { };
+	var _g = 0;
+	var _g1 = Reflect.fields(first);
+	while(_g < _g1.length) {
+		var field = _g1[_g];
+		++_g;
+		Reflect.setField(to,field,Reflect.field(first,field));
+	}
+	var _g2 = 0;
+	var _g11 = Reflect.fields(second);
+	while(_g2 < _g11.length) {
+		var field1 = _g11[_g2];
+		++_g2;
+		Reflect.setField(to,field1,Reflect.field(second,field1));
+	}
+	return to;
+};
+thx_Objects.assign = function(to,from,replacef) {
+	if(null == replacef) replacef = function(field,oldv,newv) {
+		return newv;
+	};
+	var _g = 0;
+	var _g1 = Reflect.fields(from);
+	while(_g < _g1.length) {
+		var field1 = _g1[_g];
+		++_g;
+		var newv1 = Reflect.field(from,field1);
+		if(Object.prototype.hasOwnProperty.call(to,field1)) Reflect.setField(to,field1,replacef(field1,Reflect.field(to,field1),newv1)); else to[field1] = newv1;
+	}
+	return to;
+};
+thx_Objects.copyTo = function(src,dst,cloneInstances) {
+	if(cloneInstances == null) cloneInstances = false;
+	var _g = 0;
+	var _g1 = Reflect.fields(src);
+	while(_g < _g1.length) {
+		var field = _g1[_g];
+		++_g;
+		var sv = thx_Dynamics.clone(Reflect.field(src,field),cloneInstances);
+		var dv = Reflect.field(dst,field);
+		if(Reflect.isObject(sv) && null == Type.getClass(sv) && (Reflect.isObject(dv) && null == Type.getClass(dv))) thx_Objects.copyTo(sv,dv); else dst[field] = sv;
+	}
+	return dst;
+};
+thx_Objects.clone = function(src,cloneInstances) {
+	if(cloneInstances == null) cloneInstances = false;
+	return thx_Dynamics.clone(src,cloneInstances);
+};
+thx_Objects.toMap = function(o) {
+	return thx_Arrays.reduce(thx_Objects.tuples(o),function(map,t) {
+		var value = t._1;
+		map.set(t._0,value);
+		return map;
+	},new haxe_ds_StringMap());
+};
+thx_Objects.size = function(o) {
+	return Reflect.fields(o).length;
+};
+thx_Objects.string = function(o) {
+	return "{" + Reflect.fields(o).map(function(key) {
+		var v = Reflect.field(o,key);
+		var s;
+		if(typeof(v) == "string") s = thx_Strings.quote(v); else s = thx_Dynamics.string(v);
+		return "" + key + " : " + s;
+	}).join(", ") + "}";
+};
+thx_Objects.stringImpl = function(o,cache) {
+};
+thx_Objects.values = function(o) {
+	return Reflect.fields(o).map(function(key) {
+		return Reflect.field(o,key);
+	});
+};
+thx_Objects.tuples = function(o) {
+	return Reflect.fields(o).map(function(key) {
+		var _1 = Reflect.field(o,key);
+		return { _0 : key, _1 : _1};
+	});
+};
+thx_Objects.hasPath = function(o,path) {
+	var paths = path.split(".");
+	var current = o;
+	var _g = 0;
+	while(_g < paths.length) {
+		var currentPath = paths[_g];
+		++_g;
+		if(thx_Strings.DIGITS.match(currentPath)) {
+			var index = Std.parseInt(currentPath);
+			var arr = Std.instance(current,Array);
+			if(null == arr || arr.length <= index) return false;
+			current = arr[index];
+		} else if(Object.prototype.hasOwnProperty.call(current,currentPath)) current = Reflect.field(current,currentPath); else return false;
+	}
+	return true;
+};
+thx_Objects.hasPathValue = function(o,path) {
+	return thx_Objects.getPath(o,path) != null;
+};
+thx_Objects.getPath = function(o,path) {
+	var paths = path.split(".");
+	var current = o;
+	var _g = 0;
+	while(_g < paths.length) {
+		var currentPath = paths[_g];
+		++_g;
+		if(thx_Strings.DIGITS.match(currentPath)) {
+			var index = Std.parseInt(currentPath);
+			var arr = Std.instance(current,Array);
+			if(null == arr) return null;
+			current = arr[index];
+		} else if(Object.prototype.hasOwnProperty.call(current,currentPath)) current = Reflect.field(current,currentPath); else return null;
+	}
+	return current;
+};
+thx_Objects.getPathOr = function(o,path,alt) {
+	var paths = path.split(".");
+	var current = o;
+	var _g = 0;
+	while(_g < paths.length) {
+		var currentPath = paths[_g];
+		++_g;
+		if(thx_Strings.DIGITS.match(currentPath)) {
+			var index = Std.parseInt(currentPath);
+			var arr = Std.instance(current,Array);
+			if(null == arr) return null;
+			current = arr[index];
+		} else if(Object.prototype.hasOwnProperty.call(current,currentPath)) current = Reflect.field(current,currentPath); else return alt;
+	}
+	return current;
+};
+thx_Objects.setPath = function(o,path,val) {
+	var paths = path.split(".");
+	var current = o;
+	var _g1 = 0;
+	var _g = paths.length - 1;
+	while(_g1 < _g) {
+		var i = _g1++;
+		var currentPath = paths[i];
+		var nextPath = paths[i + 1];
+		if(thx_Strings.DIGITS.match(currentPath) || currentPath == "*") {
+			var index;
+			if(currentPath == "*") index = current.length; else index = Std.parseInt(currentPath);
+			if(current[index] == null) {
+				if(thx_Strings.DIGITS.match(nextPath) || nextPath == "*") current[index] = []; else current[index] = { };
+			}
+			current = current[index];
+		} else {
+			if(!Object.prototype.hasOwnProperty.call(current,currentPath)) {
+				if(thx_Strings.DIGITS.match(nextPath) || nextPath == "*") current[currentPath] = []; else current[currentPath] = { };
+			}
+			current = Reflect.field(current,currentPath);
+		}
+	}
+	var p = paths[paths.length - 1];
+	if(thx_Strings.DIGITS.match(p)) {
+		var index1 = Std.parseInt(p);
+		current[index1] = val;
+	} else if(p == "*") current.push(val); else current[p] = val;
+	return o;
+};
+thx_Objects.removePath = function(o,path) {
+	var paths = path.split(".");
+	var target = paths.pop();
+	try {
+		var sub = paths.reduce(function(existing,nextPath) {
+			if(nextPath == "*") return existing.pop(); else if(thx_Strings.DIGITS.match(nextPath)) {
+				var current = existing;
+				var index = Std.parseInt(nextPath);
+				return current[index];
+			} else return Reflect.field(existing,nextPath);
+		},o);
+		if(null != sub) Reflect.deleteField(sub,target);
+	} catch( e ) {
+		haxe_CallStack.lastException = e;
+		if (e instanceof js__$Boot_HaxeError) e = e.val;
+	}
+	return o;
+};
+var thx_Options = function() { };
+$hxClasses["thx.Options"] = thx_Options;
+thx_Options.__name__ = ["thx","Options"];
+thx_Options.ofValue = function(value) {
+	if(null == value) return haxe_ds_Option.None; else return haxe_ds_Option.Some(value);
+};
+thx_Options.equals = function(a,b,eq) {
+	switch(a[1]) {
+	case 1:
+		switch(b[1]) {
+		case 1:
+			return true;
+		default:
+			return false;
+		}
+		break;
+	case 0:
+		switch(b[1]) {
+		case 0:
+			var a1 = a[2];
+			var b1 = b[2];
+			if(null == eq) eq = function(a2,b2) {
+				return a2 == b2;
+			};
+			return eq(a1,b1);
+		default:
+			return false;
+		}
+		break;
+	}
+};
+thx_Options.equalsValue = function(a,b,eq) {
+	return thx_Options.equals(a,null == b?haxe_ds_Option.None:haxe_ds_Option.Some(b),eq);
+};
+thx_Options.map = function(option,callback) {
+	switch(option[1]) {
+	case 1:
+		return haxe_ds_Option.None;
+	case 0:
+		var v = option[2];
+		return haxe_ds_Option.Some(callback(v));
+	}
+};
+thx_Options.ap = function(option,fopt) {
+	switch(option[1]) {
+	case 1:
+		return haxe_ds_Option.None;
+	case 0:
+		var v = option[2];
+		return thx_Options.map(fopt,function(f) {
+			return f(v);
+		});
+	}
+};
+thx_Options.flatMap = function(option,callback) {
+	switch(option[1]) {
+	case 1:
+		return haxe_ds_Option.None;
+	case 0:
+		var v = option[2];
+		return callback(v);
+	}
+};
+thx_Options.join = function(option) {
+	return thx_Options.flatMap(option,thx_Functions.identity);
+};
+thx_Options.foldLeft = function(option,b,f) {
+	switch(option[1]) {
+	case 1:
+		return b;
+	case 0:
+		var v = option[2];
+		return f(b,v);
+	}
+};
+thx_Options.toArray = function(option) {
+	switch(option[1]) {
+	case 1:
+		return [];
+	case 0:
+		var v = option[2];
+		return [v];
+	}
+};
+thx_Options.toBool = function(option) {
+	switch(option[1]) {
+	case 1:
+		return false;
+	case 0:
+		return true;
+	}
+};
+thx_Options.toOption = function(value) {
+	if(null == value) return haxe_ds_Option.None; else return haxe_ds_Option.Some(value);
+};
+thx_Options.get = function(option) {
+	switch(option[1]) {
+	case 1:
+		return null;
+	case 0:
+		var v = option[2];
+		return v;
+	}
+};
+thx_Options.getOrElse = function(option,alt) {
+	switch(option[1]) {
+	case 1:
+		return alt;
+	case 0:
+		var v = option[2];
+		return v;
+	}
+};
+thx_Options.orElse = function(option,alt) {
+	switch(option[1]) {
+	case 1:
+		return alt;
+	case 0:
+		return option;
+	}
+};
+thx_Options.all = function(option,f) {
+	switch(option[1]) {
+	case 1:
+		return true;
+	case 0:
+		var v = option[2];
+		return f(v);
+	}
+};
+thx_Options.any = function(option,f) {
+	switch(option[1]) {
+	case 1:
+		return false;
+	case 0:
+		var v = option[2];
+		return f(v);
+	}
+};
+thx_Options.toSuccess = function(option,error) {
+	switch(option[1]) {
+	case 1:
+		return thx_Either.Left(error);
+	case 0:
+		var v = option[2];
+		return thx_Either.Right(v);
+	}
+};
+thx_Options.toSuccessNel = function(option,error) {
+	switch(option[1]) {
+	case 1:
+		return thx_Either.Left(thx__$Nel_Nel_$Impl_$.pure(error));
+	case 0:
+		var v = option[2];
+		return thx_Either.Right(v);
+	}
+};
+thx_Options.ap2 = function(f,v1,v2) {
+	return thx_Options.ap(v2,thx_Options.map(v1,thx_Functions2.curry(f)));
+};
+thx_Options.ap3 = function(f,v1,v2,v3) {
+	return thx_Options.ap(v3,thx_Options.ap2(thx_Functions3.curry(f),v1,v2));
+};
+thx_Options.ap4 = function(f,v1,v2,v3,v4) {
+	return thx_Options.ap(v4,thx_Options.ap3(thx_Functions4.curry(f),v1,v2,v3));
+};
+thx_Options.ap5 = function(f,v1,v2,v3,v4,v5) {
+	return thx_Options.ap(v5,thx_Options.ap4(thx_Functions5.curry(f),v1,v2,v3,v4));
+};
+thx_Options.ap6 = function(f,v1,v2,v3,v4,v5,v6) {
+	return thx_Options.ap(v6,thx_Options.ap5(thx_Functions6.curry(f),v1,v2,v3,v4,v5));
+};
+thx_Options.ap7 = function(f,v1,v2,v3,v4,v5,v6,v7) {
+	return thx_Options.ap(v7,thx_Options.ap6(thx_Functions7.curry(f),v1,v2,v3,v4,v5,v6));
+};
+thx_Options.ap8 = function(f,v1,v2,v3,v4,v5,v6,v7,v8) {
+	return thx_Options.ap(v8,thx_Options.ap7(thx_Functions8.curry(f),v1,v2,v3,v4,v5,v6,v7));
+};
+var thx__$Ord_Ordering_$Impl_$ = {};
+$hxClasses["thx._Ord.Ordering_Impl_"] = thx__$Ord_Ordering_$Impl_$;
+thx__$Ord_Ordering_$Impl_$.__name__ = ["thx","_Ord","Ordering_Impl_"];
+thx__$Ord_Ordering_$Impl_$.fromInt = function(value) {
+	if(value < 0) return thx_OrderingImpl.LT; else if(value > 0) return thx_OrderingImpl.GT; else return thx_OrderingImpl.EQ;
+};
+thx__$Ord_Ordering_$Impl_$.fromFloat = function(value) {
+	if(value < 0) return thx_OrderingImpl.LT; else if(value > 0) return thx_OrderingImpl.GT; else return thx_OrderingImpl.EQ;
+};
+thx__$Ord_Ordering_$Impl_$.toInt = function(this1) {
+	switch(this1[1]) {
+	case 0:
+		return -1;
+	case 1:
+		return 1;
+	case 2:
+		return 0;
+	}
+};
+var thx__$Ord_Ord_$Impl_$ = {};
+$hxClasses["thx._Ord.Ord_Impl_"] = thx__$Ord_Ord_$Impl_$;
+thx__$Ord_Ord_$Impl_$.__name__ = ["thx","_Ord","Ord_Impl_"];
+thx__$Ord_Ord_$Impl_$.fromIntComparison = function(f) {
+	return function(a,b) {
+		return thx__$Ord_Ordering_$Impl_$.fromInt(f(a,b));
+	};
+};
+thx__$Ord_Ord_$Impl_$.order = function(this1,a0,a1) {
+	return this1(a0,a1);
+};
+thx__$Ord_Ord_$Impl_$.contramap = function(this1,f) {
+	return function(b0,b1) {
+		return this1(f(b0),f(b1));
+	};
+};
+thx__$Ord_Ord_$Impl_$.inverse = function(this1) {
+	return function(a0,a1) {
+		return this1(a1,a0);
+	};
+};
+thx__$Ord_Ord_$Impl_$.fromCompare = function(f) {
+	return function(a0,a1) {
+		var i = f(a0,a1);
+		if(i < 0) return thx_OrderingImpl.LT; else if(i == 0) return thx_OrderingImpl.EQ; else return thx_OrderingImpl.GT;
+	};
+};
+var thx__$ReadonlyArray_ReadonlyArray_$Impl_$ = {};
+$hxClasses["thx._ReadonlyArray.ReadonlyArray_Impl_"] = thx__$ReadonlyArray_ReadonlyArray_$Impl_$;
+thx__$ReadonlyArray_ReadonlyArray_$Impl_$.__name__ = ["thx","_ReadonlyArray","ReadonlyArray_Impl_"];
+thx__$ReadonlyArray_ReadonlyArray_$Impl_$.empty = function() {
+	return [];
+};
+thx__$ReadonlyArray_ReadonlyArray_$Impl_$.get = function(this1,index) {
+	return this1[index];
+};
+thx__$ReadonlyArray_ReadonlyArray_$Impl_$.toArray = function(this1) {
+	return this1.slice();
+};
+thx__$ReadonlyArray_ReadonlyArray_$Impl_$.unsafe = function(this1) {
+	return this1;
+};
+var thx__$Semigroup_Semigroup_$Impl_$ = {};
+$hxClasses["thx._Semigroup.Semigroup_Impl_"] = thx__$Semigroup_Semigroup_$Impl_$;
+thx__$Semigroup_Semigroup_$Impl_$.__name__ = ["thx","_Semigroup","Semigroup_Impl_"];
+thx__$Semigroup_Semigroup_$Impl_$.__properties__ = {get_append:"get_append"}
+thx__$Semigroup_Semigroup_$Impl_$.get_append = function(this1) {
+	return this1;
+};
+var thx_Strings = function() { };
+$hxClasses["thx.Strings"] = thx_Strings;
+thx_Strings.__name__ = ["thx","Strings"];
+thx_Strings.after = function(value,searchFor) {
+	var pos = value.indexOf(searchFor);
+	if(pos < 0) return ""; else return value.substring(pos + searchFor.length);
+};
+thx_Strings.afterLast = function(value,searchFor) {
+	var pos = value.lastIndexOf(searchFor);
+	if(pos < 0) return ""; else return value.substring(pos + searchFor.length);
+};
+thx_Strings.capitalize = function(s) {
+	return HxOverrides.substr(s,0,1).toUpperCase() + HxOverrides.substr(s,1,s.length - 1);
+};
+thx_Strings.capitalizeWords = function(value,whiteSpaceOnly) {
+	if(whiteSpaceOnly == null) whiteSpaceOnly = false;
+	if(whiteSpaceOnly) return thx_Strings.UCWORDSWS.map(HxOverrides.substr(value,0,1).toUpperCase() + HxOverrides.substr(value,1,value.length - 1),thx_Strings.upperMatch); else return thx_Strings.UCWORDS.map(HxOverrides.substr(value,0,1).toUpperCase() + HxOverrides.substr(value,1,value.length - 1),thx_Strings.upperMatch);
+};
+thx_Strings.canonicalizeNewlines = function(value) {
+	return thx_Strings.CANONICALIZE_LINES.replace(value,"\n");
+};
+thx_Strings.caseInsensitiveCompare = function(a,b) {
+	return thx_Strings.compare(a.toLowerCase(),b.toLowerCase());
+};
+thx_Strings.caseInsensitiveEndsWith = function(s,end) {
+	return StringTools.endsWith(s.toLowerCase(),end.toLowerCase());
+};
+thx_Strings.caseInsensitiveEndsWithAny = function(s,values) {
+	return thx_Strings.endsWithAny(s.toLowerCase(),values.map(function(v) {
+		return v.toLowerCase();
+	}));
+};
+thx_Strings.caseInsensitiveStartsWith = function(s,start) {
+	return StringTools.startsWith(s.toLowerCase(),start.toLowerCase());
+};
+thx_Strings.caseInsensitiveStartsWithAny = function(s,values) {
+	return thx_Strings.startsWithAny(s.toLowerCase(),values.map(function(v) {
+		return v.toLowerCase();
+	}));
+};
+thx_Strings.collapse = function(value) {
+	return thx_Strings.WSG.replace(StringTools.trim(value)," ");
+};
+thx_Strings.compare = function(a,b) {
+	return haxe_Utf8.compare(a,b);
+};
+thx_Strings.contains = function(s,test) {
+	return s.indexOf(test) >= 0;
+};
+thx_Strings.count = function(s,test) {
+	return s.split(test).length - 1;
+};
+thx_Strings.containsAny = function(s,tests) {
+	return thx_Arrays.any(tests,(function(f,s1) {
+		return function(a1) {
+			return f(s1,a1);
+		};
+	})(thx_Strings.contains,s));
+};
+thx_Strings.dasherize = function(s) {
+	return StringTools.replace(s,"_","-");
+};
+thx_Strings.diffAt = function(a,b) {
+	var min = thx_Ints.min(a.length,b.length);
+	var _g = 0;
+	while(_g < min) {
+		var i = _g++;
+		if(a.substring(i,i + 1) != b.substring(i,i + 1)) return i;
+	}
+	return min;
+};
+thx_Strings.ellipsis = function(s,maxlen,symbol) {
+	if(symbol == null) symbol = "…";
+	if(maxlen == null) maxlen = 20;
+	var sl = s.length;
+	var symboll = symbol.length;
+	if(sl > maxlen) {
+		if(maxlen < symboll) return HxOverrides.substr(symbol,symboll - maxlen,maxlen); else return HxOverrides.substr(s,0,maxlen - symboll) + symbol;
+	} else return s;
+};
+thx_Strings.ellipsisMiddle = function(s,maxlen,symbol) {
+	if(symbol == null) symbol = "…";
+	if(maxlen == null) maxlen = 20;
+	var sl = s.length;
+	var symboll = symbol.length;
+	if(sl > maxlen) {
+		if(maxlen <= symboll) return thx_Strings.ellipsis(s,maxlen,symbol);
+		var hll = Math.ceil((maxlen - symboll) / 2);
+		var hlr = Math.floor((maxlen - symboll) / 2);
+		return HxOverrides.substr(s,0,hll) + symbol + HxOverrides.substr(s,sl - hlr,hlr);
+	} else return s;
+};
+thx_Strings.endsWithAny = function(s,values) {
+	return thx_Iterables.any(values,function(end) {
+		return StringTools.endsWith(s,end);
+	});
+};
+thx_Strings.filter = function(s,predicate) {
+	return s.split("").filter(predicate).join("");
+};
+thx_Strings.filterCharcode = function(s,predicate) {
+	return thx_Strings.toCharcodes(s).filter(predicate).map(function(i) {
+		return String.fromCharCode(i);
+	}).join("");
+};
+thx_Strings.from = function(value,searchFor) {
+	var pos = value.indexOf(searchFor);
+	if(pos < 0) return ""; else return value.substring(pos);
+};
+thx_Strings.hashCode = function(value) {
+	var code = 0;
+	var _g1 = 0;
+	var _g = value.length;
+	while(_g1 < _g) {
+		var i = _g1++;
+		var c = HxOverrides.cca(value,i);
+		code = (function($this) {
+			var $r;
+			var a = haxe__$Int32_Int32_$Impl_$.mul(thx_Strings.HASCODE_MUL,code);
+			$r = a + c | 0;
+			return $r;
+		}(this)) % thx_Strings.HASCODE_MAX;
+	}
+	return code;
+};
+thx_Strings.hasContent = function(value) {
+	return value != null && value.length > 0;
+};
+thx_Strings.humanize = function(s) {
+	return StringTools.replace(thx_Strings.underscore(s),"_"," ");
+};
+thx_Strings.isAlpha = function(s) {
+	return s.length > 0 && !thx_Strings.IS_ALPHA.match(s);
+};
+thx_Strings.isAlphaNum = function(value) {
+	return thx_Strings.ALPHANUM.match(value);
+};
+thx_Strings.isBreakingWhitespace = function(value) {
+	return !thx_Strings.IS_BREAKINGWHITESPACE.match(value);
+};
+thx_Strings.isLowerCase = function(value) {
+	return value.toLowerCase() == value;
+};
+thx_Strings.isUpperCase = function(value) {
+	return value.toUpperCase() == value;
+};
+thx_Strings.ifEmpty = function(value,alt) {
+	if(null != value && "" != value) return value; else return alt;
+};
+thx_Strings.isDigitsOnly = function(value) {
+	return thx_Strings.DIGITS.match(value);
+};
+thx_Strings.isEmpty = function(value) {
+	return value == null || value == "";
+};
+thx_Strings.lowerCaseFirst = function(value) {
+	return value.substring(0,1).toLowerCase() + value.substring(1);
+};
+thx_Strings.random = function(value,length) {
+	if(length == null) length = 1;
+	return haxe_Utf8.sub(value,Math.floor((value.length - length + 1) * Math.random()),length);
+};
+thx_Strings.randomSequence = function(seed,length) {
+	return thx_Ints.range(0,length).map(function(_) {
+		return thx_Strings.random(seed);
+	}).join("");
+};
+thx_Strings.randomSequence64 = function(length) {
+	return thx_Strings.randomSequence(haxe_crypto_Base64.CHARS,length);
+};
+thx_Strings.iterator = function(s) {
+	var _this = s.split("");
+	return HxOverrides.iter(_this);
+};
+thx_Strings.map = function(value,callback) {
+	return value.split("").map(callback);
+};
+thx_Strings.remove = function(value,toremove) {
+	return StringTools.replace(value,toremove,"");
+};
+thx_Strings.removeAfter = function(value,toremove) {
+	if(StringTools.endsWith(value,toremove)) return value.substring(0,value.length - toremove.length); else return value;
+};
+thx_Strings.removeAt = function(value,index,length) {
+	return value.substring(0,index) + value.substring(index + length);
+};
+thx_Strings.removeBefore = function(value,toremove) {
+	if(StringTools.startsWith(value,toremove)) return value.substring(toremove.length); else return value;
+};
+thx_Strings.removeOne = function(value,toremove) {
+	var pos = value.indexOf(toremove);
+	if(pos < 0) return value;
+	return value.substring(0,pos) + value.substring(pos + toremove.length);
+};
+thx_Strings.repeat = function(s,times) {
+	return ((function($this) {
+		var $r;
+		var _g = [];
+		{
+			var _g1 = 0;
+			while(_g1 < times) {
+				var i = _g1++;
+				_g.push(s);
+			}
+		}
+		$r = _g;
+		return $r;
+	}(this))).join("");
+};
+thx_Strings.reverse = function(s) {
+	var arr = s.split("");
+	arr.reverse();
+	return arr.join("");
+};
+thx_Strings.quote = function(s) {
+	if(s.indexOf("\"") < 0) return "\"" + s + "\""; else if(s.indexOf("'") < 0) return "'" + s + "'"; else return "\"" + StringTools.replace(s,"\"","\\\"") + "\"";
+};
+thx_Strings.splitOnce = function(s,separator) {
+	var pos = s.indexOf(separator);
+	if(pos < 0) return [s];
+	return [s.substring(0,pos),s.substring(pos + separator.length)];
+};
+thx_Strings.startsWithAny = function(s,values) {
+	return thx_Iterables.any(values,function(start) {
+		return StringTools.startsWith(s,start);
+	});
+};
+thx_Strings.stripTags = function(s) {
+	return thx_Strings.STRIPTAGS.replace(s,"");
+};
+thx_Strings.surround = function(s,left,right) {
+	return "" + left + s + (null == right?left:right);
+};
+thx_Strings.toArray = function(s) {
+	return s.split("");
+};
+thx_Strings.toCharcodes = function(s) {
+	return thx_Strings.map(s,function(s1) {
+		return HxOverrides.cca(s1,0);
+	});
+};
+thx_Strings.toChunks = function(s,len) {
+	var chunks = [];
+	while(s.length > 0) {
+		chunks.push(HxOverrides.substr(s,0,len));
+		s = HxOverrides.substr(s,len,s.length - len);
+	}
+	return chunks;
+};
+thx_Strings.toLines = function(s) {
+	return thx_Strings.SPLIT_LINES.split(s);
+};
+thx_Strings.trimChars = function(value,charlist) {
+	return thx_Strings.trimCharsRight(thx_Strings.trimCharsLeft(value,charlist),charlist);
+};
+thx_Strings.trimCharsLeft = function(value,charlist) {
+	var pos = 0;
+	var _g1 = 0;
+	var _g = value.length;
+	while(_g1 < _g) {
+		var i = _g1++;
+		if(thx_Strings.contains(charlist,value.charAt(i))) pos++; else break;
+	}
+	return value.substring(pos);
+};
+thx_Strings.trimCharsRight = function(value,charlist) {
+	var len = value.length;
+	var pos = len;
+	var i;
+	var _g = 0;
+	while(_g < len) {
+		var j = _g++;
+		i = len - j - 1;
+		if(thx_Strings.contains(charlist,value.charAt(i))) pos = i; else break;
+	}
+	return value.substring(0,pos);
+};
+thx_Strings.underscore = function(s) {
+	s = new EReg("::","g").replace(s,"/");
+	s = new EReg("([A-Z]+)([A-Z][a-z])","g").replace(s,"$1_$2");
+	s = new EReg("([a-z\\d])([A-Z])","g").replace(s,"$1_$2");
+	s = new EReg("-","g").replace(s,"_");
+	return s.toLowerCase();
+};
+thx_Strings.upperCaseFirst = function(value) {
+	return value.substring(0,1).toUpperCase() + value.substring(1);
+};
+thx_Strings.upTo = function(value,searchFor) {
+	var pos = value.indexOf(searchFor);
+	if(pos < 0) return value; else return value.substring(0,pos);
+};
+thx_Strings.wrapColumns = function(s,columns,indent,newline) {
+	if(newline == null) newline = "\n";
+	if(indent == null) indent = "";
+	if(columns == null) columns = 78;
+	return thx_Strings.SPLIT_LINES.split(s).map(function(part) {
+		return thx_Strings.wrapLine(StringTools.trim(thx_Strings.WSG.replace(part," ")),columns,indent,newline);
+	}).join(newline);
+};
+thx_Strings.upperMatch = function(re) {
+	return re.matched(0).toUpperCase();
+};
+thx_Strings.wrapLine = function(s,columns,indent,newline) {
+	var parts = [];
+	var pos = 0;
+	var len = s.length;
+	var ilen = indent.length;
+	columns -= ilen;
+	while(true) {
+		if(pos + columns >= len - ilen) {
+			parts.push(s.substring(pos));
+			break;
+		}
+		var i = 0;
+		while(!StringTools.isSpace(s,pos + columns - i) && i < columns) i++;
+		if(i == columns) {
+			i = 0;
+			while(!StringTools.isSpace(s,pos + columns + i) && pos + columns + i < len) i++;
+			parts.push(s.substring(pos,pos + columns + i));
+			pos += columns + i + 1;
+		} else {
+			parts.push(s.substring(pos,pos + columns - i));
+			pos += columns - i + 1;
+		}
+	}
+	return indent + parts.join(newline + indent);
+};
+thx_Strings.lpad = function(s,$char,length) {
+	var diff = length - s.length;
+	if(diff > 0) return thx_Strings.repeat($char,diff) + s; else return s;
+};
+thx_Strings.rpad = function(s,$char,length) {
+	var diff = length - s.length;
+	if(diff > 0) return s + thx_Strings.repeat($char,diff); else return s;
+};
+var thx_TimePeriod = $hxClasses["thx.TimePeriod"] = { __ename__ : ["thx","TimePeriod"], __constructs__ : ["Second","Minute","Hour","Day","Week","Month","Year"] };
+thx_TimePeriod.Second = ["Second",0];
+thx_TimePeriod.Second.toString = $estr;
+thx_TimePeriod.Second.__enum__ = thx_TimePeriod;
+thx_TimePeriod.Minute = ["Minute",1];
+thx_TimePeriod.Minute.toString = $estr;
+thx_TimePeriod.Minute.__enum__ = thx_TimePeriod;
+thx_TimePeriod.Hour = ["Hour",2];
+thx_TimePeriod.Hour.toString = $estr;
+thx_TimePeriod.Hour.__enum__ = thx_TimePeriod;
+thx_TimePeriod.Day = ["Day",3];
+thx_TimePeriod.Day.toString = $estr;
+thx_TimePeriod.Day.__enum__ = thx_TimePeriod;
+thx_TimePeriod.Week = ["Week",4];
+thx_TimePeriod.Week.toString = $estr;
+thx_TimePeriod.Week.__enum__ = thx_TimePeriod;
+thx_TimePeriod.Month = ["Month",5];
+thx_TimePeriod.Month.toString = $estr;
+thx_TimePeriod.Month.__enum__ = thx_TimePeriod;
+thx_TimePeriod.Year = ["Year",6];
+thx_TimePeriod.Year.toString = $estr;
+thx_TimePeriod.Year.__enum__ = thx_TimePeriod;
+var thx__$Timestamp_Timestamp_$Impl_$ = {};
+$hxClasses["thx._Timestamp.Timestamp_Impl_"] = thx__$Timestamp_Timestamp_$Impl_$;
+thx__$Timestamp_Timestamp_$Impl_$.__name__ = ["thx","_Timestamp","Timestamp_Impl_"];
+thx__$Timestamp_Timestamp_$Impl_$.create = function(year,month,day,hour,minute,second) {
+	return thx_Dates.create(year,month,day,hour,minute,second).getTime();
+};
+thx__$Timestamp_Timestamp_$Impl_$.now = function() {
+	var d = new Date();
+	return d.getTime();
+};
+thx__$Timestamp_Timestamp_$Impl_$.fromDate = function(d) {
+	return d.getTime();
+};
+thx__$Timestamp_Timestamp_$Impl_$.fromString = function(s) {
+	return HxOverrides.strDate(s).getTime();
+};
+thx__$Timestamp_Timestamp_$Impl_$.toDate = function(this1) {
+	var d = new Date();
+	d.setTime(this1);
+	return d;
+};
+thx__$Timestamp_Timestamp_$Impl_$.toString = function(this1) {
+	var _this;
+	var d = new Date();
+	d.setTime(this1);
+	_this = d;
+	return HxOverrides.dateStr(_this);
+};
+thx__$Timestamp_Timestamp_$Impl_$.snapNext = function(this1,period) {
+	switch(period[1]) {
+	case 0:
+		return Math.ceil(this1 / 1000.0) * 1000.0;
+	case 1:
+		return Math.ceil(this1 / 60000.0) * 60000.0;
+	case 2:
+		return Math.ceil(this1 / 3600000.0) * 3600000.0;
+	case 3:
+		var d;
+		var d1 = new Date();
+		d1.setTime(this1);
+		d = d1;
+		var year = d.getFullYear();
+		var month = d.getMonth();
+		var day = d.getDate() + 1;
+		return thx_Dates.create(year,month,day,0,0,0).getTime();
+	case 4:
+		var d2;
+		var d3 = new Date();
+		d3.setTime(this1);
+		d2 = d3;
+		var wd = d2.getDay();
+		var year1 = d2.getFullYear();
+		var month1 = d2.getMonth();
+		var day1 = d2.getDate() + 7 - wd;
+		return thx_Dates.create(year1,month1,day1,0,0,0).getTime();
+	case 5:
+		var d4;
+		var d5 = new Date();
+		d5.setTime(this1);
+		d4 = d5;
+		var year2 = d4.getFullYear();
+		var month2 = d4.getMonth() + 1;
+		return thx_Dates.create(year2,month2,1,0,0,0).getTime();
+	case 6:
+		var d6;
+		var d7 = new Date();
+		d7.setTime(this1);
+		d6 = d7;
+		var year3 = d6.getFullYear() + 1;
+		return thx_Dates.create(year3,0,1,0,0,0).getTime();
+	}
+};
+thx__$Timestamp_Timestamp_$Impl_$.snapPrev = function(this1,period) {
+	switch(period[1]) {
+	case 0:
+		return Math.floor(this1 / 1000.0) * 1000.0;
+	case 1:
+		return Math.floor(this1 / 60000.0) * 60000.0;
+	case 2:
+		return Math.floor(this1 / 3600000.0) * 3600000.0;
+	case 3:
+		var d;
+		var d1 = new Date();
+		d1.setTime(this1);
+		d = d1;
+		var year = d.getFullYear();
+		var month = d.getMonth();
+		var day = d.getDate();
+		return thx_Dates.create(year,month,day,0,0,0).getTime();
+	case 4:
+		var d2;
+		var d3 = new Date();
+		d3.setTime(this1);
+		d2 = d3;
+		var wd = d2.getDay();
+		var year1 = d2.getFullYear();
+		var month1 = d2.getMonth();
+		var day1 = d2.getDate() - wd;
+		return thx_Dates.create(year1,month1,day1,0,0,0).getTime();
+	case 5:
+		var d4;
+		var d5 = new Date();
+		d5.setTime(this1);
+		d4 = d5;
+		var year2 = d4.getFullYear();
+		var month2 = d4.getMonth();
+		return thx_Dates.create(year2,month2,1,0,0,0).getTime();
+	case 6:
+		var d6;
+		var d7 = new Date();
+		d7.setTime(this1);
+		d6 = d7;
+		var year3 = d6.getFullYear();
+		return thx_Dates.create(year3,0,1,0,0,0).getTime();
+	}
+};
+thx__$Timestamp_Timestamp_$Impl_$.snapTo = function(this1,period) {
+	switch(period[1]) {
+	case 0:
+		return Math.round(this1 / 1000.0) * 1000.0;
+	case 1:
+		return Math.round(this1 / 60000.0) * 60000.0;
+	case 2:
+		return Math.round(this1 / 3600000.0) * 3600000.0;
+	case 3:
+		var d;
+		var d1 = new Date();
+		d1.setTime(this1);
+		d = d1;
+		var mod;
+		if(d.getHours() >= 12) mod = 1; else mod = 0;
+		var year = d.getFullYear();
+		var month = d.getMonth();
+		var day = d.getDate() + mod;
+		return thx_Dates.create(year,month,day,0,0,0).getTime();
+	case 4:
+		var d2;
+		var d3 = new Date();
+		d3.setTime(this1);
+		d2 = d3;
+		var wd = d2.getDay();
+		var mod1;
+		if(wd < 3) mod1 = -wd; else if(wd > 3) mod1 = 7 - wd; else if(d2.getHours() < 12) mod1 = -wd; else mod1 = 7 - wd;
+		var year1 = d2.getFullYear();
+		var month1 = d2.getMonth();
+		var day1 = d2.getDate() + mod1;
+		return thx_Dates.create(year1,month1,day1,0,0,0).getTime();
+	case 5:
+		var d4;
+		var d5 = new Date();
+		d5.setTime(this1);
+		d4 = d5;
+		var mod2;
+		if(d4.getDate() > Math.round(DateTools.getMonthDays(d4) / 2)) mod2 = 1; else mod2 = 0;
+		var year2 = d4.getFullYear();
+		var month2 = d4.getMonth() + mod2;
+		return thx_Dates.create(year2,month2,1,0,0,0).getTime();
+	case 6:
+		var d6;
+		var d7 = new Date();
+		d7.setTime(this1);
+		d6 = d7;
+		var mod3;
+		if(this1 > new Date(d6.getFullYear(),6,2,0,0,0).getTime()) mod3 = 1; else mod3 = 0;
+		var year3 = d6.getFullYear() + mod3;
+		return thx_Dates.create(year3,0,1,0,0,0).getTime();
+	}
+};
+thx__$Timestamp_Timestamp_$Impl_$.r = function(t,v) {
+	return Math.round(t / v) * v;
+};
+thx__$Timestamp_Timestamp_$Impl_$.f = function(t,v) {
+	return Math.floor(t / v) * v;
+};
+thx__$Timestamp_Timestamp_$Impl_$.c = function(t,v) {
+	return Math.ceil(t / v) * v;
+};
+var thx__$Tuple_Tuple0_$Impl_$ = {};
+$hxClasses["thx._Tuple.Tuple0_Impl_"] = thx__$Tuple_Tuple0_$Impl_$;
+thx__$Tuple_Tuple0_$Impl_$.__name__ = ["thx","_Tuple","Tuple0_Impl_"];
+thx__$Tuple_Tuple0_$Impl_$._new = function() {
+	return thx_Nil.nil;
+};
+thx__$Tuple_Tuple0_$Impl_$["with"] = function(this1,v) {
+	return v;
+};
+thx__$Tuple_Tuple0_$Impl_$.toString = function(this1) {
+	return "Tuple0()";
+};
+thx__$Tuple_Tuple0_$Impl_$.toNil = function(this1) {
+	return this1;
+};
+thx__$Tuple_Tuple0_$Impl_$.nilToTuple = function(v) {
+	return thx_Nil.nil;
+};
+var thx__$Tuple_Tuple1_$Impl_$ = {};
+$hxClasses["thx._Tuple.Tuple1_Impl_"] = thx__$Tuple_Tuple1_$Impl_$;
+thx__$Tuple_Tuple1_$Impl_$.__name__ = ["thx","_Tuple","Tuple1_Impl_"];
+thx__$Tuple_Tuple1_$Impl_$.__properties__ = {get__0:"get__0"}
+thx__$Tuple_Tuple1_$Impl_$._new = function(_0) {
+	return _0;
+};
+thx__$Tuple_Tuple1_$Impl_$.get__0 = function(this1) {
+	return this1;
+};
+thx__$Tuple_Tuple1_$Impl_$["with"] = function(this1,v) {
+	return { _0 : this1, _1 : v};
+};
+thx__$Tuple_Tuple1_$Impl_$.toString = function(this1) {
+	return "Tuple1(" + Std.string(this1) + ")";
+};
+thx__$Tuple_Tuple1_$Impl_$.arrayToTuple = function(v) {
+	return v[0];
+};
+var thx__$Tuple_Tuple2_$Impl_$ = {};
+$hxClasses["thx._Tuple.Tuple2_Impl_"] = thx__$Tuple_Tuple2_$Impl_$;
+thx__$Tuple_Tuple2_$Impl_$.__name__ = ["thx","_Tuple","Tuple2_Impl_"];
+thx__$Tuple_Tuple2_$Impl_$.__properties__ = {get_right:"get_right",get_left:"get_left"}
+thx__$Tuple_Tuple2_$Impl_$.of = function(_0,_1) {
+	return { _0 : _0, _1 : _1};
+};
+thx__$Tuple_Tuple2_$Impl_$._new = function(_0,_1) {
+	return { _0 : _0, _1 : _1};
+};
+thx__$Tuple_Tuple2_$Impl_$.get_left = function(this1) {
+	return this1._0;
+};
+thx__$Tuple_Tuple2_$Impl_$.get_right = function(this1) {
+	return this1._1;
+};
+thx__$Tuple_Tuple2_$Impl_$.flip = function(this1) {
+	return { _0 : this1._1, _1 : this1._0};
+};
+thx__$Tuple_Tuple2_$Impl_$.dropLeft = function(this1) {
+	return this1._1;
+};
+thx__$Tuple_Tuple2_$Impl_$.dropRight = function(this1) {
+	return this1._0;
+};
+thx__$Tuple_Tuple2_$Impl_$["with"] = function(this1,v) {
+	return { _0 : this1._0, _1 : this1._1, _2 : v};
+};
+thx__$Tuple_Tuple2_$Impl_$.toString = function(this1) {
+	return "Tuple2(" + Std.string(this1._0) + "," + Std.string(this1._1) + ")";
+};
+thx__$Tuple_Tuple2_$Impl_$.map = function(this1,f) {
+	var _1 = f(this1._1);
+	return { _0 : this1._0, _1 : _1};
+};
+thx__$Tuple_Tuple2_$Impl_$.arrayToTuple2 = function(v) {
+	return { _0 : v[0], _1 : v[1]};
+};
+var thx__$Tuple_Tuple3_$Impl_$ = {};
+$hxClasses["thx._Tuple.Tuple3_Impl_"] = thx__$Tuple_Tuple3_$Impl_$;
+thx__$Tuple_Tuple3_$Impl_$.__name__ = ["thx","_Tuple","Tuple3_Impl_"];
+thx__$Tuple_Tuple3_$Impl_$.of = function(_0,_1,_2) {
+	return { _0 : _0, _1 : _1, _2 : _2};
+};
+thx__$Tuple_Tuple3_$Impl_$._new = function(_0,_1,_2) {
+	return { _0 : _0, _1 : _1, _2 : _2};
+};
+thx__$Tuple_Tuple3_$Impl_$.flip = function(this1) {
+	return { _0 : this1._2, _1 : this1._1, _2 : this1._0};
+};
+thx__$Tuple_Tuple3_$Impl_$.dropLeft = function(this1) {
+	return { _0 : this1._1, _1 : this1._2};
+};
+thx__$Tuple_Tuple3_$Impl_$.dropRight = function(this1) {
+	return { _0 : this1._0, _1 : this1._1};
+};
+thx__$Tuple_Tuple3_$Impl_$["with"] = function(this1,v) {
+	return { _0 : this1._0, _1 : this1._1, _2 : this1._2, _3 : v};
+};
+thx__$Tuple_Tuple3_$Impl_$.toString = function(this1) {
+	return "Tuple3(" + Std.string(this1._0) + "," + Std.string(this1._1) + "," + Std.string(this1._2) + ")";
+};
+thx__$Tuple_Tuple3_$Impl_$.arrayToTuple3 = function(v) {
+	return { _0 : v[0], _1 : v[1], _2 : v[2]};
+};
+thx__$Tuple_Tuple3_$Impl_$.map = function(this1,f) {
+	var _2 = f(this1._2);
+	return { _0 : this1._0, _1 : this1._1, _2 : _2};
+};
+var thx__$Tuple_Tuple4_$Impl_$ = {};
+$hxClasses["thx._Tuple.Tuple4_Impl_"] = thx__$Tuple_Tuple4_$Impl_$;
+thx__$Tuple_Tuple4_$Impl_$.__name__ = ["thx","_Tuple","Tuple4_Impl_"];
+thx__$Tuple_Tuple4_$Impl_$.of = function(_0,_1,_2,_3) {
+	return { _0 : _0, _1 : _1, _2 : _2, _3 : _3};
+};
+thx__$Tuple_Tuple4_$Impl_$._new = function(_0,_1,_2,_3) {
+	return { _0 : _0, _1 : _1, _2 : _2, _3 : _3};
+};
+thx__$Tuple_Tuple4_$Impl_$.flip = function(this1) {
+	return { _0 : this1._3, _1 : this1._2, _2 : this1._1, _3 : this1._0};
+};
+thx__$Tuple_Tuple4_$Impl_$.dropLeft = function(this1) {
+	return { _0 : this1._1, _1 : this1._2, _2 : this1._3};
+};
+thx__$Tuple_Tuple4_$Impl_$.dropRight = function(this1) {
+	return { _0 : this1._0, _1 : this1._1, _2 : this1._2};
+};
+thx__$Tuple_Tuple4_$Impl_$["with"] = function(this1,v) {
+	return { _0 : this1._0, _1 : this1._1, _2 : this1._2, _3 : this1._3, _4 : v};
+};
+thx__$Tuple_Tuple4_$Impl_$.toString = function(this1) {
+	return "Tuple4(" + Std.string(this1._0) + "," + Std.string(this1._1) + "," + Std.string(this1._2) + "," + Std.string(this1._3) + ")";
+};
+thx__$Tuple_Tuple4_$Impl_$.arrayToTuple4 = function(v) {
+	return { _0 : v[0], _1 : v[1], _2 : v[2], _3 : v[3]};
+};
+var thx__$Tuple_Tuple5_$Impl_$ = {};
+$hxClasses["thx._Tuple.Tuple5_Impl_"] = thx__$Tuple_Tuple5_$Impl_$;
+thx__$Tuple_Tuple5_$Impl_$.__name__ = ["thx","_Tuple","Tuple5_Impl_"];
+thx__$Tuple_Tuple5_$Impl_$.of = function(_0,_1,_2,_3,_4) {
+	return { _0 : _0, _1 : _1, _2 : _2, _3 : _3, _4 : _4};
+};
+thx__$Tuple_Tuple5_$Impl_$._new = function(_0,_1,_2,_3,_4) {
+	return { _0 : _0, _1 : _1, _2 : _2, _3 : _3, _4 : _4};
+};
+thx__$Tuple_Tuple5_$Impl_$.flip = function(this1) {
+	return { _0 : this1._4, _1 : this1._3, _2 : this1._2, _3 : this1._1, _4 : this1._0};
+};
+thx__$Tuple_Tuple5_$Impl_$.dropLeft = function(this1) {
+	return { _0 : this1._1, _1 : this1._2, _2 : this1._3, _3 : this1._4};
+};
+thx__$Tuple_Tuple5_$Impl_$.dropRight = function(this1) {
+	return { _0 : this1._0, _1 : this1._1, _2 : this1._2, _3 : this1._3};
+};
+thx__$Tuple_Tuple5_$Impl_$["with"] = function(this1,v) {
+	return { _0 : this1._0, _1 : this1._1, _2 : this1._2, _3 : this1._3, _4 : this1._4, _5 : v};
+};
+thx__$Tuple_Tuple5_$Impl_$.toString = function(this1) {
+	return "Tuple5(" + Std.string(this1._0) + "," + Std.string(this1._1) + "," + Std.string(this1._2) + "," + Std.string(this1._3) + "," + Std.string(this1._4) + ")";
+};
+thx__$Tuple_Tuple5_$Impl_$.arrayToTuple5 = function(v) {
+	return { _0 : v[0], _1 : v[1], _2 : v[2], _3 : v[3], _4 : v[4]};
+};
+var thx__$Tuple_Tuple6_$Impl_$ = {};
+$hxClasses["thx._Tuple.Tuple6_Impl_"] = thx__$Tuple_Tuple6_$Impl_$;
+thx__$Tuple_Tuple6_$Impl_$.__name__ = ["thx","_Tuple","Tuple6_Impl_"];
+thx__$Tuple_Tuple6_$Impl_$.of = function(_0,_1,_2,_3,_4,_5) {
+	return { _0 : _0, _1 : _1, _2 : _2, _3 : _3, _4 : _4, _5 : _5};
+};
+thx__$Tuple_Tuple6_$Impl_$._new = function(_0,_1,_2,_3,_4,_5) {
+	return { _0 : _0, _1 : _1, _2 : _2, _3 : _3, _4 : _4, _5 : _5};
+};
+thx__$Tuple_Tuple6_$Impl_$.flip = function(this1) {
+	return { _0 : this1._5, _1 : this1._4, _2 : this1._3, _3 : this1._2, _4 : this1._1, _5 : this1._0};
+};
+thx__$Tuple_Tuple6_$Impl_$.dropLeft = function(this1) {
+	return { _0 : this1._1, _1 : this1._2, _2 : this1._3, _3 : this1._4, _4 : this1._5};
+};
+thx__$Tuple_Tuple6_$Impl_$.dropRight = function(this1) {
+	return { _0 : this1._0, _1 : this1._1, _2 : this1._2, _3 : this1._3, _4 : this1._4};
+};
+thx__$Tuple_Tuple6_$Impl_$.toString = function(this1) {
+	return "Tuple6(" + Std.string(this1._0) + "," + Std.string(this1._1) + "," + Std.string(this1._2) + "," + Std.string(this1._3) + "," + Std.string(this1._4) + "," + Std.string(this1._5) + ")";
+};
+thx__$Tuple_Tuple6_$Impl_$.arrayToTuple6 = function(v) {
+	return { _0 : v[0], _1 : v[1], _2 : v[2], _3 : v[3], _4 : v[4], _5 : v[5]};
+};
+var thx_Types = function() { };
+$hxClasses["thx.Types"] = thx_Types;
+thx_Types.__name__ = ["thx","Types"];
+thx_Types.isAnonymousObject = function(v) {
+	return Reflect.isObject(v) && null == Type.getClass(v);
+};
+thx_Types.isPrimitive = function(v) {
+	{
+		var _g = Type["typeof"](v);
+		switch(_g[1]) {
+		case 1:case 2:case 3:
+			return true;
+		case 0:case 5:case 7:case 4:case 8:
+			return false;
+		case 6:
+			var c = _g[2];
+			return Type.getClassName(c) == "String";
+		}
+	}
+};
+thx_Types.hasSuperClass = function(cls,sup) {
+	while(null != cls) {
+		if(cls == sup) return true;
+		cls = Type.getSuperClass(cls);
+	}
+	return false;
+};
+thx_Types.sameType = function(a,b) {
+	return thx_Types.toString(Type["typeof"](a)) == thx_Types.toString(Type["typeof"](b));
+};
+thx_Types.typeInheritance = function(type) {
+	switch(type[1]) {
+	case 1:
+		return ["Int"];
+	case 2:
+		return ["Float"];
+	case 3:
+		return ["Bool"];
+	case 4:
+		return ["{}"];
+	case 5:
+		return ["Function"];
+	case 6:
+		var c = type[2];
+		var classes = [];
+		while(null != c) {
+			classes.push(c);
+			c = Type.getSuperClass(c);
+		}
+		return classes.map(Type.getClassName);
+	case 7:
+		var e = type[2];
+		return [Type.getEnumName(e)];
+	default:
+		throw new js__$Boot_HaxeError("invalid type " + Std.string(type));
+	}
+};
+thx_Types.toString = function(type) {
+	switch(type[1]) {
+	case 0:
+		return "Null";
+	case 1:
+		return "Int";
+	case 2:
+		return "Float";
+	case 3:
+		return "Bool";
+	case 4:
+		return "{}";
+	case 5:
+		return "Function";
+	case 6:
+		var c = type[2];
+		return Type.getClassName(c);
+	case 7:
+		var e = type[2];
+		return Type.getEnumName(e);
+	default:
+		throw new js__$Boot_HaxeError("invalid type " + Std.string(type));
+	}
+};
+thx_Types.valueTypeInheritance = function(value) {
+	return thx_Types.typeInheritance(Type["typeof"](value));
+};
+thx_Types.valueTypeToString = function(value) {
+	return thx_Types.toString(Type["typeof"](value));
+};
+thx_Types.anyValueToString = function(value) {
+	if(js_Boot.__instanceof(value,ValueType)) return thx_Types.toString(value);
+	if(js_Boot.__instanceof(value,Class)) return Type.getClassName(value);
+	if(js_Boot.__instanceof(value,Enum)) return Type.getEnumName(value);
+	return thx_Types.valueTypeToString(value);
+};
+var thx__$Validation_Validation_$Impl_$ = {};
+$hxClasses["thx._Validation.Validation_Impl_"] = thx__$Validation_Validation_$Impl_$;
+thx__$Validation_Validation_$Impl_$.__name__ = ["thx","_Validation","Validation_Impl_"];
+thx__$Validation_Validation_$Impl_$.__properties__ = {get_either:"get_either"}
+thx__$Validation_Validation_$Impl_$.validation = function(e) {
+	return e;
+};
+thx__$Validation_Validation_$Impl_$.vnel = function(e) {
+	return e;
+};
+thx__$Validation_Validation_$Impl_$.pure = function(a) {
+	return thx_Either.Right(a);
+};
+thx__$Validation_Validation_$Impl_$.success = function(a) {
+	return thx_Either.Right(a);
+};
+thx__$Validation_Validation_$Impl_$.failure = function(e) {
+	return thx_Either.Left(e);
+};
+thx__$Validation_Validation_$Impl_$.nn = function(a,e) {
+	if(a == null) return thx_Either.Left(e); else return thx_Either.Right(a);
+};
+thx__$Validation_Validation_$Impl_$.successNel = function(a) {
+	return thx_Either.Right(a);
+};
+thx__$Validation_Validation_$Impl_$.failureNel = function(e) {
+	return thx_Either.Left(thx__$Nel_Nel_$Impl_$.pure(e));
+};
+thx__$Validation_Validation_$Impl_$.nnNel = function(a,e) {
+	if(a == null) return thx_Either.Left(thx__$Nel_Nel_$Impl_$.pure(e)); else return thx_Either.Right(a);
+};
+thx__$Validation_Validation_$Impl_$.get_either = function(this1) {
+	return this1;
+};
+thx__$Validation_Validation_$Impl_$.map = function(this1,f) {
+	return thx__$Validation_Validation_$Impl_$.ap(this1,thx_Either.Right(f),function(e1,e2) {
+		throw new js__$Boot_HaxeError("Unreachable");
+	});
+};
+thx__$Validation_Validation_$Impl_$.ap = function(this1,v,s) {
+	switch(this1[1]) {
+	case 0:
+		var e0 = this1[2];
+		{
+			var _g = v;
+			switch(_g[1]) {
+			case 0:
+				var e1 = _g[2];
+				return thx_Either.Left((thx__$Semigroup_Semigroup_$Impl_$.get_append(s))(e0,e1));
+			case 1:
+				var b = _g[2];
+				return thx_Either.Left(e0);
+			}
+		}
+		break;
+	case 1:
+		var a = this1[2];
+		{
+			var _g1 = v;
+			switch(_g1[1]) {
+			case 0:
+				var e = _g1[2];
+				return thx_Either.Left(e);
+			case 1:
+				var f = _g1[2];
+				return thx_Either.Right(f(a));
+			}
+		}
+		break;
+	}
+};
+thx__$Validation_Validation_$Impl_$.zip = function(this1,v,s) {
+	return thx__$Validation_Validation_$Impl_$.ap(this1,thx_Eithers.map(v,function(b) {
+		return (function(f,_1) {
+			return function(_0) {
+				return f(_0,_1);
+			};
+		})(thx__$Tuple_Tuple2_$Impl_$.of,b);
+	}),s);
+};
+thx__$Validation_Validation_$Impl_$.leftMap = function(this1,f) {
+	return thx_Eithers.leftMap(this1,f);
+};
+thx__$Validation_Validation_$Impl_$.wrapNel = function(this1) {
+	return thx_Eithers.leftMap(this1,thx__$Nel_Nel_$Impl_$.pure);
+};
+thx__$Validation_Validation_$Impl_$.flatMapV = function(this1,f) {
+	switch(this1[1]) {
+	case 0:
+		var a = this1[2];
+		return thx_Either.Left(a);
+	case 1:
+		var b = this1[2];
+		return f(b);
+	}
+};
+thx__$Validation_Validation_$Impl_$.val2 = function(f,v1,v2,s) {
+	return thx__$Validation_Validation_$Impl_$.ap(v2,(function($this) {
+		var $r;
+		var f1 = thx_Functions2.curry(f);
+		$r = thx__$Validation_Validation_$Impl_$.ap(v1,thx_Either.Right(f1),function(e1,e2) {
+			throw new js__$Boot_HaxeError("Unreachable");
+		});
+		return $r;
+	}(this)),s);
+};
+thx__$Validation_Validation_$Impl_$.val3 = function(f,v1,v2,v3,s) {
+	return thx__$Validation_Validation_$Impl_$.ap(v3,(function($this) {
+		var $r;
+		var f1 = thx_Functions3.curry(f);
+		$r = thx__$Validation_Validation_$Impl_$.ap(v2,(function($this) {
+			var $r;
+			var f2 = thx_Functions2.curry(f1);
+			$r = thx__$Validation_Validation_$Impl_$.ap(v1,thx_Either.Right(f2),function(e1,e2) {
+				throw new js__$Boot_HaxeError("Unreachable");
+			});
+			return $r;
+		}($this)),s);
+		return $r;
+	}(this)),s);
+};
+thx__$Validation_Validation_$Impl_$.val4 = function(f,v1,v2,v3,v4,s) {
+	return thx__$Validation_Validation_$Impl_$.ap(v4,(function($this) {
+		var $r;
+		var f1 = thx_Functions4.curry(f);
+		$r = thx__$Validation_Validation_$Impl_$.ap(v3,(function($this) {
+			var $r;
+			var f2 = thx_Functions3.curry(f1);
+			$r = thx__$Validation_Validation_$Impl_$.ap(v2,(function($this) {
+				var $r;
+				var f3 = thx_Functions2.curry(f2);
+				$r = thx__$Validation_Validation_$Impl_$.ap(v1,thx_Either.Right(f3),function(e1,e2) {
+					throw new js__$Boot_HaxeError("Unreachable");
+				});
+				return $r;
+			}($this)),s);
+			return $r;
+		}($this)),s);
+		return $r;
+	}(this)),s);
+};
+thx__$Validation_Validation_$Impl_$.val5 = function(f,v1,v2,v3,v4,v5,s) {
+	return thx__$Validation_Validation_$Impl_$.ap(v5,(function($this) {
+		var $r;
+		var f1 = thx_Functions5.curry(f);
+		$r = thx__$Validation_Validation_$Impl_$.ap(v4,(function($this) {
+			var $r;
+			var f2 = thx_Functions4.curry(f1);
+			$r = thx__$Validation_Validation_$Impl_$.ap(v3,(function($this) {
+				var $r;
+				var f3 = thx_Functions3.curry(f2);
+				$r = thx__$Validation_Validation_$Impl_$.ap(v2,(function($this) {
+					var $r;
+					var f4 = thx_Functions2.curry(f3);
+					$r = thx__$Validation_Validation_$Impl_$.ap(v1,thx_Either.Right(f4),function(e1,e2) {
+						throw new js__$Boot_HaxeError("Unreachable");
+					});
+					return $r;
+				}($this)),s);
+				return $r;
+			}($this)),s);
+			return $r;
+		}($this)),s);
+		return $r;
+	}(this)),s);
+};
+thx__$Validation_Validation_$Impl_$.val6 = function(f,v1,v2,v3,v4,v5,v6,s) {
+	return thx__$Validation_Validation_$Impl_$.ap(v6,(function($this) {
+		var $r;
+		var f1 = thx_Functions6.curry(f);
+		$r = thx__$Validation_Validation_$Impl_$.ap(v5,(function($this) {
+			var $r;
+			var f2 = thx_Functions5.curry(f1);
+			$r = thx__$Validation_Validation_$Impl_$.ap(v4,(function($this) {
+				var $r;
+				var f3 = thx_Functions4.curry(f2);
+				$r = thx__$Validation_Validation_$Impl_$.ap(v3,(function($this) {
+					var $r;
+					var f4 = thx_Functions3.curry(f3);
+					$r = thx__$Validation_Validation_$Impl_$.ap(v2,(function($this) {
+						var $r;
+						var f5 = thx_Functions2.curry(f4);
+						$r = thx__$Validation_Validation_$Impl_$.ap(v1,thx_Either.Right(f5),function(e1,e2) {
+							throw new js__$Boot_HaxeError("Unreachable");
+						});
+						return $r;
+					}($this)),s);
+					return $r;
+				}($this)),s);
+				return $r;
+			}($this)),s);
+			return $r;
+		}($this)),s);
+		return $r;
+	}(this)),s);
+};
+thx__$Validation_Validation_$Impl_$.val7 = function(f,v1,v2,v3,v4,v5,v6,v7,s) {
+	return thx__$Validation_Validation_$Impl_$.ap(v7,(function($this) {
+		var $r;
+		var f1 = thx_Functions7.curry(f);
+		$r = thx__$Validation_Validation_$Impl_$.ap(v6,(function($this) {
+			var $r;
+			var f2 = thx_Functions6.curry(f1);
+			$r = thx__$Validation_Validation_$Impl_$.ap(v5,(function($this) {
+				var $r;
+				var f3 = thx_Functions5.curry(f2);
+				$r = thx__$Validation_Validation_$Impl_$.ap(v4,(function($this) {
+					var $r;
+					var f4 = thx_Functions4.curry(f3);
+					$r = thx__$Validation_Validation_$Impl_$.ap(v3,(function($this) {
+						var $r;
+						var f5 = thx_Functions3.curry(f4);
+						$r = thx__$Validation_Validation_$Impl_$.ap(v2,(function($this) {
+							var $r;
+							var f6 = thx_Functions2.curry(f5);
+							$r = thx__$Validation_Validation_$Impl_$.ap(v1,thx_Either.Right(f6),function(e1,e2) {
+								throw new js__$Boot_HaxeError("Unreachable");
+							});
+							return $r;
+						}($this)),s);
+						return $r;
+					}($this)),s);
+					return $r;
+				}($this)),s);
+				return $r;
+			}($this)),s);
+			return $r;
+		}($this)),s);
+		return $r;
+	}(this)),s);
+};
+thx__$Validation_Validation_$Impl_$.val8 = function(f,v1,v2,v3,v4,v5,v6,v7,v8,s) {
+	return thx__$Validation_Validation_$Impl_$.ap(v8,(function($this) {
+		var $r;
+		var f1 = thx_Functions8.curry(f);
+		$r = thx__$Validation_Validation_$Impl_$.ap(v7,(function($this) {
+			var $r;
+			var f2 = thx_Functions7.curry(f1);
+			$r = thx__$Validation_Validation_$Impl_$.ap(v6,(function($this) {
+				var $r;
+				var f3 = thx_Functions6.curry(f2);
+				$r = thx__$Validation_Validation_$Impl_$.ap(v5,(function($this) {
+					var $r;
+					var f4 = thx_Functions5.curry(f3);
+					$r = thx__$Validation_Validation_$Impl_$.ap(v4,(function($this) {
+						var $r;
+						var f5 = thx_Functions4.curry(f4);
+						$r = thx__$Validation_Validation_$Impl_$.ap(v3,(function($this) {
+							var $r;
+							var f6 = thx_Functions3.curry(f5);
+							$r = thx__$Validation_Validation_$Impl_$.ap(v2,(function($this) {
+								var $r;
+								var f7 = thx_Functions2.curry(f6);
+								$r = thx__$Validation_Validation_$Impl_$.ap(v1,thx_Either.Right(f7),function(e1,e2) {
+									throw new js__$Boot_HaxeError("Unreachable");
+								});
+								return $r;
+							}($this)),s);
+							return $r;
+						}($this)),s);
+						return $r;
+					}($this)),s);
+					return $r;
+				}($this)),s);
+				return $r;
+			}($this)),s);
+			return $r;
+		}($this)),s);
+		return $r;
+	}(this)),s);
+};
+var thx_error_AssertError = function(msg,pos) {
+	if(null == msg) msg = "expected true";
+	thx_Error.call(this,msg,null,pos);
+};
+$hxClasses["thx.error.AssertError"] = thx_error_AssertError;
+thx_error_AssertError.__name__ = ["thx","error","AssertError"];
+thx_error_AssertError.__super__ = thx_Error;
+thx_error_AssertError.prototype = $extend(thx_Error.prototype,{
+	__class__: thx_error_AssertError
+});
 var thx_error_ErrorWrapper = function(message,innerError,stack,pos) {
 	thx_Error.call(this,message,stack,pos);
 	this.innerError = innerError;
@@ -37597,8 +45058,10 @@ $hxClasses["thx.error.ErrorWrapper"] = thx_error_ErrorWrapper;
 thx_error_ErrorWrapper.__name__ = ["thx","error","ErrorWrapper"];
 thx_error_ErrorWrapper.__super__ = thx_Error;
 thx_error_ErrorWrapper.prototype = $extend(thx_Error.prototype,{
-	__class__: thx_error_ErrorWrapper
+	innerError: null
+	,__class__: thx_error_ErrorWrapper
 });
+function $iterator(o) { if( o instanceof Array ) return function() { return HxOverrides.iter(o); }; return typeof(o.iterator) == 'function' ? $bind(o,o.iterator) : o.iterator; }
 var $_, $fid = 0;
 function $bind(o,m) { if( m == null ) return null; if( m.__id__ == null ) m.__id__ = $fid++; var f; if( o.hx__closures__ == null ) o.hx__closures__ = {}; else f = o.hx__closures__[m.__id__]; if( f == null ) { f = function(){ return f.method.apply(f.scope, arguments); }; f.scope = o; f.method = m; o.hx__closures__[m.__id__] = f; } return f; }
 if(Array.prototype.indexOf) HxOverrides.indexOf = function(a,o,i) {
@@ -37619,6 +45082,27 @@ var Bool = $hxClasses.Bool = Boolean;
 Bool.__ename__ = ["Bool"];
 var Class = $hxClasses.Class = { __name__ : ["Class"]};
 var Enum = { };
+if(Array.prototype.map == null) Array.prototype.map = function(f) {
+	var a = [];
+	var _g1 = 0;
+	var _g = this.length;
+	while(_g1 < _g) {
+		var i = _g1++;
+		a[i] = f(this[i]);
+	}
+	return a;
+};
+if(Array.prototype.filter == null) Array.prototype.filter = function(f1) {
+	var a1 = [];
+	var _g11 = 0;
+	var _g2 = this.length;
+	while(_g11 < _g2) {
+		var i1 = _g11++;
+		var e = this[i1];
+		if(f1(e)) a1.push(e);
+	}
+	return a1;
+};
 var __map_reserved = {}
 var ArrayBuffer = $global.ArrayBuffer || js_html_compat_ArrayBuffer;
 if(ArrayBuffer.prototype.slice == null) ArrayBuffer.prototype.slice = js_html_compat_ArrayBuffer.sliceImpl;
@@ -37650,10 +45134,45 @@ while(_g11 < _g2) {
 lime_system_CFFI.available = false;
 lime_system_CFFI.enabled = false;
 if(window.createjs != null) createjs.Sound.alternateExtensions = ["ogg","mp3","wav"];
+
+      // Production steps of ECMA-262, Edition 5, 15.4.4.21
+      // Reference: http://es5.github.io/#x15.4.4.21
+      if (!Array.prototype.reduce) {
+        Array.prototype.reduce = function(callback /*, initialValue*/) {
+          'use strict';
+          if (this == null) {
+            throw new TypeError('Array.prototype.reduce called on null or undefined');
+          }
+          if (typeof callback !== 'function') {
+            throw new TypeError(callback + ' is not a function');
+          }
+          var t = Object(this), len = t.length >>> 0, k = 0, value;
+          if (arguments.length == 2) {
+            value = arguments[1];
+          } else {
+            while (k < len && ! k in t) {
+              k++;
+            }
+            if (k >= len) {
+              throw new TypeError('Reduce of empty array with no initial value');
+            }
+            value = t[k++];
+          }
+          for (; k < len; k++) {
+            if (k in t) {
+              value = callback(value, t[k], k, t);
+            }
+          }
+          return value;
+        };
+      }
+    ;
 openfl_display_DisplayObject.__instanceCount = 0;
 openfl_display_DisplayObject.__worldRenderDirty = 0;
 openfl_display_DisplayObject.__worldTransformDirty = 0;
 openfl_display_DisplayObject.__cacheAsBitmapMode = false;
+DateTools.DAYS_OF_MONTH = [31,28,31,30,31,30,31,31,30,31,30,31];
+haxe_crypto_Base64.CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 haxe_ds_ObjectMap.count = 0;
 haxe_io_FPHelper.i64tmp = (function($this) {
 	var $r;
@@ -38909,6 +46428,42 @@ openfl_utils__$CompressionAlgorithm_CompressionAlgorithm_$Impl_$.LZMA = 1;
 openfl_utils__$CompressionAlgorithm_CompressionAlgorithm_$Impl_$.ZLIB = 2;
 openfl_utils__$Endian_Endian_$Impl_$.BIG_ENDIAN = 0;
 openfl_utils__$Endian_Endian_$Impl_$.LITTLE_ENDIAN = 1;
+thx_Assert.behavior = new thx_DefaultAssertBehavior();
+thx_bigint_Small.zero = new thx_bigint_Small(0);
+thx_bigint_Small.one = new thx_bigint_Small(1);
+thx_bigint_Small.two = new thx_bigint_Small(2);
+thx_bigint_Small.ten = new thx_bigint_Small(10);
+thx_bigint_Small.negativeOne = new thx_bigint_Small(-1);
+thx__$BigInt_BigInt_$Impl_$.zero = thx_bigint_Small.zero;
+thx__$BigInt_BigInt_$Impl_$.one = thx_bigint_Small.one;
+thx__$BigInt_BigInt_$Impl_$.two = thx_bigint_Small.two;
+thx__$BigInt_BigInt_$Impl_$.negativeOne = thx_bigint_Small.negativeOne;
+thx_bigint_Decimals.divisionExtraScale = 4;
+thx_bigint_Bigs.BASE = 10000000;
+thx_bigint_Bigs.DOUBLE_BASE = 100000000000000.0;
+thx_bigint_Bigs.LOG_BASE = 7;
+thx_bigint_Bigs.MAX_INT = 9007199254740992;
+thx_bigint_Bigs.MAX_INT_ARR = thx_bigint_Bigs.smallToArray(thx_bigint_Bigs.MAX_INT);
+thx_bigint_Bigs.LOG_MAX_INT = Math.log(thx_bigint_Bigs.MAX_INT);
+thx_bigint_Bigs.powersOfTwo = (function() {
+	var powers = [1];
+	while(powers[powers.length - 1] <= 10000000) powers.push(2 * powers[powers.length - 1]);
+	return powers;
+})();
+thx_bigint_Bigs.bigPowersOfTwo = thx_bigint_Bigs.powersOfTwo.map(function(v) {
+	return new thx_bigint_Small(v);
+});
+thx_bigint_Bigs.powers2Length = thx_bigint_Bigs.powersOfTwo.length;
+thx_bigint_Bigs.highestPower2 = thx_bigint_Bigs.powersOfTwo[thx_bigint_Bigs.powers2Length - 1];
+thx_bigint_Bigs.bigHighestPower2 = new thx_bigint_Small(thx_bigint_Bigs.highestPower2);
+thx_bigint_DecimalImpl.zero = thx_bigint_Decimals.fromInt(0);
+thx_bigint_DecimalImpl.one = thx_bigint_Decimals.fromInt(1);
+thx_bigint_DecimalImpl.ten = thx_bigint_Decimals.fromInt(10);
+thx__$Decimal_Decimal_$Impl_$.zero = thx_bigint_DecimalImpl.zero;
+thx__$Decimal_Decimal_$Impl_$.one = thx_bigint_DecimalImpl.one;
+thx_Floats.TOLERANCE = 10e-5;
+thx_Floats.EPSILON = 1e-9;
+thx_Floats.pattern_parse = new EReg("^(\\+|-)?\\d+(\\.\\d+)?(e-?\\d+)?$","");
 thx_Int64s.one = (function($this) {
 	var $r;
 	var x = new haxe__$Int64__$_$_$Int64(0,1);
@@ -38951,5 +46506,29 @@ thx_Int64s.min = (function($this) {
 	$r = x;
 	return $r;
 }(this));
+thx_Ints.pattern_parse = new EReg("^[ \t\r\n]*[+-]?(\\d+|0x[0-9A-F]+)","i");
+thx_Ints.BASE = "0123456789abcdefghijklmnopqrstuvwxyz";
+thx_Ints.order = function(i0,i1) {
+	if(i0 > i1) return thx_OrderingImpl.GT; else if(i0 == i1) return thx_OrderingImpl.EQ; else return thx_OrderingImpl.LT;
+};
+thx_Ints.monoid = { zero : 0, append : function(a,b) {
+	return a + b;
+}};
+thx_Strings.ord = thx__$Ord_Ord_$Impl_$.fromIntComparison(thx_Strings.compare);
+thx_Strings.HASCODE_MAX = 2147483647;
+thx_Strings.HASCODE_MUL = 31;
+thx_Strings.monoid = { zero : "", append : function(a,b) {
+	return a + b;
+}};
+thx_Strings.UCWORDS = new EReg("[^a-zA-Z]([a-z])","g");
+thx_Strings.IS_BREAKINGWHITESPACE = new EReg("[^\t\n\r ]","");
+thx_Strings.IS_ALPHA = new EReg("[^a-zA-Z]","");
+thx_Strings.UCWORDSWS = new EReg("[ \t\r\n][a-z]","g");
+thx_Strings.ALPHANUM = new EReg("^[a-z0-9]+$","i");
+thx_Strings.DIGITS = new EReg("^[0-9]+$","");
+thx_Strings.STRIPTAGS = new EReg("</?[a-z]+[^>]*>","gi");
+thx_Strings.WSG = new EReg("[ \t\r\n]+","g");
+thx_Strings.SPLIT_LINES = new EReg("\r\n|\n\r|\n|\r","g");
+thx_Strings.CANONICALIZE_LINES = new EReg("\r\n|\n\r|\r","g");
 ApplicationMain.main();
 })(typeof console != "undefined" ? console : {log:function(){}}, typeof window != "undefined" ? window : exports, typeof window != "undefined" ? window : typeof global != "undefined" ? global : typeof self != "undefined" ? self : this);

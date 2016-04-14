@@ -19,6 +19,9 @@ class Main extends Sprite {
 	var resultDecimal:TextField;
 	var resultBinary:TextField;
 	var resultHexadecimal:TextField;
+	var aValue:TextField;
+	var bValue:TextField;
+	var cValue:TextField;
 
 	//Simple text
 	var title:TextField;
@@ -27,6 +30,9 @@ class Main extends Sprite {
 	var resultDecimalTitle:TextField;
 	var resultBinaryTitle:TextField;
 	var resultHexadecimalTitle:TextField;
+	var aTitle:TextField;
+	var bTitle:TextField;
+	var cTitle:TextField;
 
 	//fonts
 	var insideText:TextFormat;
@@ -67,6 +73,12 @@ class Main extends Sprite {
 		addChild(resultBinaryTitle);
 		addChild(resultHexadecimal);
 		addChild(resultHexadecimalTitle);
+		addChild(aTitle);
+		addChild(aValue);
+		addChild(bTitle);
+		addChild(bValue);
+		addChild(cTitle);
+		addChild(cValue);
 		addChild(sprite);
 	}	
 	private function onButtonClick(e:Dynamic){
@@ -87,13 +99,19 @@ class Main extends Sprite {
 		resultDecimal=new TextField();
 		resultBinary=new TextField();
 		resultHexadecimal=new TextField();
-
+		aValue=new TextField();
+		bValue=new TextField();
+		cValue=new TextField();
+		
 		title=new TextField();
 		operationTitle=new TextField();
 		operationsTitle=new TextField();
 		resultDecimalTitle=new TextField();
 		resultBinaryTitle=new TextField();
 		resultHexadecimalTitle=new TextField();
+		aTitle=new TextField();
+		bTitle=new TextField();
+		cTitle=new TextField();
 		
 		resultDecimalTitle.x=20.0;
 		resultDecimalTitle.y=5.0;
@@ -108,6 +126,7 @@ class Main extends Sprite {
 		resultDecimal.border=true;
 		resultDecimal.background=true;
 		resultDecimal.backgroundColor=0x847575;
+		
 		resultBinaryTitle.x=20.0;
 		resultBinaryTitle.y=80.0;
 		resultBinaryTitle.text="Binary: ";
@@ -122,18 +141,57 @@ class Main extends Sprite {
 		resultBinary.backgroundColor=0x847575;
 				
 		resultHexadecimalTitle.x=20.0;
-		resultHexadecimalTitle.y=180.0;
+		resultHexadecimalTitle.y=160.0;
 		resultHexadecimalTitle.text="Hexadecimal: ";
 		resultHexadecimalTitle.setTextFormat(outsideText);
 		resultHexadecimal.x=20.0;
-		resultHexadecimal.y=200.0;
+		resultHexadecimal.y=180.0;
 		resultHexadecimal.height=30.0;
 		resultHexadecimal.width=200.0;
 		resultHexadecimal.setTextFormat(insideText);
 		resultHexadecimal.border=true;
 		resultHexadecimal.background=true;
 		resultHexadecimal.backgroundColor=0x847575;
-		
+
+		aTitle.x=22.0;
+		aTitle.y=255.0;
+		aTitle.text="A: ";
+		aTitle.setTextFormat(outsideText);
+		aValue.x=60.0;
+		aValue.y=250.0;
+		aValue.height=30.0;
+		aValue.width=100.0;
+		aValue.setTextFormat(insideText);
+		aValue.border=true;
+		aValue.background=true;
+		aValue.backgroundColor=0x847575;
+
+		bTitle.x=22.0;
+		bTitle.y=295.0;
+		bTitle.text="B: ";
+		bTitle.setTextFormat(outsideText);
+		bValue.x=60.0;
+		bValue.y=290.0;
+		bValue.height=30.0;
+		bValue.width=100.0;
+		bValue.setTextFormat(insideText);
+		bValue.border=true;
+		bValue.background=true;
+		bValue.backgroundColor=0x847575;
+
+		cTitle.x=22.0;
+		cTitle.y=335.0;
+		cTitle.text="C: ";
+		cTitle.setTextFormat(outsideText);
+		cValue.x=60.0;
+		cValue.y=330.0;
+		cValue.height=30.0;
+		cValue.width=100.0;
+		cValue.setTextFormat(insideText);
+		cValue.border=true;
+		cValue.background=true;
+		cValue.backgroundColor=0x847575;
+
 		operationTitle.x=20.0;
 		operationTitle.y=470.0;
 		operationTitle.width=250;
@@ -163,7 +221,7 @@ class Main extends Sprite {
 		operations.border=true;
 		operations.multiline=true;
 		operations.background=true;
-
+		trace("Hola crayola");
 				helpMessage="Seccion de Ayuda\n"
 				     +"================\n"
 				     +"Instrucciones:\n"
@@ -194,9 +252,12 @@ class Main extends Sprite {
 		calc.setOperation(operation.text);
 		for(i in calc.printOperations())
 		      operations.appendText(i+"\n");
-		resultDecimal.text=calc.print()+"";
-		resultBinary.text=calc.printBinary();
-		resultHexadecimal.text=calc.printHexadecimal();
+		      resultDecimal.text=calc.print()+"";
+		      resultBinary.text=calc.printBinary();
+		      resultHexadecimal.text=calc.printHexadecimal();
+		      aValue.text=calc.printAValue();
+		      bValue.text=calc.printBValue();
+		      cValue.text=calc.printCValue();
 		}
 	}
 
