@@ -1,3 +1,0 @@
-HXCPP_M64=1
-hxcpp_api_level=321
-hxcpp=/usr/share/haxelib/hxcpp/3,2,205/
