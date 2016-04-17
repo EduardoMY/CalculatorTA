@@ -2,7 +2,7 @@
 <project>	
 	<meta title="Calculator" package="com.sample.calculator" version="1.0.0" company="Company Name" />
 	<app main="Main" path="Export" file="Calculator" />
-	<window background="#333333" width="800" height="600" fps="60"/>
+	<window background="#333333" width="1000" height="600" fps="60"/>
 	<source path="Source" />
 		<haxelib name="thx.core"/>
 	<haxelib name="openfl" />

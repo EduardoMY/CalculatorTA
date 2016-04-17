@@ -215,7 +215,7 @@ class Main extends Sprite {
 		operations.x=400.0;
 		operations.y=23.0;
 		operations.height=400.0;
-		operations.width=365.0;
+		operations.width=550.0;
 		//operations.wordWrap=true;
 		operations.setTextFormat(insideText);
 		operations.border=true;

@@ -1,18 +1,15 @@
 package ;
 
-/*
-
-(+ 0.1 ( * 0.2 0.1))
-
-*/
-
 class Calculator{
 
     var originalOperation: String;
     var result:Number;
     var a:Number;
+    var aNeg:Number;
     var b:Number;
+    var bNeg:Number;
     var c:Number;
+    var cNeg:Number;
     var resultBinary:String;
     var resultHexadecimal:String;
     var operations:Array<String>;
@@ -23,10 +20,18 @@ class Calculator{
     	   originalOperation="0";
 	   a=new Number("0");
 	   a.setNickName("A");
+	   aNeg=new Number("0");
+	   aNeg.setNickName("-A");
+	   
 	   b=new Number("0");
 	   b.setNickName("B");
-	   c=new Number("0");
+	   bNeg=new Number("0");
+	   bNeg.setNickName("-B");
+
+	   c=new Number("0");	   
 	   c.setNickName("C");
+	   cNeg=new Number("0");
+	   cNeg.setNickName("-C");
     }
     
     public function setOperation(newOperation:String){
@@ -114,8 +119,17 @@ class Calculator{
 			     i++;
 			     continue;
 			     }
-		if(tokens[i]=="(" || tokens[i]==")"){
-				  values.push(tokens[i]);
+			     
+		if(tokens[i]=="("){
+			values.push(tokens[i]);
+		}
+		else if(tokens[i]==")"){
+				if(previousSymbol==3)
+					values.push(tokens[i]);
+				else{
+				status=7;
+				expressionStillValid=false;
+				}
 		}
 		else if(operators.indexOf(tokens[i])!=-1){
 		     var lastOp:String;
@@ -165,8 +179,17 @@ class Calculator{
 		     }
 		}
 		else if(variables.indexOf(tokens[i])!=-1){//Checks if the Value is a Variable {A, B, C}
-		     values.push(tokens[i]);
-		     previousSymbol=3;
+		     if(previousSymbol!=3){
+				if(previousSymbol==2 && values.pop()=="-"){
+					values.push("-"+tokens[i]);
+				}
+				else values.push(tokens[i]);
+		     		previousSymbol=3;
+		     }
+		     else {
+		     	  status=1;
+		     	  expressionStillValid=false;
+		     }
 		}
 		else if(tokens[i]=="." || (tokens[i]>="0" && tokens[i]<="9")){
 		     trace(tokens[i]+"Number");
@@ -176,6 +199,7 @@ class Calculator{
 		     var hasNumberAfterPoint:Bool=false;
 		     var hasE:Bool=false;
 		     var hasNumberAfterE:Bool=false;
+		     var hasMinus:Bool=false;
 		     if(tokens[i]=="."){
 			hasPoint=true;
 			i++;
@@ -185,7 +209,7 @@ class Calculator{
 			expressionStillValid=false;
 		     }
 		     else{
-		     	     while(i<tokens.length && (tokens[i]=="." || tokens[i]=="E" || (tokens[i]>="0" && tokens[i]<="9")) && expressionStillValid){
+		     	     while(i<tokens.length && (tokens[i]=="-" || tokens[i]=="." || tokens[i]=="E" || (tokens[i]>="0" && tokens[i]<="9")) && expressionStillValid){
 		     					   trace("hola"+tokens[i]);
 		     					   posNumber+=tokens[i];
 		     					   if(tokens[i]=="."){
@@ -203,8 +227,19 @@ class Calculator{
 									expressionStillValid=false;
 		     							status=8;
 					       		     }
-		     					     else hasE=true;
+		     					     else
+								hasE=true;
 		     					     }
+							     else if(tokens[i]=="-"){
+							     	  if(hasE){
+								     	  if(hasMinus){
+								  	   expressionStillValid=false;
+									    status=8;
+									    }
+									    else hasMinus=true;
+								  }
+								  else break; 
+							     }
 		     					     else if(hasE)
 		     					     	     hasNumberAfterE=true;
 							    i++;
@@ -256,6 +291,7 @@ class Calculator{
 	   return values;
 	   
     }
+    
     public function print(){
     	return this.result.print();	
     }
@@ -293,7 +329,7 @@ class Calculator{
         var values:Array<Number> = new Array<Number>();
 
 	// Stack for variables: 'variables'
-	var variables:Array<String>=["A", "B", "C"];
+	var variables:Array<String>=["A","-A", "B","-B", "C", "-C"];
 	
 	// Stack for Operators: 'ops'
         var ops:Array<String> = new Array<String>();
@@ -309,10 +345,16 @@ class Calculator{
 		trace("It is a Number " +tokens[i]);
 		if(tokens[i]=="A")
 			values.push(a);
+		else if(tokens[i]=="-A")
+		     values.push(aNeg);
 		else if(tokens[i]=="B")
 		     values.push(b);
+		else if(tokens[i]=="-B")
+		     values.push(bNeg);
 		else if(tokens[i]=="C")
 		     values.push(c);
+		else if(tokens[i]=="-C")
+		     values.push(cNeg);
                 else values.push(new Number(tokens[i]));		
             }
 			    
@@ -355,19 +397,25 @@ class Calculator{
 		operations.push(a.print()+' = '+ a.print());
 	}
 
-
+	
 	switch(letter){
 	case "A":
 	     a=values.pop();
 	     a.setNickName("A");
+	     aNeg=Number.getCopy(a);
+	     aNeg.setNickName("-A");
 	     return a;
 	case "B":
 	     b=values.pop();
 	     b.setNickName("B");
+	     bNeg=Number.getCopy(b);
+	     bNeg.setNickName("-B");
 	     return b;
 	case "C":
 	     c=values.pop();
 	     c.setNickName("C");
+	     cNeg=Number.getCopy(c);
+	     cNeg.setNickName("-C");
 	     return c;
 	}
         // Top of 'values' contains result, return it
@@ -507,20 +555,3 @@ class Calculator{
     }
     
 }
-
-
-//Erase
-
-    /*
-    public function checksMultiplicability(a:Int64, b:Int64){
-    	   var aLength:Int;
-	   var bLength:Int;
-	   if(Int64.isNeg(a))
-		aLength=Int64.toStr(a).length-1;
-		else aLength=Int64.toStr(a).length;
-	if(Int64.isNeg(b))
-		bLength=Int64.toStr(b).length-1;
-		else bLength=Int64.toStr(a).length;
-	return aLength+bLength<=14;
-    }
-    */
