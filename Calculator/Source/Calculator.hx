@@ -209,7 +209,7 @@ class Calculator{
 			expressionStillValid=false;
 		     }
 		     else{
-		     	     while(i<tokens.length && (tokens[i]=="-" || tokens[i]=="." || tokens[i]=="E" || (tokens[i]>="0" && tokens[i]<="9")) && expressionStillValid){
+		     	     while(i<tokens.length && (tokens[i]=="." || tokens[i]=="E" || (tokens[i]>="0" && tokens[i]<="9")) && expressionStillValid){
 		     					   trace("hola"+tokens[i]);
 		     					   posNumber+=tokens[i];
 		     					   if(tokens[i]=="."){
@@ -227,19 +227,14 @@ class Calculator{
 									expressionStillValid=false;
 		     							status=8;
 					       		     }
-		     					     else
-								hasE=true;
-		     					     }
-							     else if(tokens[i]=="-"){
-							     	  if(hasE){
-								     	  if(hasMinus){
-								  	   expressionStillValid=false;
-									    status=8;
-									    }
-									    else hasMinus=true;
-								  }
-								  else break; 
+		     					     else{
+								if(i<tokens.length-1){
+									posNumber+=tokens[i+1];
+									i++;
+									}
+							     	hasE=true;
 							     }
+		     					     }
 		     					     else if(hasE)
 		     					     	     hasNumberAfterE=true;
 							    i++;

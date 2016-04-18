@@ -44,8 +44,6 @@ class Number{
 	      	this.value=this.value.multiply(DecimalImpl.ten);
 		this.exponent--;
 	      }
-//	      this.value.scaleTo(4);
-//	      trace("The scale is"+this.value.scale);
 	      
 	      sNumber=this.value.toString();
 	      
@@ -69,7 +67,10 @@ class Number{
       
       private function getNumber(spaces:Int){
       	      var decimal:DecimalImpl;
+	      if(spaces>=-7 && spaces<=7)
       	      decimal=this.value.multiply(DecimalImpl.ten.pow(spaces));
+	      else
+	      decimal=DecimalImpl.zero;
       	      return decimal;
       }
      
@@ -155,13 +156,13 @@ class Number{
 
       static public function mul(x:Number, y:Number){
              var rNumber:Number;
-	     rNumber=new Number(x.getValue().multiply(y.getValue()).toString());
+	     rNumber=new Number(x.getValue().multiply(y.getValue()).toString()+"E"+(x.getExponent()+y.getExponent()));
 	     return rNumber;
       }
 
       static public function div(x:Number, y:Number){
              var rNumber:Number;
-	     rNumber=new Number(x.getValue().divideWithScale(y.getValue(),7).toString());
+	     rNumber=new Number(x.getValue().divideWithScale(y.getValue(),7).toString()+"E"+(x.getExponent()-y.getExponent()));
 	     return rNumber;
       }
 
