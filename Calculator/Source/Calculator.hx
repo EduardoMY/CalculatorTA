@@ -46,11 +46,11 @@ class Calculator{
 		     trace(realTokens.length);
 	   	     this.result=evaluate(assign, realTokens);
 		     if(!quitExecution){
-		     this.resultBinary=getBinaryValue(0);
-	   	     this.resultHexadecimal=getHexadecimalValue(this.resultBinary);
+			this.resultBinary=getBinaryValue(0);
+		     	this.resultHexadecimal=getHexadecimalValue(this.resultBinary);
 		     }
 		     else{
-	  	     this.resultBinary="";
+			this.resultBinary="";
 	   	     this.resultHexadecimal="";
 		     quitExecution=false;
 		     }
@@ -100,12 +100,11 @@ class Calculator{
     public function checkIntegrity(tokens:Array<String>){
     	   //Regex ("([ ]*[-+]?[0-9]{1,12})([ ]*[+-/*][ ]*[+-]?[0-9]{1,12})*([ ]*[=]{1}[ ]*)", "g");   
 	   var i:Int=0;
-	   var previousSymbol:Int=0; //0=Nothing, 1=Symbol, 2=SIgn,3=Number
+	   var previousSymbol:Int=0; //0=Nothing, 1=Symbol, 2=SIgn,3=Number, 4=(, 5=)
 	   var operators:Array<String>=["-", "+", "*", "/", "^"];
 	   var variables:Array<String>=["A", "B", "C"];
 	   var values:Array<String>=[];
 	   var expressionStillValid:Bool=true;
-	   var expressionHasReachedEqual:Bool=false;
 	   var status:Int=6;
 	   
 	   if(tokens.length==0){
@@ -121,14 +120,22 @@ class Calculator{
 			     }
 			     
 		if(tokens[i]=="("){
+			if(previousSymbol==3 || previousSymbol==5){
+			expressionStillValid=false;
+			status=8;
+			}
 			values.push(tokens[i]);
+			previousSymbol=4;
 		}
 		else if(tokens[i]==")"){
-				if(previousSymbol==3)
+				if(previousSymbol==3 || previousSymbol==4){
 					values.push(tokens[i]);
+					previousSymbol=5;
+					}
 				else{
 				status=7;
 				expressionStillValid=false;
+				
 				}
 		}
 		else if(operators.indexOf(tokens[i])!=-1){
@@ -263,7 +270,7 @@ class Calculator{
 		}
 		else if(tokens[i]=="="){
 		     status=0;
-		     expressionHasReachedEqual=true;
+		     expressionStillValid=false;
 		}
 		else { 
 		     status=1;
@@ -271,14 +278,27 @@ class Calculator{
 		     expressionStillValid=false;
 		}
 	   	i++;	
-	   }
+	   }//end of big loop
+	   
 	if(status==0 && previousSymbol!=3){
 		status=2;
 	}
-	else if(status==0 && variables.indexOf(tokens[i-1])==-1){
-	     trace("Normal operation");
-	     values.push("*");
+	
+	if(status==0){
+	trace("Hello");
+	var hasAssignation:Bool=false;
+		while(i<tokens.length && !hasAssignation){
+			if(variables.indexOf(tokens[i])!=-1){
+			values.push(tokens[i]);
+			hasAssignation=true;
+
+			}
+			i++;
+		}
+		if(!hasAssignation)
+			values.push("");
 	}
+
 	values.push(status+"");
 	
 	for(c in values)
