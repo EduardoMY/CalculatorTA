@@ -4,17 +4,20 @@ import thx.bigint.Decimals;
 import thx.bigint.DecimalImpl;
 
 class Number{
+//To-Do list
+/*
+
+*/
       var value:DecimalImpl;
       var exponent:Int;// from -99 to 99
       var nickName:String;
-      var error:Bool;
+      var error:Int;//0=No error, 1= Overflow, 2=Too much digits,3=Div between zero, 4=imaginary number
       
       public function new(num:String){
-      
 	     var exponentComponent:String;
 	     var valueComponent:String;
       	     var hasE:Int=num.indexOf("E");
-	     nickName="";
+	     this.nickName="";
 	     if(hasE!=-1){
 		valueComponent=num.substr(0, hasE);
 		exponentComponent=num.substr(hasE+1);
@@ -25,16 +28,17 @@ class Number{
 	     	  this.value=Decimals.parse(num);
 		  this.exponent=0;
 	     }
-	     trace(this.value.toString());
-	     
+//	     trace(this.value.toString());
+	     this.error=0;
+
 	     compact();
-	     
       }
 
       private function compact(){
       	      var hasPoint:Bool;
 	      var sNumber:String;
-	      var hasPoint:Bool=false, hasAnyMoreZeros=true;
+	      var len:Int;
+	      var hasPoint:Bool=false;
 	      
       	      while(this.value.compareToAbs(DecimalImpl.ten)>=0){
 		this.value=this.value.divide(DecimalImpl.ten);
@@ -51,7 +55,31 @@ class Number{
 		hasPoint=true;
 		
 	      if(hasPoint)
-	      while(hasAnyMoreZeros){
+		sNumber=reduceValueString(sNumber);
+		
+	      len=sNumber.length;
+	      if(sNumber.indexOf("-")!=-1)
+		len--;
+	      if(sNumber.indexOf(".")!=-1)
+		len--;
+		
+	      if(len>8){
+		this.error=2;
+		this.value=Decimals.parse("0");
+		}
+	      else if(this.exponent>99 || this.exponent<-99){
+	      	this.error=1;
+		this.value=Decimals.parse("0");
+		}
+	      else {
+	      	   this.value=Decimals.parse(sNumber);
+	      }
+      }
+      
+      private function reduceValueString(sNumber:String){
+      	      var  hasAnyMoreZeros=true;
+	      
+      	      while(hasAnyMoreZeros){
 		if(sNumber.charAt(sNumber.length-1)=="0")
 			sNumber=sNumber.substr(0, sNumber.length-1);
 		else
@@ -61,8 +89,36 @@ class Number{
 			hasAnyMoreZeros=false;
 		}
 	      }
-	      this.value=Decimals.parse(sNumber);
-	      trace("EL numero es "+this.value.toString());
+	      return sNumber;
+      }
+            
+      static public function getCopy(x:Number){
+      	     var xNum:Number;
+	     xNum=new Number(x.getValue()+"E"+x.getExponent());
+	     return xNum;
+      }
+      
+      public function getError(){
+            return this.error;
+      }
+      public function setError(x:Int){
+      	     this.error=x;
+      }
+      public function getValue(){ return this.value;}
+      
+      public function getExponent(){return this.exponent;}
+      
+      public function resetOverflow(){
+      	      if(this.error==1 || this.error==2){
+		this.error=0;
+	      }
+      }
+      public function setNickName(name:String){
+      	     this.nickName=name;
+      }
+      
+      public function negate(){
+      	     this.value=this.value.negate();
       }
       
       private function getNumber(spaces:Int){
@@ -73,42 +129,45 @@ class Number{
 	      decimal=DecimalImpl.zero;
       	      return decimal;
       }
-     
       
-      public function setNickName(name:String){
-      	     this.nickName=name;
-      }
-      
-      public function print(){
-      
-      	     var name:String;
+      public function vPrint(){
+      	     var name:String="";
 	     var expComponent:String="";
 	     var valueComponent:String;//=this.value.toString();
-	     
-      	     if(this.nickName==""){
+	     if(this.error==0){
 		if(this.exponent<-7 || this.exponent>7){
 				    valueComponent=this.value.toString();
 				    expComponent="E"+this.exponent;
 		}
 		else {
 		     valueComponent=this.value.multiply(DecimalImpl.ten.pow(this.exponent)).toString();
-		     //expComponent="E"+this.exponent;
+		     if(valueComponent.indexOf(".")!=-1)
+			valueComponent=reduceValueString(valueComponent);
 		}
 		name=valueComponent+expComponent;
+	}
+	else{
+		switch (this.error){
+		     case 1:
+		     name="Overflow!";
+		     case 2:
+		     name="Overflow!!";
+		     case 3:
+		     name="Math. Error Division by Zero";
+		     case 4:
+		     name="Imaginary number";
 		}
-	     else name= this.nickName;
+		
+	}
 	     return name;
       }
-
-      public function isOverflowed(){
-            return true;
+      
+      public function print(){
+      	     if(this.nickName=="")
+		return vPrint();
+	     else return this.nickName;
+      
       }
-      
-      public function getValue(){ return this.value;}
-      
-      public function getExponent(){return this.exponent;}
-      
-      public function hasError(){this.error=true;}
       
       static public function sum(x:Number, y:Number){
       	     var rNumber:Number;
@@ -126,8 +185,7 @@ class Number{
 		xDecimals=x.getNumber(-dfExp);
 		yDecimals=y.getNumber(0);
 	     }
-	     trace(xDecimals);
-	     trace(yDecimals);
+	     
 	     rNumber=new Number((xDecimals.add(yDecimals)).toString()+"E"+maxExp );
 	     return rNumber;
       }
@@ -148,8 +206,7 @@ class Number{
 		xDecimals=x.getNumber(-dfExp);
 		yDecimals=y.getNumber(0);
 	     }
-	     trace(xDecimals);
-	     trace(yDecimals);
+	     
 	     rNumber=new Number((xDecimals.subtract(yDecimals)).toString()+"E"+maxExp );
 	     return rNumber;
       }
@@ -162,6 +219,10 @@ class Number{
 
       static public function div(x:Number, y:Number){
              var rNumber:Number;
+	     if(y.getValue().compareTo(DecimalImpl.zero)==0){
+		rNumber=new Number("0");
+		rNumber.setError(3);
+		}
 	     rNumber=new Number(x.getValue().divideWithScale(y.getValue(),7).toString()+"E"+(x.getExponent()-y.getExponent()));
 	     return rNumber;
       }
@@ -172,35 +233,19 @@ class Number{
 	     yDecimal=y.getValue();
 	     xDecimal=x.getValue();
 	     
-	     if(yDecimal.compareToAbs(DecimalImpl.zero)<0)
-		rNumber=new Number(xDecimal.square().toString());
+	     if(yDecimal.compareToAbs(DecimalImpl.one)<0){
+		if(xDecimal.isNegative()){
+			rNumber=new Number("0");
+			rNumber.setError(4);
+		}
 		else
-		rNumber=new Number(xDecimal.pow(yDecimal.abs().toInt()).toString());
+			rNumber=new Number(xDecimal.square().toString());
+	     }
+		else
+		rNumber=new Number(xDecimal.pow(yDecimal.abs().toInt()).toString()+
+			    "E"+(yDecimal.abs().toInt()*x.getExponent()+x.getExponent()*y.getExponent()));
 	     if(yDecimal.isNegative())
 		rNumber=div(new Number(DecimalImpl.one.toString()), rNumber);
 	     return rNumber;
-      }
-      
-      static public function copy(x:Number){
-      	     
-      }
-
-      static public function max(x:Int, y:Int){
-      	     if(x>y)
-	     	     return x;
-	     return y;
-      }
-
-      
-      static public function min(x:Int, y:Int){
-      	     if(x>y)
-		return y;
-	 return x;
-      }
-      
-      static public function getCopy(x:Number){
-      	     var xNum:Number;
-	     xNum=new Number(x.getValue()+"E"+x.getExponent());
-	     return xNum;
       }
 }

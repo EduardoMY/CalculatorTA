@@ -10,8 +10,8 @@ class Calculator{
     var bNeg:Number;
     var c:Number;
     var cNeg:Number;
-    var resultBinary:String;
-    var resultHexadecimal:String;
+    var resultBinary:String="";
+    var resultHexadecimal:String="";
     var operations:Array<String>;
     var quitExecution:Bool;
     
@@ -43,57 +43,59 @@ class Calculator{
 		case "0": //No error at all
 		     this.operations=[];
 		     var assign:String=realTokens.pop();
-		     trace(realTokens.length);
 	   	     this.result=evaluate(assign, realTokens);
-		     if(!quitExecution){
-			this.resultBinary=getBinaryValue(0);
-		     	this.resultHexadecimal=getHexadecimalValue(this.resultBinary);
-		     }
-		     else{
-			this.resultBinary="";
-	   	     this.resultHexadecimal="";
+//		     if(!quitExecution){
+//			this.resultBinary=getBinaryValue(0);
+//		     	this.resultHexadecimal=getHexadecimalValue(this.resultBinary);
+//		     }
+//		     else{
+//			this.resultBinary="";
+//	   	     this.resultHexadecimal="";
 		     quitExecution=false;
-		     }
+//		     }
 		case "1": //Error Invalid Token
 		     this.operations=["Token invalid ("+realTokens.pop()+")"];
 		     this.result=new Number("0");
-		     this.resultBinary="";
-		     this.resultHexadecimal="";
+//		     this.resultBinary="";
+//		     this.resultHexadecimal="";
 		case "2": //Error  Missing Operation
 		     this.operations=["There is a missing operation"];
 		     this.result=new Number("0");
-		     this.resultBinary="";
-		     this.resultHexadecimal="";
+//		     this.resultBinary="";
+//		     this.resultHexadecimal="";
 		case "3": //Error Bad combination of signs
 		     this.operations=["Bad combination of signs("+realTokens[realTokens.length-2]+realTokens[realTokens.length-1]+")"];
 		     this.result=new Number("0");
-		     this.resultBinary="";
-		     this.resultHexadecimal="";
+//		     this.resultBinary="";
+//		     this.resultHexadecimal="";
 		case "4": //Number too big
 		     this.operations=["Overflow !!!"];
 		     this.result=new Number("0");
-		     this.resultBinary="";
-		     this.resultHexadecimal="";
+//		     this.resultBinary="";
+//		     this.resultHexadecimal="";
 		case "5": //Single operation
 		     this.operations=["Error: Cannot aply an operation to a single number"];
 		     this.result=new Number("0");
-		     this.resultBinary="";
-		     this.resultHexadecimal="";
+//		     this.resultBinary="";
+//		     this.resultHexadecimal="";
 		case "6":
 		     this.operations=["No = at the end"];
 		     this.result=new Number("0");
-		     this.resultBinary="";
-		     this.resultHexadecimal="";
+//		     this.resultBinary="";
+//		     this.resultHexadecimal="";
 		case "7":
 		     this.operations=["Empty operation"];
 		     this.result=new Number("0");
-		     this.resultBinary="";
-		     this.resultHexadecimal="";
+//		     this.resultBinary="";
+//		     this.resultHexadecimal="";
 		case "8":
 		     this.operations=["Invalid Number"];
 		     this.result=new Number("0");
-		     this.resultBinary="";
-		     this.resultHexadecimal="";
+//		     this.resultBinary="";
+//		     this.resultHexadecimal="";
+		case "9":
+		     this.operations=["Parenthesis Mismatch"];
+		     this.result=new Number("0");
 	   }
     }
 
@@ -108,12 +110,10 @@ class Calculator{
 	   var status:Int=6;
 	   
 	   if(tokens.length==0){
-		trace("emptyyyyyy");
 		status=7;
 		expressionStillValid=false;
 	   }
 	   while(i<tokens.length && expressionStillValid){
-	   	trace(tokens[i]);
 	   	if(tokens[i] == " "){
 			     i++;
 			     continue;
@@ -124,34 +124,44 @@ class Calculator{
 			expressionStillValid=false;
 			status=8;
 			}
-			values.push(tokens[i]);
-			previousSymbol=4;
+			else {
+			     values.push(tokens[i]);
+			     previousSymbol=4;
+			     var state:Int=1, c:Int=i+1;
+			     while(c<tokens.length && tokens[c]!="=" && state!=0){
+			     	if(tokens[c]=="(")
+					state++;
+				else if(tokens[c]==")")
+				     state--;
+				c++;
+			     }
+			     if(state!=0){
+				status=9;
+				expressionStillValid=false;
+			     }
+			}
 		}
 		else if(tokens[i]==")"){
-				if(previousSymbol==3 || previousSymbol==4){
+				if(previousSymbol==3 || previousSymbol==5){
 					values.push(tokens[i]);
 					previousSymbol=5;
-					}
+				}
 				else{
-				status=7;
-				expressionStillValid=false;
-				
+					status=7;
+					expressionStillValid=false;				
 				}
 		}
 		else if(operators.indexOf(tokens[i])!=-1){
-		     var lastOp:String;
 		     if(previousSymbol==0 && (tokens[i]=="+" || tokens[i]=="-")){
-		     		trace("sign star");
 		     		values.push(tokens[i]);
 				previousSymbol=2;
-		     		}
+		     	}
 		     else if(previousSymbol==0)
 		     {
 			status= 5;
 			expressionStillValid=false;
 		     }
 		     else if(previousSymbol==1 && (tokens[i]=="+" || tokens[i]=="-")){
-		     trace("weird sign");
 		     	  values.push(tokens[i]);
 			  previousSymbol=2;
 		     }
@@ -160,29 +170,14 @@ class Calculator{
 			  values.push(tokens[i]);
 			  expressionStillValid=false;
 		     }
-		     else if(previousSymbol==2){//
-		     	  if(tokens[i]=="+" || tokens[i]=="-"){
-			  	trace("another sign");
-			  	lastOp=values.pop();
-				trace("El simbolo es"+(lastOp)+"    "+tokens[i]);
-			  	if(lastOp=="-"){
-					if(tokens[i]=="+")
-						values.push("-");
-					else
-						values.push("+");
-					trace("Paso");
-				}
-				else values.push(tokens[i]);
-			  }
-			  else {
-			       status=3;
-			       values.push(tokens[i]);
-			       expressionStillValid=false;
-			  }
+		     else if(previousSymbol==3 || previousSymbol==4 || previousSymbol==5) {
+		     	  previousSymbol=1;
+			  values.push(tokens[i]);
 		     }
-		     else if(previousSymbol==3){
-		     	values.push(tokens[i]);
-			previousSymbol=1;
+		     else {
+		     	  status = 3;
+			  values.push(tokens[i]);
+			  expressionStillValid=false;
 		     }
 		}
 		else if(variables.indexOf(tokens[i])!=-1){//Checks if the Value is a Variable {A, B, C}
@@ -199,7 +194,6 @@ class Calculator{
 		     }
 		}
 		else if(tokens[i]=="." || (tokens[i]>="0" && tokens[i]<="9")){
-		     trace(tokens[i]+"Number");
 		     var posNumber:String="";
 		     var realNumber:String;
 		     var hasPoint:Bool=false;
@@ -217,7 +211,6 @@ class Calculator{
 		     }
 		     else{
 		     	     while(i<tokens.length && (tokens[i]=="." || tokens[i]=="E" || (tokens[i]>="0" && tokens[i]<="9")) && expressionStillValid){
-		     					   trace("hola"+tokens[i]);
 		     					   posNumber+=tokens[i];
 		     					   if(tokens[i]=="."){
 								if(hasPoint || hasE){
@@ -235,7 +228,7 @@ class Calculator{
 		     							status=8;
 					       		     }
 		     					     else{
-								if(i<tokens.length-1){
+								if(i<tokens.length-1 && tokens[i+1]=="-"){
 									posNumber+=tokens[i+1];
 									i++;
 									}
@@ -246,13 +239,11 @@ class Calculator{
 		     					     	     hasNumberAfterE=true;
 							    i++;
 						}//while
-		     //Check if the 
+		     //Check if the
+		     trace(posNumber);
 		     if((hasE && !hasNumberAfterE) || (hasPoint && !hasNumberAfterPoint)){
 		     	      status=8;
 			      expressionStillValid=false;
-			      trace(posNumber);
-			      trace("Evaluating number at the end");
-			      
 		     }
 		     else if(expressionStillValid) {
 		     	  if(previousSymbol==2){
@@ -263,7 +254,6 @@ class Calculator{
 		     	  else values.push(posNumber);
 		     	  previousSymbol=3;
 		     }
-		     trace(posNumber+"COmpleteNumber");
 		     i--;
 		  }//big else
 		     
@@ -280,12 +270,11 @@ class Calculator{
 	   	i++;	
 	   }//end of big loop
 	   
-	if(status==0 && previousSymbol!=3){
-		status=2;
-	}
+	if(status==0)
+		if(previousSymbol!=3 && previousSymbol!=5)
+			status=2;
 	
 	if(status==0){
-	trace("Hello");
 	var hasAssignation:Bool=false;
 		while(i<tokens.length && !hasAssignation){
 			if(variables.indexOf(tokens[i])!=-1){
@@ -300,40 +289,31 @@ class Calculator{
 	}
 
 	values.push(status+"");
-	
+	/*
 	for(c in values)
-	      trace(c+"Checar todos los digitos");
+	      trace(c+"Checar todos los digitos"); */
 	   return values;
-	   
     }
     
     public function print(){
-    	return this.result.print();	
-    }
-    
-    public function printBinary(){
-      	return this.resultBinary;
-    }
-   
-    public function printHexadecimal(){
-    	return this.resultHexadecimal;
+    	return this.result.vPrint();	
     }
 
     public function printAValue(){
-    	   return a.print();
+    	   return a.vPrint();
     }
     
     public function printBValue(){
-    	   return b.print();
+    	   return b.vPrint();
     }
     
     public function printCValue(){
-    	   return c.print();
+    	   return c.vPrint();
     }	
 
     public function printOperations(){
     	   return this.operations;
-	   }
+    }
 	   
     public function evaluate(letter:String, tokens:Array<String>)    {
     
@@ -357,7 +337,6 @@ class Calculator{
 	// Current token is a number, push it to stack for numbers
             if (tokens[i].length>1 || variables.indexOf(tokens[i])!=-1 || (tokens[i]>="0" && tokens[i]<="9"))
             {
-		trace("It is a Number " +tokens[i]);
 		if(tokens[i]=="A")
 			values.push(a);
 		else if(tokens[i]=="-A")
@@ -380,7 +359,6 @@ class Calculator{
             // Closing brace encountered, solve entire brace
             else if (tokens[i] == ")")
             {
-		trace("C");
                 while (ops[ops.length-1] != "(")
                   values.push(applyOp(ops.pop(), values.pop(), values.pop()));
                 ops.pop();
@@ -409,7 +387,7 @@ class Calculator{
 	 //checks if there is no operation to make
 	 if(this.operations.length==0){
 		var a:Number=values[0];
-		operations.push(a.print()+' = '+ a.print());
+		operations.push(a.print()+' = '+ a.vPrint());
 	}
 
 	
@@ -418,18 +396,21 @@ class Calculator{
 	     a=values.pop();
 	     a.setNickName("A");
 	     aNeg=Number.getCopy(a);
+	     aNeg.negate();
 	     aNeg.setNickName("-A");
 	     return a;
 	case "B":
 	     b=values.pop();
 	     b.setNickName("B");
 	     bNeg=Number.getCopy(b);
+	     bNeg.negate();
 	     bNeg.setNickName("-B");
 	     return b;
 	case "C":
 	     c=values.pop();
 	     c.setNickName("C");
 	     cNeg=Number.getCopy(c);
+	     cNeg.negate();
 	     cNeg.setNickName("-C");
 	     return c;
 	}
@@ -463,55 +444,59 @@ class Calculator{
         case "+":
 	    res=Number.sum(a, b);
 	    operations.push(a.print()+' + ' + b.print()+' = '+res.print());
-            return res;
-	    //Overflow
-	    /*
+	    if(res.getError()==0)
+	                return res;
 	    else {
-	    	 operations.push('$a + $b = Overflow!!');
 		 quitExecution=true;
-		 return 0;
-	    }*/
+		 return new Number("0");
+	    }
         case "-":
 	     res=Number.sub(a,b);
-	     operations.push(a.print()+' - ' + b.print()+' = '+res.print());
-             return res;
-	     //Overflow
-	     /*
-	     else{
-	     	     operations.push('$a - $b = Overflow');
-		     quitExecution=true;
-            	     return 0;
-	     }*/
+     	     operations.push(a.print()+' - ' + b.print()+' = '+res.print());
+	     if(res.getError()==0)
+		return res;
+	     else {
+	     	 quitExecution=true;
+		 return new Number("0");
+	     }
         case "*":
-	     	     res=Number.mul(a,b);
-	     	     operations.push(a.print()+' * ' + b.print()+' = '+res.print());
-            	     return res;
-		// If there is an overflow
-		/*
-		   	operations.push('$a * $b = Overflow');
-			quitExecution=true;
-                 	return 0;
-		*/
+	     res=Number.mul(a,b);
+	     operations.push(a.print()+' * ' + b.print()+' = '+res.print());
+	     if(res.getError()==0)
+		return res;
+	     else {
+	     quitExecution=true;
+	     return new Number("0");
+	      }
 		
         case "/":
-	//Check if you are going to divide by zero
+	     
 	       res=Number.div(a ,b);
-	       operations.push(a.print()+' / ' + b.print()+' = '+res.print());	       
-	       return res;
-	       
-	 //If you are gonna do that
-	 /*
-		operations.push('$a / $b = Arith. Error');
-		quitExecution=true;
-	       return 0;*/
+	       operations.push(a.print()+' / ' + b.print()+' = '+res.print());
+	       if(res.getError()==0)
+		return res;
+	       else {
+	       quitExecution=true;
+	       return new Number("0");
+	       }
 	case "^":     
 	     res=Number.pow(a,b);
 	     operations.push(a.print()+' ^ ' + b.print()+' = '+res.print());
-	     return res;
+	     if(res.getError()==0)
+		return res;
+	     else{
+		quitExecution=true;
+		return new Number("0");
+	     }
+	     
 	     }
 	 return new Number("0");
     }
+    }
 
+
+
+/*
     public function getBinaryValue(x:Int){
         var f1:String="";
         var f2:String="";
@@ -570,3 +555,18 @@ class Calculator{
     }
     
 }
+
+   
+    public function printBinary(){
+      	return this.resultBinary;
+    }
+   
+    public function printHexadecimal(){
+    	return this.resultHexadecimal;
+    }
+
+
+
+
+
+*/

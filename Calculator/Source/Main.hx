@@ -242,7 +242,8 @@ class Main extends Sprite {
 				     +"Numeros mayores seran marcados como overflow\n"
 				     +"Division entre cero tambien es error.\n"
 				     +"Puedes poner TODOS los espacios que gustes.\n"
-				     +"Binario/hexadecimal no sirve en numeros negativos :/\n";
+				     +"Binario/hexadecimal no sirve en numeros negativos :/\n"
+				     +"Se trunca el valor";
 		operations.text=helpMessage;
 
 	}
@@ -253,8 +254,8 @@ class Main extends Sprite {
 		for(i in calc.printOperations())
 		      operations.appendText(i+"\n");
 		      resultDecimal.text=calc.print()+"";
-		      resultBinary.text=calc.printBinary();
-		      resultHexadecimal.text=calc.printHexadecimal();
+//resultBinary.text=calc.printBinary();
+//		      resultHexadecimal.text=calc.printHexadecimal();
 		      aValue.text=calc.printAValue();
 		      bValue.text=calc.printBValue();
 		      cValue.text=calc.printCValue();
