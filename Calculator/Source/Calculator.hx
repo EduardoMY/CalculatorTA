@@ -1,7 +1,7 @@
 package ;
 
 class Calculator{
-
+//Check if the () is closed
     var originalOperation: String;
     var result:Number;
     var a:Number;
@@ -121,42 +121,55 @@ class Calculator{
 			     
 		if(tokens[i]=="("){
 			if(previousSymbol==3 || previousSymbol==5){
-			expressionStillValid=false;
-			status=8;
+				expressionStillValid=false;
+				status=8;
 			}
 			else {
-			     values.push(tokens[i]);
-			     previousSymbol=4;
-			     var state:Int=1, c:Int=i+1;
-			     while(c<tokens.length && tokens[c]!="=" && state!=0){
-			     	if(tokens[c]=="(")
-					state++;
-				else if(tokens[c]==")")
-				     state--;
-				c++;
-			     }
+			     var state:Int=0, c:Int=i;
+			     trace("PArent");
+			     state=checkParenthesis(tokens, c, "(");
 			     if(state!=0){
 				status=9;
 				expressionStillValid=false;
 			     }
+			     else{
+			     	previousSymbol=4;
+				values.push(tokens[i]);
+			     }
 			}
 		}
 		else if(tokens[i]==")"){
+				trace("))))))");
+				
 				if(previousSymbol==3 || previousSymbol==5){
-					values.push(tokens[i]);
-					previousSymbol=5;
+					trace("BBBBBB");
+					var state:Int=0;
+					var c:Int=i;
+					state=checkParenthesis(tokens, c, ")");
+					trace("i"+i);
+					if(state!=0){
+						expressionStillValid=false;
+						status=9;
+					}
+					else { 
+					     	values.push(tokens[i]);
+						trace(")   "+tokens[i]);
+//						expressionStillValid=false;
+						previousSymbol=5;
+					
+					}
 				}
 				else{
-					status=7;
-					expressionStillValid=false;				
+					status=8;
+					expressionStillValid=false;
 				}
 		}
 		else if(operators.indexOf(tokens[i])!=-1){
-		     if(previousSymbol==0 && (tokens[i]=="+" || tokens[i]=="-")){
+		     if((previousSymbol==0 || previousSymbol==4) && (tokens[i]=="+" || tokens[i]=="-")){
 		     		values.push(tokens[i]);
 				previousSymbol=2;
 		     	}
-		     else if(previousSymbol==0)
+		     else if(previousSymbol==0 || previousSymbol==4)
 		     {
 			status= 5;
 			expressionStillValid=false;
@@ -267,11 +280,16 @@ class Calculator{
 		     values.push(tokens[i]);
 		     expressionStillValid=false;
 		}
-	   	i++;	
+		
+	   	i++;
+		
 	   }//end of big loop
-	   
+/*
+	   if(previousSymbol==5){
+		return values;
+	   }*/
 	if(status==0)
-		if(previousSymbol!=3 && previousSymbol!=5)
+		if(!(previousSymbol==3 || previousSymbol==5))
 			status=2;
 	
 	if(status==0){
@@ -289,10 +307,42 @@ class Calculator{
 	}
 
 	values.push(status+"");
-	/*
-	for(c in values)
-	      trace(c+"Checar todos los digitos"); */
-	   return values;
+	trace("fin");
+	return values;
+    }
+
+    public function checkParenthesis(tokens:Array<String>, i:Int, p:String){
+    	   var state:Int=0, df:Int=0;
+	   var sParenthesis:String="", oParenthesis:String="";
+	   
+	   switch(p){
+	   case "(":
+	   	sParenthesis=")";
+		oParenthesis="(";
+		df=1;
+		state=-1;
+		i++;
+	   case ")":
+	     	sParenthesis="(";
+		oParenthesis=")";
+		df=-1;
+		state=-1;
+		i--;
+	   }
+	   trace(p);
+	   trace(sParenthesis);
+	   trace(oParenthesis);
+	   trace(df);
+	   trace("Prueba de Parenthesis");
+	   while(i>=0 && i<tokens.length && tokens[i]!="=" && state!=0){
+	   	 if(tokens[i]==sParenthesis)
+			state++;
+		else if(tokens[i]==oParenthesis)
+		     state--;
+		 i=i+df;
+		 trace(i);
+	   }
+	   return state;
     }
     
     public function print(){
@@ -319,7 +369,7 @@ class Calculator{
     
 	var length:Int = tokens.length;
  	var i:Int =0;
-
+	
 	// Stack for numbers: 'values'
         var values:Array<Number> = new Array<Number>();
 

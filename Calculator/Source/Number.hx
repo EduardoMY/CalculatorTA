@@ -6,7 +6,8 @@ import thx.bigint.DecimalImpl;
 class Number{
 //To-Do list
 /*
-
+Notacion CIentifica Inciso b
+Exactitud a)
 */
       var value:DecimalImpl;
       var exponent:Int;// from -99 to 99
@@ -28,7 +29,6 @@ class Number{
 	     	  this.value=Decimals.parse(num);
 		  this.exponent=0;
 	     }
-//	     trace(this.value.toString());
 	     this.error=0;
 
 	     compact();
@@ -39,18 +39,21 @@ class Number{
 	      var sNumber:String;
 	      var len:Int;
 	      var hasPoint:Bool=false;
-	      
-      	      while(this.value.compareToAbs(DecimalImpl.ten)>=0){
-		this.value=this.value.divide(DecimalImpl.ten);
-		this.exponent++;
-	      }
-	      while(this.value.compareToAbs(DecimalImpl.zero)<0){
-	      	this.value=this.value.multiply(DecimalImpl.ten);
-		this.exponent--;
+	      if(this.value.compareTo(DecimalImpl.zero)!=0){
+	            	      while(this.value.compareToAbs(DecimalImpl.ten)>=0){
+	      		      this.value=this.value.divide(DecimalImpl.ten);
+			      this.exponent++;
+		    	      }			      
+	      		      while(this.value.compareToAbs(DecimalImpl.one)<0){
+	      		      this.value=this.value.multiply(DecimalImpl.ten);
+		      	      this.exponent--;
+//			      trace("Less");
+	      		      }
 	      }
 	      
 	      sNumber=this.value.toString();
-	      
+	      trace(this.value.toString()+"Almost");
+	      trace(sNumber);
 	      if(sNumber.indexOf(".")!=-1)
 		hasPoint=true;
 		
@@ -62,10 +65,23 @@ class Number{
 		len--;
 	      if(sNumber.indexOf(".")!=-1)
 		len--;
-		
+//		trace(sNumber);
+//		trace(len);
 	      if(len>8){
 		this.error=2;
-		this.value=Decimals.parse("0");
+		if(sNumber.indexOf("-")!=-1){
+			if(sNumber.indexOf(".")!=-1)
+				this.value=Decimals.parse(sNumber.substr(0, 10));
+			else
+				this.value=Decimals.parse(sNumber.substr(0, 9));
+		}
+		else {
+		     if(sNumber.indexOf(".")!=-1)
+			this.value=Decimals.parse(sNumber.substr(0, 9));     
+		     else
+		     this.value=Decimals.parse(sNumber.substr(0, 8));
+		}
+		this.error=2;
 		}
 	      else if(this.exponent>99 || this.exponent<-99){
 	      	this.error=1;
@@ -109,7 +125,7 @@ class Number{
       public function getExponent(){return this.exponent;}
       
       public function resetOverflow(){
-      	      if(this.error==1 || this.error==2){
+      	      if(this.error==2){
 		this.error=0;
 	      }
       }
@@ -171,8 +187,9 @@ class Number{
       
       static public function sum(x:Number, y:Number){
       	     var rNumber:Number;
-	     var xDecimals:DecimalImpl, yDecimals:DecimalImpl;
+	     var xDecimals:DecimalImpl, yDecimals:DecimalImpl, rDecimals:DecimalImpl;
 	     var maxExp:Int, dfExp:Int;
+	     
 	     if(x.getExponent()>y.getExponent()){
 		maxExp=x.getExponent();
 		dfExp=maxExp-y.getExponent();
@@ -185,14 +202,18 @@ class Number{
 		xDecimals=x.getNumber(-dfExp);
 		yDecimals=y.getNumber(0);
 	     }
-	     
-	     rNumber=new Number((xDecimals.add(yDecimals)).toString()+"E"+maxExp );
+	     rDecimals=xDecimals.add(yDecimals);
+//	     trace(rDecimals.toString());
+	     rNumber=new Number(rDecimals.toString()+"E"+maxExp );
+	     rNumber.resetOverflow();
 	     return rNumber;
       }
 
       static public function sub(x:Number, y:Number){
              var rNumber:Number;
 	     var xDecimals:DecimalImpl, yDecimals:DecimalImpl;
+	     var rDecimals:DecimalImpl;
+	     
 	     var maxExp:Int, dfExp:Int;
 	     if(x.getExponent()>y.getExponent()){
 		maxExp=x.getExponent();
@@ -206,24 +227,33 @@ class Number{
 		xDecimals=x.getNumber(-dfExp);
 		yDecimals=y.getNumber(0);
 	     }
-	     
-	     rNumber=new Number((xDecimals.subtract(yDecimals)).toString()+"E"+maxExp );
+	     rDecimals=xDecimals.subtract(yDecimals);
+	     rNumber=new Number(rDecimals.toString()+"E"+maxExp );
+	     rNumber.resetOverflow();
 	     return rNumber;
       }
 
       static public function mul(x:Number, y:Number){
              var rNumber:Number;
-	     rNumber=new Number(x.getValue().multiply(y.getValue()).toString()+"E"+(x.getExponent()+y.getExponent()));
+	     var rDecimals:DecimalImpl;
+	     rDecimals=x.getValue().multiply(y.getValue());
+	     rNumber=new Number(rDecimals.toString()+"E"+(x.getExponent()+y.getExponent()));
+	     rNumber.resetOverflow();
 	     return rNumber;
       }
 
       static public function div(x:Number, y:Number){
              var rNumber:Number;
+	     var rDecimals:DecimalImpl;
+	
 	     if(y.getValue().compareTo(DecimalImpl.zero)==0){
 		rNumber=new Number("0");
-		rNumber.setError(3);
+		rNumber.setError(4);
 		}
-	     rNumber=new Number(x.getValue().divideWithScale(y.getValue(),7).toString()+"E"+(x.getExponent()-y.getExponent()));
+	     else{
+		rDecimals=x.getValue().divideWithScale(y.getValue(),8);
+	     	rNumber=new Number(rDecimals.toString()+"E"+(x.getExponent()-y.getExponent()));
+	     }
 	     return rNumber;
       }
 
