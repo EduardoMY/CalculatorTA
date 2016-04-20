@@ -17,8 +17,6 @@ class Main extends Sprite {
 	var operation:TextField;
 	var operations:TextField;
 	var resultDecimal:TextField;
-	var resultBinary:TextField;
-	var resultHexadecimal:TextField;
 	var aValue:TextField;
 	var bValue:TextField;
 	var cValue:TextField;
@@ -28,8 +26,6 @@ class Main extends Sprite {
 	var operationTitle:TextField;
 	var operationsTitle:TextField;
 	var resultDecimalTitle:TextField;
-	var resultBinaryTitle:TextField;
-	var resultHexadecimalTitle:TextField;
 	var aTitle:TextField;
 	var bTitle:TextField;
 	var cTitle:TextField;
@@ -69,10 +65,6 @@ class Main extends Sprite {
 		addChild(operationsTitle);
 		addChild(resultDecimal);
 		addChild(resultDecimalTitle);
-		addChild(resultBinary);
-		addChild(resultBinaryTitle);
-		addChild(resultHexadecimal);
-		addChild(resultHexadecimalTitle);
 		addChild(aTitle);
 		addChild(aValue);
 		addChild(bTitle);
@@ -80,10 +72,12 @@ class Main extends Sprite {
 		addChild(cTitle);
 		addChild(cValue);
 		addChild(sprite);
-	}	
+	}
+	
 	private function onButtonClick(e:Dynamic){
 		operations.text=helpMessage;
 	}
+	
 	private function init(){
 
 		calc=new Calculator();
@@ -97,8 +91,6 @@ class Main extends Sprite {
 		operation=new TextField();
 		operations=new TextField();
 		resultDecimal=new TextField();
-		resultBinary=new TextField();
-		resultHexadecimal=new TextField();
 		aValue=new TextField();
 		bValue=new TextField();
 		cValue=new TextField();
@@ -107,18 +99,16 @@ class Main extends Sprite {
 		operationTitle=new TextField();
 		operationsTitle=new TextField();
 		resultDecimalTitle=new TextField();
-		resultBinaryTitle=new TextField();
-		resultHexadecimalTitle=new TextField();
 		aTitle=new TextField();
 		bTitle=new TextField();
 		cTitle=new TextField();
 		
 		resultDecimalTitle.x=20.0;
-		resultDecimalTitle.y=5.0;
+		resultDecimalTitle.y=20.0;
 		resultDecimalTitle.text="Result: ";
 		resultDecimalTitle.setTextFormat(outsideText);
 		resultDecimal.x=20.0;
-		resultDecimal.y=22.0;
+		resultDecimal.y=50.0;
 		resultDecimal.height=30.0;
 		resultDecimal.width=200.0;
 		resultDecimal.setTextFormat(insideText);
@@ -127,31 +117,6 @@ class Main extends Sprite {
 		resultDecimal.background=true;
 		resultDecimal.backgroundColor=0x847575;
 		
-		resultBinaryTitle.x=20.0;
-		resultBinaryTitle.y=80.0;
-		resultBinaryTitle.text="Binary: ";
-		resultBinaryTitle.setTextFormat(outsideText);
-		resultBinary.x=20.0;
-		resultBinary.y=100.0;
-		resultBinary.height=30.0;
-		resultBinary.width=300.0;
-		resultBinary.setTextFormat(insideText);
-		resultBinary.border=true;
-		resultBinary.background=true;
-		resultBinary.backgroundColor=0x847575;
-				
-		resultHexadecimalTitle.x=20.0;
-		resultHexadecimalTitle.y=160.0;
-		resultHexadecimalTitle.text="Hexadecimal: ";
-		resultHexadecimalTitle.setTextFormat(outsideText);
-		resultHexadecimal.x=20.0;
-		resultHexadecimal.y=180.0;
-		resultHexadecimal.height=30.0;
-		resultHexadecimal.width=200.0;
-		resultHexadecimal.setTextFormat(insideText);
-		resultHexadecimal.border=true;
-		resultHexadecimal.background=true;
-		resultHexadecimal.backgroundColor=0x847575;
 
 		aTitle.x=22.0;
 		aTitle.y=255.0;
@@ -194,7 +159,7 @@ class Main extends Sprite {
 
 		operationTitle.x=20.0;
 		operationTitle.y=470.0;
-		operationTitle.width=250;
+		operationTitle.width=320;
 		operationTitle.height=30;
 		operationTitle.text="Operation: <Insert the operation here>";
 		operationTitle.setTextFormat(outsideText);
@@ -209,7 +174,7 @@ class Main extends Sprite {
 
 		operationsTitle.x=400.0;
 		operationsTitle.y=5.0;
-		operationsTitle.width=200.0;
+		operationsTitle.width=240.0;
 		operationsTitle.text="Operations, help or errors: ";
 		operationsTitle.setTextFormat(outsideText);
 		operations.x=400.0;
@@ -231,19 +196,19 @@ class Main extends Sprite {
 				     +"==========================\n"
 				     +"Notas Importantes:\n"
 				     +"El sistema marcara error por problemas de sintaxis.\n"
-				     +"Al marcar un error el cuadro de resultados tendra cero,\n"
-		   		     +"binario y Hexadecimal estaran vaciosy\n"
-				     +"y este cuadro tendra el mensaje de error.\n"
+				     +"Al marcar un error el cuadro de resultados y en este.\n"
 				     +"El sistema acepta numeros con signo (-N y +N).\n"
 				     +"No se puede utilizar mas de un signo por numero.\n"
 				     +"La operacion deben de tener un signo de igualdad al terminar.\n"
-				     +"Todo despues era ignorado.\n"
-				     +"Solo aceptan numeros enteros y de 12 digitos.\n"
-				     +"Numeros mayores seran marcados como overflow\n"
+				     +"Puede tener A, B o C despues de = para asignar valor.\n"
+				     +"Solo aceptan numero con precision de 8 digitos.\n"
+				     +"Si excede esa precision sera error de Overflow\n"
+				     +"Si en alguna operacion excede esa exactitud sera truncado\n"
+				     +"La matisa va desde -99 hasta 99\n"
 				     +"Division entre cero tambien es error.\n"
-				     +"Puedes poner TODOS los espacios que gustes.\n"
-				     +"Binario/hexadecimal no sirve en numeros negativos :/\n"
-				     +"Se trunca el valor";
+				     +"Raiz de Numero negativo tambien es error\n"
+				     +"Puedes poner TODOS los espacios que gustes.\n";
+				     
 		operations.text=helpMessage;
 
 	}
@@ -254,8 +219,6 @@ class Main extends Sprite {
 		for(i in calc.printOperations())
 		      operations.appendText(i+"\n");
 		      resultDecimal.text=calc.print()+"";
-//resultBinary.text=calc.printBinary();
-//		      resultHexadecimal.text=calc.printHexadecimal();
 		      aValue.text=calc.printAValue();
 		      bValue.text=calc.printBValue();
 		      cValue.text=calc.printCValue();

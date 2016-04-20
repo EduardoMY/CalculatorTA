@@ -151,14 +151,28 @@ Exactitud a)
 	     var valueComponent:String;//=this.value.toString();
 	     if(this.error==0){
 		if(this.exponent<-8 || this.exponent>7){
+				    
 				    valueComponent=this.value.toString();
 				    expComponent="E"+this.exponent;
 		}
 		else {
+		     var length:Int;
 		     valueComponent=this.value.multiply(DecimalImpl.ten.pow(this.exponent)).toString();
 		     if(valueComponent.indexOf(".")!=-1)
 			valueComponent=reduceValueString(valueComponent);
-		}
+
+			//QUick fix to print the number in the correct format
+			length=valueComponent.length;
+			if(valueComponent.indexOf("-")!=-1)
+			length--;
+			if(valueComponent.indexOf(".")!=-1){
+				length=length-2;
+				if(length>8){
+				valueComponent=this.value.toString();
+				    expComponent="E"+this.exponent;
+				}	
+			}
+	}
 		name=valueComponent+expComponent;
 	}
 	else{

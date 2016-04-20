@@ -44,55 +44,31 @@ class Calculator{
 		     this.operations=[];
 		     var assign:String=realTokens.pop();
 	   	     this.result=evaluate(assign, realTokens);
-//		     if(!quitExecution){
-//			this.resultBinary=getBinaryValue(0);
-//		     	this.resultHexadecimal=getHexadecimalValue(this.resultBinary);
-//		     }
-//		     else{
-//			this.resultBinary="";
-//	   	     this.resultHexadecimal="";
 		     quitExecution=false;
-//		     }
 		case "1": //Error Invalid Token
 		     this.operations=["Token invalid ("+realTokens.pop()+")"];
 		     this.result=new Number("0");
-//		     this.resultBinary="";
-//		     this.resultHexadecimal="";
 		case "2": //Error  Missing Operation
 		     this.operations=["There is a missing operation"];
 		     this.result=new Number("0");
-//		     this.resultBinary="";
-//		     this.resultHexadecimal="";
 		case "3": //Error Bad combination of signs
 		     this.operations=["Bad combination of signs("+realTokens[realTokens.length-2]+realTokens[realTokens.length-1]+")"];
 		     this.result=new Number("0");
-//		     this.resultBinary="";
-//		     this.resultHexadecimal="";
 		case "4": //Number too big
 		     this.operations=["Overflow !!!"];
 		     this.result=new Number("0");
-//		     this.resultBinary="";
-//		     this.resultHexadecimal="";
 		case "5": //Single operation
 		     this.operations=["Error: Cannot aply an operation to a single number"];
 		     this.result=new Number("0");
-//		     this.resultBinary="";
-//		     this.resultHexadecimal="";
 		case "6":
 		     this.operations=["No = at the end"];
 		     this.result=new Number("0");
-//		     this.resultBinary="";
-//		     this.resultHexadecimal="";
 		case "7":
 		     this.operations=["Empty operation"];
 		     this.result=new Number("0");
-//		     this.resultBinary="";
-//		     this.resultHexadecimal="";
 		case "8":
 		     this.operations=["Invalid Number"];
 		     this.result=new Number("0");
-//		     this.resultBinary="";
-//		     this.resultHexadecimal="";
 		case "9":
 		     this.operations=["Parenthesis Mismatch"];
 		     this.result=new Number("0");
@@ -126,7 +102,6 @@ class Calculator{
 			}
 			else {
 			     var state:Int=0, c:Int=i;
-			     trace("PArent");
 			     state=checkParenthesis(tokens, c, "(");
 			     if(state!=0){
 				status=9;
@@ -153,8 +128,6 @@ class Calculator{
 					}
 					else { 
 					     	values.push(tokens[i]);
-//						trace(")   "+tokens[i]);
-//						expressionStillValid=false;
 						previousSymbol=5;
 					
 					}
@@ -232,9 +205,6 @@ class Calculator{
 		     						}//if(tokens[i]==".")
 		     				           else hasPoint=true;
 		     					   }
-		     					   else if(!hasE && hasPoint){
-		     					   	hasNumberAfterPoint=true;
-		     					   }
 		     					   else if(tokens[i]=="E"){
 		     					   	if(hasE){
 									expressionStillValid=false;
@@ -242,18 +212,26 @@ class Calculator{
 					       		     }
 		     					     else{
 								if(i<tokens.length-1 && tokens[i+1]=="-"){
+										 trace("Negative E");
 									posNumber+=tokens[i+1];
 									i++;
 									}
 							     	hasE=true;
 							     }
 		     					     }
+							   else if(!hasE && hasPoint){
+		     					   	hasNumberAfterPoint=true;
+		     					   }
 		     					     else if(hasE)
 		     					     	     hasNumberAfterE=true;
 							    i++;
 						}//while
 		     //Check if the
 		     trace(posNumber);
+		     trace(hasPoint);
+		     trace(hasNumberAfterPoint);
+		     trace(hasE);
+		     trace(hasNumberAfterE);
 		     if((hasE && !hasNumberAfterE) || (hasPoint && !hasNumberAfterPoint)){
 		     	      status=8;
 			      expressionStillValid=false;
@@ -284,10 +262,7 @@ class Calculator{
 	   	i++;
 		
 	   }//end of big loop
-/*
-	   if(previousSymbol==5){
-		return values;
-	   }*/
+
 	if(status==0)
 		if(!(previousSymbol==3 || previousSymbol==5))
 			status=2;
@@ -536,81 +511,5 @@ class Calculator{
 	     }
 	 return new Number("0");
     }
-    }
-
-
-
-/*
-    public function getBinaryValue(x:Int){
-        var f1:String="";
-        var f2:String="";
-	if(x<=0)
-		f2="0";
-	else {
-	f2=recursiveBinarySolution(x);
-	}
-		return f2;        
-    }
-        public function recursiveBinarySolution(x:Int){
-        if(x==0)
-            return "";
-        return  "";//recursiveBinarySolution(Int.div(x,2))+"" +Int.mod(x,2);
-    }
-    public function getHexadecimalValue(x:String){
-        var f:String=recursiveHexadecimalSolution(x);
-        return f;
-    }
-     public function recursiveHexadecimalSolution(x:String){
-
-    	   if(x.length<=4)
-		return getHexadecimalSymbol(x);
-	return recursiveHexadecimalSolution(x.substr(0,x.length-4)) +
-	       getHexadecimalSymbol(x.substr(x.length-4));
-    }
-
-    public function getHexadecimalSymbol(num:String){
-        switch(num){
-	case "0000":return "0";
-	case "0": return "0";
-	case "0001":return "1";
-	case "1": return "1";
-	case "0010":return "2";
-	case "10": return "2";
-	case "0011":return "3";
-	case "11": return "3";
-	case "0100":return "4";
-	case "100": return "4";
-	case "0101":return "5";
-	case "101": return "5";
-	case "0110":return "6";
-	case "110": return "6";
-	case "0111":return "7";
-	case "111": return "7";
-	case "1000":return "8";
-	case "1001":return "9";
-	case "1010":return "A";
-	case "1011":return "B";
-	case "1100":return "C";
-	case "1101":return "D";
-	case "1110":return "E";
-	case "1111":return "F";     
-	}
-	return "No";
-    }
     
 }
-
-   
-    public function printBinary(){
-      	return this.resultBinary;
-    }
-   
-    public function printHexadecimal(){
-    	return this.resultHexadecimal;
-    }
-
-
-
-
-
-*/
