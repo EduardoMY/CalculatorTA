@@ -153,7 +153,7 @@ class Calculator{
 					}
 					else { 
 					     	values.push(tokens[i]);
-						trace(")   "+tokens[i]);
+//						trace(")   "+tokens[i]);
 //						expressionStillValid=false;
 						previousSymbol=5;
 					
@@ -411,6 +411,8 @@ class Calculator{
             {
                 while (ops[ops.length-1] != "(")
                   values.push(applyOp(ops.pop(), values.pop(), values.pop()));
+		  //CHange Parenthesis
+		  values[values.length-1].setParenthesis();
                 ops.pop();
             }
             // Current token is an operator.
@@ -488,7 +490,11 @@ class Calculator{
     {
 
         var res:Number;
-	
+	if(a.getError()!=0 || b.getError()!=0){
+		operations.push("Overflow!!");
+		this.quitExecution=true;
+	}
+	else{
         switch (op)
         {
         case "+":
@@ -496,49 +502,37 @@ class Calculator{
 	    operations.push(a.print()+' + ' + b.print()+' = '+res.print());
 	    if(res.getError()==0)
 	                return res;
-	    else {
-		 quitExecution=true;
-		 return new Number("0");
-	    }
+	    else 
+		 this.quitExecution=true;
         case "-":
 	     res=Number.sub(a,b);
      	     operations.push(a.print()+' - ' + b.print()+' = '+res.print());
 	     if(res.getError()==0)
 		return res;
-	     else {
-	     	 quitExecution=true;
-		 return new Number("0");
-	     }
+	     else 
+	     	 this.quitExecution=true;
         case "*":
 	     res=Number.mul(a,b);
 	     operations.push(a.print()+' * ' + b.print()+' = '+res.print());
 	     if(res.getError()==0)
 		return res;
-	     else {
-	     quitExecution=true;
-	     return new Number("0");
-	      }
-		
+	     else 
+	     	  this.quitExecution=true;
         case "/":
-	     
 	       res=Number.div(a ,b);
 	       operations.push(a.print()+' / ' + b.print()+' = '+res.print());
 	       if(res.getError()==0)
 		return res;
-	       else {
-	       quitExecution=true;
-	       return new Number("0");
-	       }
+	       else 
+	       this.quitExecution=true;
 	case "^":     
 	     res=Number.pow(a,b);
 	     operations.push(a.print()+' ^ ' + b.print()+' = '+res.print());
 	     if(res.getError()==0)
 		return res;
-	     else{
-		quitExecution=true;
-		return new Number("0");
+	     else
+		this.quitExecution=true;
 	     }
-	     
 	     }
 	 return new Number("0");
     }
