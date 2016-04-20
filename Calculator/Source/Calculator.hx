@@ -414,27 +414,31 @@ class Calculator{
 	 //checks if there is no operation to make
 	 if(this.operations.length==0){
 		var a:Number=values[0];
-		operations.push(a.print()+' = '+ a.vPrint());
+		if(a.getError()!=0)
+			operations.push(a.vPrint());
+		else
+			operations.push(a.print()+' = '+ a.vPrint());
 	}
 
-	
+	var lastValue:Number=values.pop();
+	if(lastValue.getError()==0)
 	switch(letter){
 	case "A":
-	     a=values.pop();
+	     a=lastValue;
 	     a.setNickName("A");
 	     aNeg=Number.getCopy(a);
 	     aNeg.negate();
 	     aNeg.setNickName("-A");
 	     return a;
 	case "B":
-	     b=values.pop();
+	     b=lastValue;
 	     b.setNickName("B");
 	     bNeg=Number.getCopy(b);
 	     bNeg.negate();
 	     bNeg.setNickName("-B");
 	     return b;
 	case "C":
-	     c=values.pop();
+	     c=lastValue;
 	     c.setNickName("C");
 	     cNeg=Number.getCopy(c);
 	     cNeg.negate();
@@ -442,7 +446,7 @@ class Calculator{
 	     return c;
 	}
         // Top of 'values' contains result, return it
-	return values.pop();
+	return lastValue;
     }
  
     // Returns true if 'op2' has higher or same precedence as 'op1',

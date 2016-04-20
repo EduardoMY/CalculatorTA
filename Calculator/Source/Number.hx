@@ -52,19 +52,23 @@ Exactitud a)
 	      }
 	      
 	      sNumber=this.value.toString();
-	      trace(this.value.toString()+"Almost");
-	      trace(sNumber);
+	      
 	      if(sNumber.indexOf(".")!=-1)
 		hasPoint=true;
 		
-	      if(hasPoint)
-		sNumber=reduceValueString(sNumber);
-		
+		if(hasPoint)
+			sNumber=reduceValueString(sNumber);
+			
 	      len=sNumber.length;
 	      if(sNumber.indexOf("-")!=-1)
 		len--;
 	      if(sNumber.indexOf(".")!=-1)
 		len--;
+
+		trace("sNumber before: "+sNumber);
+		
+			
+		trace("sNumber after: "+sNumber);
 	      if(len>8){
 		this.error=2;
 		if(sNumber.indexOf("-")!=-1){
@@ -79,15 +83,26 @@ Exactitud a)
 		     else
 		     this.value=Decimals.parse(sNumber.substr(0, 8));
 		}
-		this.error=2;
+			this.error=2;
 		}
-	      else if(this.exponent>99 || this.exponent<-99){
+		
+		sNumber=this.value.toString();
+		
+		if(sNumber.indexOf(".")!=-1)
+			hasPoint=true;
+		else hasPoint=false;
+		
+		if(hasPoint)
+			sNumber=reduceValueString(sNumber);
+			
+	      if(this.exponent>99 || this.exponent<-99){
 	      	this.error=1;
 		this.value=Decimals.parse("0");
 		}
 	      else {
 	      	   this.value=Decimals.parse(sNumber);
 	      }
+	      trace(this.value.toString());
       }
       
       private function reduceValueString(sNumber:String){
@@ -216,7 +231,6 @@ Exactitud a)
 		yDecimals=y.getNumber(0);
 	     }
 	     rDecimals=xDecimals.add(yDecimals);
-//	     trace(rDecimals.toString());
 	     rNumber=new Number(rDecimals.toString()+"E"+maxExp );
 	     rNumber.resetOverflow();
 	     return rNumber;
