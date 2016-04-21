@@ -114,7 +114,6 @@ class Calculator{
 			}
 		}
 		else if(tokens[i]==")"){
-				trace("))))))");
 				
 				if(previousSymbol==3 || previousSymbol==5){
 					trace("BBBBBB");
@@ -189,6 +188,7 @@ class Calculator{
 		     var hasMinus:Bool=false;
 		     if(tokens[i]=="."){
 			hasPoint=true;
+			posNumber=".";
 			i++;
 			}
 		     if(previousSymbol==3){
