@@ -281,6 +281,7 @@ Exactitud a)
 		rDecimals=x.getValue().divideWithScale(y.getValue(),8);
 	     	rNumber=new Number(rDecimals.toString()+"E"+(x.getExponent()-y.getExponent()));
 	     }
+	     rNumber.resetOverflow();
 	     return rNumber;
       }
 

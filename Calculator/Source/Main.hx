@@ -207,7 +207,8 @@ class Main extends Sprite {
 				     +"La matisa va desde -99 hasta 99\n"
 				     +"Division entre cero tambien es error.\n"
 				     +"Raiz de Numero negativo tambien es error\n"
-				     +"Puedes poner TODOS los espacios que gustes.\n";
+				     +"Puedes poner TODOS los espacios que gustes.\n"
+				     +"Si pones signo fuera de un parentesis sera ignorado";
 				     
 		operations.text=helpMessage;
 

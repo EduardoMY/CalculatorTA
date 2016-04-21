@@ -108,6 +108,8 @@ class Calculator{
 				expressionStillValid=false;
 			     }
 			     else{
+				if(previousSymbol==2)
+					values.pop();
 			     	previousSymbol=4;
 				values.push(tokens[i]);
 			     }
@@ -120,7 +122,6 @@ class Calculator{
 					var state:Int=0;
 					var c:Int=i;
 					state=checkParenthesis(tokens, c, ")");
-					trace("i"+i);
 					if(state!=0){
 						expressionStillValid=false;
 						status=9;
