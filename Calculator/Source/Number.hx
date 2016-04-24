@@ -4,11 +4,7 @@ import thx.bigint.Decimals;
 import thx.bigint.DecimalImpl;
 
 class Number{
-//To-Do list
-/*
-Notacion CIentifica Inciso b
-Exactitud a)
-*/
+
       var value:DecimalImpl;
       var exponent:Int;// from -99 to 99
       var nickName:String;
@@ -64,11 +60,6 @@ Exactitud a)
 		len--;
 	      if(sNumber.indexOf(".")!=-1)
 		len--;
-
-		trace("sNumber before: "+sNumber);
-		
-			
-		trace("sNumber after: "+sNumber);
 	      if(len>8){
 		this.error=2;
 		if(sNumber.indexOf("-")!=-1){
@@ -102,7 +93,6 @@ Exactitud a)
 	      else {
 	      	   this.value=Decimals.parse(sNumber);
 	      }
-	      trace(this.value.toString());
       }
       
       private function reduceValueString(sNumber:String){

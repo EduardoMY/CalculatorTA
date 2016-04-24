@@ -1,7 +1,7 @@
 package ;
 
 class Calculator{
-//Check if the () is closed
+
     var originalOperation: String;
     var result:Number;
     var a:Number;
@@ -108,17 +108,16 @@ class Calculator{
 				expressionStillValid=false;
 			     }
 			     else{
-				if(previousSymbol==2)
-					values.pop();
-			     	previousSymbol=4;
+				if(previousSymbol==2 && values.pop()=="-")
+						     values.push("--");
 				values.push(tokens[i]);
+				previousSymbol=4;
 			     }
 			}
 		}
 		else if(tokens[i]==")"){
 				
 				if(previousSymbol==3 || previousSymbol==5){
-					trace("BBBBBB");
 					var state:Int=0;
 					var c:Int=i;
 					state=checkParenthesis(tokens, c, ")");
@@ -213,7 +212,6 @@ class Calculator{
 					       		     }
 		     					     else{
 								if(i<tokens.length-1 && tokens[i+1]=="-"){
-										 trace("Negative E");
 									posNumber+=tokens[i+1];
 									i++;
 									}
@@ -228,11 +226,11 @@ class Calculator{
 							    i++;
 						}//while
 		     //Check if the
-		     trace(posNumber);
+/*		     trace(posNumber);
 		     trace(hasPoint);
 		     trace(hasNumberAfterPoint);
 		     trace(hasE);
-		     trace(hasNumberAfterE);
+		     trace(hasNumberAfterE); */
 		     if((hasE && !hasNumberAfterE) || (hasPoint && !hasNumberAfterPoint)){
 		     	      status=8;
 			      expressionStillValid=false;
@@ -283,7 +281,6 @@ class Calculator{
 	}
 
 	values.push(status+"");
-	trace("fin");
 	return values;
     }
 
@@ -305,18 +302,12 @@ class Calculator{
 		state=-1;
 		i--;
 	   }
-	   trace(p);
-	   trace(sParenthesis);
-	   trace(oParenthesis);
-	   trace(df);
-	   trace("Prueba de Parenthesis");
 	   while(i>=0 && i<tokens.length && tokens[i]!="=" && state!=0){
 	   	 if(tokens[i]==sParenthesis)
 			state++;
 		else if(tokens[i]==oParenthesis)
 		     state--;
 		 i=i+df;
-		 trace(i);
 	   }
 	   return state;
     }
@@ -360,8 +351,12 @@ class Calculator{
 
 	while (i <length && !this.quitExecution)
         {
-	// Current token is a number, push it to stack for numbers
-            if (tokens[i].length>1 || variables.indexOf(tokens[i])!=-1 || (tokens[i]>="0" && tokens[i]<="9"))
+	trace(tokens[i]);
+	// the special case of a sign affecting a number inside a Parenthesis
+	   if (tokens[i]=="--")
+	      ops.push(tokens[i]);
+      	// Current token is a number, push it to stack for numbers
+            else if (tokens[i].length>1 || variables.indexOf(tokens[i])!=-1 || (tokens[i]>="0" && tokens[i]<="9"))
             {
 		if(tokens[i]=="A")
 			values.push(a);
@@ -377,19 +372,30 @@ class Calculator{
 		     values.push(cNeg);
                 else values.push(new Number(tokens[i]));		
             }
-			    
-            // Current token is an opening brace, push it to 'ops'
-            else if (tokens[i] == "(")
-                ops.push(tokens[i]);
-
+	     // Current token is an opening brace, push it to 'ops'
+	    else if (tokens[i] == "(")
+	      ops.push(tokens[i]);
             // Closing brace encountered, solve entire brace
             else if (tokens[i] == ")")
             {
-                while (ops[ops.length-1] != "(")
+		trace(ops[ops.length-1]);
+                while (ops[ops.length-1] != "("){
                   values.push(applyOp(ops.pop(), values.pop(), values.pop()));
+		  trace("times");
+		  }
 		  //CHange Parenthesis
 		  values[values.length-1].setParenthesis();
+		  
+		  trace(ops[ops.length-1]);
                 ops.pop();
+		if(ops.length!=0 && ops[ops.length-1]=="--"){
+			var pBefore:String, pAfter:String;
+			pBefore=values[values.length-1].print();
+			values[values.length-1].negate();
+			pAfter=values[values.length-1].vPrint();
+			operations.push('-(' + pBefore+') = '+ pAfter);
+			ops.pop();
+		}
             }
             // Current token is an operator.
             else if (tokens[i] == "+" || tokens[i] == "-" ||
@@ -470,6 +476,8 @@ class Calculator{
     {
 
         var res:Number;
+	trace("It breaks here");
+	trace(op);
 	if(a.getError()!=0 || b.getError()!=0){
 		operations.push("Overflow!!");
 		this.quitExecution=true;
