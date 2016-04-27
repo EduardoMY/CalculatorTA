@@ -9,14 +9,16 @@ class Number{
       var exponent:Int;// from -99 to 99
       var nickName:String;
       var error:Int;//0=No error, 1= Overflow, 2=Too much digits,3=Div between zero, 4=imaginary number
-      var isInsideParenthesis:Bool;
+      var innerSignParenthesis:Bool;
+      var outerSignParenthesis:Bool;
       
       public function new(num:String){
 	     var exponentComponent:String;
 	     var valueComponent:String;
       	     var hasE:Int=num.indexOf("E");
 	     this.nickName="";
-	     this.isInsideParenthesis=false;
+	     this.innerSignParenthesis=false;
+	     this.outerSignParenthesis=false;
 	     if(hasE!=-1){
 		valueComponent=num.substr(0, hasE);
 		exponentComponent=num.substr(hasE+1);
@@ -126,8 +128,12 @@ class Number{
       public function getValue(){ return this.value;}
       
       public function getExponent(){return this.exponent;}
-      public function setParenthesis(){this.isInsideParenthesis=true;}
-      public function getParenthesis(){return this.isInsideParenthesis;}
+      public function setInnerParenthesis(){this.innerSignParenthesis=true;}
+      public function getInnerParenthesis(){return this.innerSignParenthesis;}
+      public function setOuterParenthesis(){return this.outerSignParenthesis=true;}
+      public function getOuterParenthesis(){return this.outerSignParenthesis=true;}
+      public function resetParenthesis(){this.innerSignParenthesis=false; this.outerSignParenthesis=false;}
+      
       public function resetOverflow(){
       	      if(this.error==2){
 		this.error=0;
@@ -284,7 +290,7 @@ class Number{
 	     yDecimal=y.getValue().multiply(DecimalImpl.ten.pow(y.getExponent()));
 	     xDecimal=x.getValue().multiply(DecimalImpl.ten.pow(x.getExponent()));
 	     
-	     if(!x.getParenthesis() && xDecimal.isNegative()){
+	     if(!x.getInnerParenthesis() && xDecimal.isNegative()){
 	     	xDecimal=xDecimal.negate();
 		needsToChangeSign=true;
 	     }

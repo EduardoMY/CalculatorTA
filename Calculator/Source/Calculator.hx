@@ -352,7 +352,7 @@ class Calculator{
 	while (i <length && !this.quitExecution)
         {
 	trace(tokens[i]);
-	// the special case of a sign affecting a number inside a Parenthesis
+   	// the special case of a sign affecting a number inside a Parenthesis
 	   if (tokens[i]=="--")
 	      ops.push(tokens[i]);
       	// Current token is a number, push it to stack for numbers
@@ -370,7 +370,8 @@ class Calculator{
 		     values.push(c);
 		else if(tokens[i]=="-C")
 		     values.push(cNeg);
-                else values.push(new Number(tokens[i]));		
+                else	
+			values.push(new Number(tokens[i]));
             }
 	     // Current token is an opening brace, push it to 'ops'
 	    else if (tokens[i] == "(")
@@ -379,21 +380,20 @@ class Calculator{
             else if (tokens[i] == ")")
             {
 		trace(ops[ops.length-1]);
-                while (ops[ops.length-1] != "("){
+                while (ops[ops.length-1] != "(")
                   values.push(applyOp(ops.pop(), values.pop(), values.pop()));
-		  trace("times");
-		  }
-		  //CHange Parenthesis
-		  values[values.length-1].setParenthesis();
+		  values[values.length-1].resetParenthesis();
 		  
-		  trace(ops[ops.length-1]);
+		  //CHange Parenthesis
+		  values[values.length-1].setInnerParenthesis();
                 ops.pop();
+		
 		if(ops.length!=0 && ops[ops.length-1]=="--"){
-			var pBefore:String, pAfter:String;
-			pBefore=values[values.length-1].print();
-			values[values.length-1].negate();
-			pAfter=values[values.length-1].vPrint();
-			operations.push('-(' + pBefore+') = '+ pAfter);
+			trace("entro a --");
+			var a:Number=values.pop();
+			a.negate();
+			a.setOuterParenthesis();
+			values.push(a);
 			ops.pop();
 		}
             }
@@ -519,7 +519,7 @@ class Calculator{
 	     if(res.getError()==0)
 		return res;
 	     else
-		this.quitExecution=true;
+		this.quitExecution=true;    
 	     }
 	     }
 	 return new Number("0");
