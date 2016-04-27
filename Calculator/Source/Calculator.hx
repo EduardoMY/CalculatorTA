@@ -72,6 +72,9 @@ class Calculator{
 		case "9":
 		     this.operations=["Parenthesis Mismatch"];
 		     this.result=new Number("0");
+		case "10":
+		     this.operations=["Invalid expression after ="];
+		     this.result=new Number("0");
 	   }
     }
 
@@ -226,11 +229,6 @@ class Calculator{
 							    i++;
 						}//while
 		     //Check if the
-/*		     trace(posNumber);
-		     trace(hasPoint);
-		     trace(hasNumberAfterPoint);
-		     trace(hasE);
-		     trace(hasNumberAfterE); */
 		     if((hasE && !hasNumberAfterE) || (hasPoint && !hasNumberAfterPoint)){
 		     	      status=8;
 			      expressionStillValid=false;
@@ -268,11 +266,16 @@ class Calculator{
 	
 	if(status==0){
 	var hasAssignation:Bool=false;
-		while(i<tokens.length && !hasAssignation){
+	var hasOtherSymbol:Bool=false;
+		while(i<tokens.length && !hasOtherSymbol){
 			if(variables.indexOf(tokens[i])!=-1){
 			values.push(tokens[i]);
 			hasAssignation=true;
-
+			}
+			else if(tokens[i]!=" "){
+				status=10;
+				hasOtherSymbol=true;
+				trace("Paso por aqui");
 			}
 			i++;
 		}
@@ -358,18 +361,37 @@ class Calculator{
       	// Current token is a number, push it to stack for numbers
             else if (tokens[i].length>1 || variables.indexOf(tokens[i])!=-1 || (tokens[i]>="0" && tokens[i]<="9"))
             {
-		if(tokens[i]=="A")
-			values.push(a);
-		else if(tokens[i]=="-A")
-		     values.push(aNeg);
-		else if(tokens[i]=="B")
-		     values.push(b);
-		else if(tokens[i]=="-B")
-		     values.push(bNeg);
-		else if(tokens[i]=="C")
-		     values.push(c);
-		else if(tokens[i]=="-C")
-		     values.push(cNeg);
+		var temp:Number;
+		if(tokens[i]=="A"){
+			temp=Number.getCopy(a);
+			temp.setNickName("A");
+			values.push(temp);
+			}
+		else if(tokens[i]=="-A"){
+		     temp=Number.getCopy(aNeg);
+		     temp.setNickName("-A");
+		     values.push(temp);
+		     }
+		else if(tokens[i]=="B"){
+		     temp=Number.getCopy(b);
+		     temp.setNickName("B");
+		     values.push(temp);
+		     }
+		else if(tokens[i]=="-B"){
+		     temp=Number.getCopy(bNeg);
+		     temp.setNickName("-B");
+		     values.push(temp);
+		     }
+		else if(tokens[i]=="C"){
+		     temp=Number.getCopy(c);
+		     temp.setNickName("C");
+		     values.push(temp);
+		     }
+		else if(tokens[i]=="-C"){
+		     temp=Number.getCopy(cNeg);
+		     temp.setNickName("-C");
+		     values.push(temp);
+		     }
                 else	
 			values.push(new Number(tokens[i]));
             }
@@ -390,10 +412,10 @@ class Calculator{
 		
 		if(ops.length!=0 && ops[ops.length-1]=="--"){
 			trace("entro a --");
-			var a:Number=values.pop();
-			a.negate();
-			a.setOuterParenthesis();
-			values.push(a);
+			var d:Number=values.pop();
+			d.negate();
+			d.setOuterParenthesis();
+			values.push(d);
 			ops.pop();
 		}
             }
@@ -404,7 +426,7 @@ class Calculator{
                 // While top of 'ops' has same or greater precedence to current
                 // token, which is an operator. Apply operator on top of 'ops'
                 // to top two elements in values stack
-                while (ops.length!=0 && hasPrecedence(tokens[i], ops[ops.length-1]) )
+                while (ops.length!=0 && hasPrecedence(tokens[i], ops[ops.length-1]) && !this.quitExecution )
                   values.push(applyOp(ops.pop(), values.pop(), values.pop()));
  
                 // Push current token to 'ops'.
@@ -476,7 +498,6 @@ class Calculator{
     {
 
         var res:Number;
-	trace("It breaks here");
 	trace(op);
 	if(a.getError()!=0 || b.getError()!=0){
 		operations.push("Overflow!!");
@@ -512,7 +533,7 @@ class Calculator{
 	       if(res.getError()==0)
 		return res;
 	       else 
-	       this.quitExecution=true;
+	       	    this.quitExecution=true;
 	case "^":     
 	     res=Number.pow(a,b);
 	     operations.push(a.print()+' ^ ' + b.print()+' = '+res.print());

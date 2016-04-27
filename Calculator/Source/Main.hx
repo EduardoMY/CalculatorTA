@@ -119,11 +119,11 @@ class Main extends Sprite {
 		
 
 		aTitle.x=22.0;
-		aTitle.y=255.0;
+		aTitle.y=150.0;
 		aTitle.text="A: ";
 		aTitle.setTextFormat(outsideText);
 		aValue.x=60.0;
-		aValue.y=250.0;
+		aValue.y=150.0;
 		aValue.height=30.0;
 		aValue.width=100.0;
 		aValue.setTextFormat(insideText);
@@ -132,11 +132,11 @@ class Main extends Sprite {
 		aValue.backgroundColor=0x847575;
 
 		bTitle.x=22.0;
-		bTitle.y=295.0;
+		bTitle.y=190.0;
 		bTitle.text="B: ";
 		bTitle.setTextFormat(outsideText);
 		bValue.x=60.0;
-		bValue.y=290.0;
+		bValue.y=190.0;
 		bValue.height=30.0;
 		bValue.width=100.0;
 		bValue.setTextFormat(insideText);
@@ -145,11 +145,11 @@ class Main extends Sprite {
 		bValue.backgroundColor=0x847575;
 
 		cTitle.x=22.0;
-		cTitle.y=335.0;
+		cTitle.y=230.0;
 		cTitle.text="C: ";
 		cTitle.setTextFormat(outsideText);
 		cValue.x=60.0;
-		cValue.y=330.0;
+		cValue.y=230.0;
 		cValue.height=30.0;
 		cValue.width=100.0;
 		cValue.setTextFormat(insideText);

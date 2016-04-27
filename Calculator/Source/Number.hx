@@ -9,6 +9,8 @@ class Number{
       var exponent:Int;// from -99 to 99
       var nickName:String;
       var error:Int;//0=No error, 1= Overflow, 2=Too much digits,3=Div between zero, 4=imaginary number
+      var numerator:Int;
+      var denominator:Int;
       var innerSignParenthesis:Bool;
       var outerSignParenthesis:Bool;
       
@@ -19,6 +21,9 @@ class Number{
 	     this.nickName="";
 	     this.innerSignParenthesis=false;
 	     this.outerSignParenthesis=false;
+	     this.numerator=0;
+	     this.denominator=0;
+	     
 	     if(hasE!=-1){
 		valueComponent=num.substr(0, hasE);
 		exponentComponent=num.substr(hasE+1);
@@ -131,14 +136,16 @@ class Number{
       public function setInnerParenthesis(){this.innerSignParenthesis=true;}
       public function getInnerParenthesis(){return this.innerSignParenthesis;}
       public function setOuterParenthesis(){return this.outerSignParenthesis=true;}
-      public function getOuterParenthesis(){return this.outerSignParenthesis=true;}
+      public function getOuterParenthesis(){return this.outerSignParenthesis;}
       public function resetParenthesis(){this.innerSignParenthesis=false; this.outerSignParenthesis=false;}
+      
       
       public function resetOverflow(){
       	      if(this.error==2){
 		this.error=0;
 	      }
       }
+      
       public function setNickName(name:String){
       	     this.nickName=name;
       }
@@ -150,9 +157,9 @@ class Number{
       private function getNumber(spaces:Int){
       	      var decimal:DecimalImpl;
 	      if(spaces>=-7 && spaces<=7)
-      	      decimal=this.value.multiply(DecimalImpl.ten.pow(spaces));
+      	        decimal=this.value.multiply(DecimalImpl.ten.pow(spaces));
 	      else
-	      decimal=DecimalImpl.zero;
+		decimal=DecimalImpl.zero;
       	      return decimal;
       }
       
@@ -278,8 +285,34 @@ class Number{
 	     	rNumber=new Number(rDecimals.toString()+"E"+(x.getExponent()-y.getExponent()));
 	     }
 	     rNumber.resetOverflow();
+	     
+	     //sets the numerator and denominator
+	     var xString:String, yString:String;
+	     var xInt:Int=0, yInt:Int=0;
+	     xString=x.vPrint();
+	     yString=y.vPrint();
+	     if(xString.indexOf(".")==-1 && xString.indexOf("E")==-1){
+	     	xInt=Std.parseInt(xString);
+		if(yString.indexOf(".")==-1 && yString.indexOf("E")==-1)
+			yInt=Std.parseInt(yString);
+		else yInt=0;
+	     }
+	     else yInt=0;
+	     
+	     rNumber.setDivision(xInt, yInt);
+	     
 	     return rNumber;
       }
+      public function setDivision(x:Int, y:Int){
+      	     this.numerator=x;
+	     this.denominator=y;
+      }
+      public function getNumerator(){
+      	     return this.numerator;
+      }
+      public function getDenominator(){
+      	     return this.denominator;
+	    }
 
       static public function pow(x:Number, y:Number){
              var rNumber:Number=new Number("0");
@@ -290,25 +323,42 @@ class Number{
 	     yDecimal=y.getValue().multiply(DecimalImpl.ten.pow(y.getExponent()));
 	     xDecimal=x.getValue().multiply(DecimalImpl.ten.pow(x.getExponent()));
 	     
+	     //  changes the sign if if
 	     if(!x.getInnerParenthesis() && xDecimal.isNegative()){
+	     	trace("Primer Cambio");
 	     	xDecimal=xDecimal.negate();
 		needsToChangeSign=true;
 	     }
-	    
+	     //Changes the sign again
+	     if(x.getOuterParenthesis()){
+		trace(xDecimal);
+		xDecimal=xDecimal.negate();
+		trace(xDecimal);
+		needsToChangeSign=!needsToChangeSign;
+		trace("Cambio por aqui");
+	     }
+	     
+	    //Divide by zero
 	    if(xDecimal.compareTo(DecimalImpl.zero)==0 && yDecimal.compareTo(DecimalImpl.zero)<=0){ //betweenZero
-	    	rNumber=new Number("0");
 		rNumber.setError(3);
-	    }
-	    else if(xDecimal.compareToAbs(DecimalImpl.one)<0 &&
-	    	 xDecimal.isNegative() ){//Negative
+	    }// root of a negative number
+	    else if(xDecimal.isNegative() && yDecimal.compareToAbs(DecimalImpl.one)<0 &&
+	    	 	(y.getDenominator()==0 || (y.getNumerator() % 2 !=0 && y.getDenominator() % 2 ==0 ))
+	    	 ){
+		 trace("Primer imaginary Number");
 		 rNumber.setError(4);
 	    }
 	    else{
-		rFloat=Math.pow(xDecimal.toFloat(), yDecimal.toFloat());
-		if(Math.isNaN(rFloat)){
-			rNumber=new Number("0");
+		if(xDecimal.isNegative()){
+			xDecimal=xDecimal.negate();
+			needsToChangeSign=!needsToChangeSign;
+		}
+		if(y.getDenominator()==0)
+			rFloat=Math.pow(xDecimal.toFloat(), yDecimal.toFloat());
+		else
+			rFloat=Math.pow(xDecimal.toFloat(), y.getNumerator()/y.getDenominator());
+		if(Math.isNaN(rFloat))
 			rNumber.setError(4);
-			}
 		else {
 		     if(needsToChangeSign)
 			rNumber=new Number("-"+rFloat);
@@ -318,5 +368,9 @@ class Number{
 		}
 	    }
 	     return rNumber;
+      }
+      
+      public function setNumDen(){
+
       }
 }
