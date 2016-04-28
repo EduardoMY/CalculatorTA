@@ -319,9 +319,17 @@ class Number{
 	     var yDecimal:DecimalImpl, xDecimal:DecimalImpl;
 	     var rFloat:Float;
 	     var needsToChangeSign:Bool=false;
+	     var dfExp:Int;
 	     
 	     yDecimal=y.getValue().multiply(DecimalImpl.ten.pow(y.getExponent()));
 	     xDecimal=x.getValue().multiply(DecimalImpl.ten.pow(x.getExponent()));
+
+	     dfExp=yDecimal.multiply(Decimals.fromInt(x.getExponent())).toInt();
+	     
+	     if(dfExp>99 || dfExp<-99){
+	     		 rNumber.setError(1);
+	     }
+	     else{
 	     
 	     //  changes the sign if if
 	     if(!x.getInnerParenthesis() && xDecimal.isNegative()){
@@ -351,12 +359,17 @@ class Number{
 	    else{
 		if(xDecimal.isNegative()){
 			xDecimal=xDecimal.negate();
-			needsToChangeSign=!needsToChangeSign;
+			if(!(y.getDenominator()!=0 && y.getNumerator() % 2 ==0)){
+				needsToChangeSign=!needsToChangeSign;
+				trace("Debe de ser tratado como absoluto");
+			}
 		}
 		if(y.getDenominator()==0)
 			rFloat=Math.pow(xDecimal.toFloat(), yDecimal.toFloat());
-		else
-			rFloat=Math.pow(xDecimal.toFloat(), y.getNumerator()/y.getDenominator());
+		else{
+			rFloat=Math.pow(xDecimal.toFloat(), 1/y.getDenominator());
+			rFloat=Math.pow(rFloat, y.getNumerator());
+		}
 		if(Math.isNaN(rFloat))
 			rNumber.setError(4);
 		else {
@@ -366,6 +379,8 @@ class Number{
 			rNumber=new Number(""+rFloat);
 		     rNumber.resetOverflow();
 		}
+	    }
+	    
 	    }
 	     return rNumber;
       }
