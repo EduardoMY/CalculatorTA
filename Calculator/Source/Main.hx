@@ -204,7 +204,7 @@ class Main extends Sprite {
 				     +"Solo aceptan numero con precision de 8 digitos.\n"
 				     +"Si excede esa precision sera error de Overflow\n"
 				     +"Si en alguna operacion excede esa exactitud sera truncado\n"
-				     +"La matisa va desde -99 hasta 99\n"
+				     +"E va desde -99 hasta 99 y debe ser mayuscula\n"
 				     +"Division entre cero tambien es error.\n"
 				     +"Raiz de Numero negativo tambien es error\n"
 				     +"Puedes poner TODOS los espacios que gustes.\n"

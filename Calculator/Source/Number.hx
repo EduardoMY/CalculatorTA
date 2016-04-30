@@ -350,7 +350,7 @@ class Number{
 	    if(xDecimal.compareTo(DecimalImpl.zero)==0 && yDecimal.compareTo(DecimalImpl.zero)<=0){ //betweenZero
 		rNumber.setError(3);
 	    }// root of a negative number
-	    else if(xDecimal.isNegative() && yDecimal.compareToAbs(DecimalImpl.one)<0 &&
+	    else if(yDecimal.compareTo(DecimalImpl.zero)!=0 && xDecimal.isNegative() && yDecimal.compareToAbs(DecimalImpl.one)<0 &&
 	    	 	(y.getDenominator()==0 || (y.getNumerator() % 2 !=0 && y.getDenominator() % 2 ==0 ))
 	    	 ){
 		 trace("Primer imaginary Number");
@@ -359,7 +359,7 @@ class Number{
 	    else{
 		if(xDecimal.isNegative()){
 			xDecimal=xDecimal.negate();
-			if(!(y.getDenominator()!=0 && y.getNumerator() % 2 ==0)){
+			if(yDecimal.compareTo(DecimalImpl.zero)!=0 &&!(y.getDenominator()!=0 && y.getNumerator() % 2 ==0)){
 				needsToChangeSign=!needsToChangeSign;
 				trace("Debe de ser tratado como absoluto");
 			}
