@@ -139,7 +139,6 @@ class Number{
       public function getOuterParenthesis(){return this.outerSignParenthesis;}
       public function resetParenthesis(){this.innerSignParenthesis=false; this.outerSignParenthesis=false;}
       
-      
       public function resetOverflow(){
       	      if(this.error==2){
 		this.error=0;
@@ -163,12 +162,12 @@ class Number{
       	      return decimal;
       }
       
-      public function vPrint(){
+      public function vPrint(form:Int=0, precision:Int=0){
       	     var name:String="";
 	     var expComponent:String="";
-	     var valueComponent:String;//=this.value.toString();
+	     var valueComponent:String="";
 	     if(this.error==0){
-		if(this.exponent<-8 || this.exponent>7){
+		if((this.exponent<-8 || this.exponent>7) || form==3){
 				    
 				    valueComponent=this.value.toString();
 				    expComponent="E"+this.exponent;
@@ -189,6 +188,37 @@ class Number{
 				valueComponent=this.value.toString();
 				    expComponent="E"+this.exponent;
 				}	
+			}
+			
+			//print the fixed form
+			if(expComponent=="" && form==1){
+				if(valueComponent.indexOf(".")==-1){
+					if(precision!=0){
+					valueComponent+=".";
+					var i:Int=0;
+					while(i<precision){
+					      valueComponent+="0";
+					      i++;
+					      }
+					}
+					
+				}
+				else {
+				var pos:Int=valueComponent.indexOf(".")+1;
+				var lastPos:Int=valueComponent.length;
+				if(lastPos-pos<precision){ //Add zeros
+					var i:Int=0;
+					while(i<precision-(lastPos-pos)){
+					      valueComponent+="0";
+					      i++;
+					}
+				}
+				else if(lastPos-pos>precision){ //Delete Zeros 
+				     valueComponent=valueComponent.substr(0, pos+precision);
+				     if(valueComponent.length==pos)
+				          valueComponent=valueComponent.substr(0, pos-1);
+				}
+				}
 			}
 	}
 		name=valueComponent+expComponent;
@@ -339,11 +369,8 @@ class Number{
 	     }
 	     //Changes the sign again
 	     if(x.getOuterParenthesis()){
-		trace(xDecimal);
 		xDecimal=xDecimal.negate();
-		trace(xDecimal);
 		needsToChangeSign=!needsToChangeSign;
-		trace("Cambio por aqui");
 	     }
 	     
 	    //Divide by zero
@@ -383,9 +410,5 @@ class Number{
 	    
 	    }
 	     return rNumber;
-      }
-      
-      public function setNumDen(){
-
       }
 }

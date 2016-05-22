@@ -20,6 +20,7 @@ class Main extends Sprite {
 	var aValue:TextField;
 	var bValue:TextField;
 	var cValue:TextField;
+	var format:TextField;
 
 	//Simple text
 	var title:TextField;
@@ -29,6 +30,7 @@ class Main extends Sprite {
 	var aTitle:TextField;
 	var bTitle:TextField;
 	var cTitle:TextField;
+	var formatTitle:TextField;
 
 	//fonts
 	var insideText:TextFormat;
@@ -71,6 +73,8 @@ class Main extends Sprite {
 		addChild(bValue);
 		addChild(cTitle);
 		addChild(cValue);
+		addChild(format);
+		addChild(formatTitle);
 		addChild(sprite);
 	}
 	
@@ -83,10 +87,10 @@ class Main extends Sprite {
 		calc=new Calculator();
 
 		insideText=new TextFormat();
-		insideText.size=15;
+		insideText.size=20;
 		outsideText=new TextFormat();
 		outsideText.color=0xFFFFFF;
-		outsideText.size=16;
+		outsideText.size=20;
 		
 		operation=new TextField();
 		operations=new TextField();
@@ -94,7 +98,8 @@ class Main extends Sprite {
 		aValue=new TextField();
 		bValue=new TextField();
 		cValue=new TextField();
-		
+		format=new TextField();
+
 		title=new TextField();
 		operationTitle=new TextField();
 		operationsTitle=new TextField();
@@ -102,13 +107,14 @@ class Main extends Sprite {
 		aTitle=new TextField();
 		bTitle=new TextField();
 		cTitle=new TextField();
+		formatTitle=new TextField();
 		
 		resultDecimalTitle.x=20.0;
 		resultDecimalTitle.y=20.0;
 		resultDecimalTitle.text="Result: ";
 		resultDecimalTitle.setTextFormat(outsideText);
 		resultDecimal.x=20.0;
-		resultDecimal.y=50.0;
+		resultDecimal.y=70.0;
 		resultDecimal.height=30.0;
 		resultDecimal.width=200.0;
 		resultDecimal.setTextFormat(insideText);
@@ -116,7 +122,6 @@ class Main extends Sprite {
 		resultDecimal.border=true;
 		resultDecimal.background=true;
 		resultDecimal.backgroundColor=0x847575;
-		
 
 		aTitle.x=22.0;
 		aTitle.y=150.0;
@@ -172,13 +177,29 @@ class Main extends Sprite {
 		operation.type=TextFieldType.INPUT;
 		operation.background=true;
 
+		
+		formatTitle.x=260.0;
+		formatTitle.y=130.0;
+		formatTitle.text="Format: ";
+		formatTitle.setTextFormat(outsideText);
+		format.x=260.0;
+		format.y=160.0;
+		format.height=30.0;
+		format.width=100.0;
+		format.text="std";
+		format.setTextFormat(insideText);
+		format.border=true;
+		format.background=true;
+		format.backgroundColor=0x847575;
+		
+
 		operationsTitle.x=400.0;
 		operationsTitle.y=5.0;
 		operationsTitle.width=240.0;
 		operationsTitle.text="Operations, help or errors: ";
 		operationsTitle.setTextFormat(outsideText);
 		operations.x=400.0;
-		operations.y=23.0;
+		operations.y=30.0;
 		operations.height=400.0;
 		operations.width=550.0;
 		//operations.wordWrap=true;
@@ -211,6 +232,7 @@ class Main extends Sprite {
 				     +"Si pones signo fuera de un parentesis sera ignorado";
 				     
 		operations.text=helpMessage;
+		
 
 	}
 	private function onKeyUp(event:KeyboardEvent):Void{
@@ -220,6 +242,7 @@ class Main extends Sprite {
 		for(i in calc.printOperations())
 		      operations.appendText(i+"\n");
 		      resultDecimal.text=calc.print()+"";
+		      format.text=calc.printForm();
 		      aValue.text=calc.printAValue();
 		      bValue.text=calc.printBValue();
 		      cValue.text=calc.printCValue();

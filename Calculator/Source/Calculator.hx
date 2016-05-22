@@ -1,5 +1,11 @@
 package ;
 
+/* Notas rapidas de sistemas de informacion
+   * Alinear las flechas
+   * Corregir las cardinalidades
+   * Destruir la tabla adicional
+*/
+
 class Calculator{
 
     var originalOperation: String;
@@ -10,34 +16,45 @@ class Calculator{
     var bNeg:Number;
     var c:Number;
     var cNeg:Number;
-    var resultBinary:String="";
-    var resultHexadecimal:String="";
     var operations:Array<String>;
     var quitExecution:Bool;
+    var format:Int; //0=Std, 1=fixed, 2=real, 3=SN
+    var precision:Int; 
     
     public function new(){
     
-    	   originalOperation="0";
-	   a=new Number("0");
-	   a.setNickName("A");
-	   aNeg=new Number("0");
-	   aNeg.setNickName("-A");
-	   
-	   b=new Number("0");
-	   b.setNickName("B");
-	   bNeg=new Number("0");
-	   bNeg.setNickName("-B");
+    	   this.originalOperation="";
+	   this.format=0;
+	   this.precision=0;
 
-	   c=new Number("0");	   
-	   c.setNickName("C");
-	   cNeg=new Number("0");
-	   cNeg.setNickName("-C");
+	   this.a=new Number("0");
+	   this.a.setNickName("A");
+	   this.aNeg=new Number("0");
+	   this.aNeg.setNickName("-A");
+	   
+	   this.b=new Number("0");
+	   this.b.setNickName("B");
+	   this.bNeg=new Number("0");
+	   this.bNeg.setNickName("-B");
+
+	   this.c=new Number("0");	   
+	   this.c.setNickName("C");
+	   this.cNeg=new Number("0");
+	   this.cNeg.setNickName("-C");
     }
     
     public function setOperation(newOperation:String){
+
     	   this.originalOperation=newOperation;
+	   newOperation=newOperation.toLowerCase();
 	   var tokens:Array<String>=newOperation.split("");
-	   var realTokens:Array<String>=checkIntegrity(tokens);
+	   var realTokens:Array<String>;
+	   if(newOperation.indexOf("format")!=-1)
+		realTokens=checkFormIntegrity(tokens);
+	   else if(newOperation.indexOf("if")!=-1)
+	   	realTokens=checkIfIntegrity(tokens);
+	   else
+		realTokens=checkIntegrity(tokens);
 	   
 	   switch(realTokens.pop()){
 		case "0": //No error at all
@@ -53,7 +70,7 @@ class Calculator{
 		     this.result=new Number("0");
 		case "3": //Error Bad combination of signs
 		     this.operations=["Bad combination of signs("+realTokens[realTokens.length-2]+realTokens[realTokens.length-1]+")"];
-		     this.result=new Number("0");
+		     this.result=new Number("pp0");
 		case "4": //Number too big
 		     this.operations=["Overflow !!!"];
 		     this.result=new Number("0");
@@ -75,13 +92,155 @@ class Calculator{
 		case "10":
 		     this.operations=["Invalid expression after ="];
 		     this.result=new Number("0");
+		case "11": //format
+		     this.operations=[realTokens.pop()+""];
+		     this.result=new Number("0");
+		case "12"://if
+		     this.operations=[realTokens.pop()+""];
+		     this.result=new Number("0");
 	   }
     }
+    public function checkFormIntegrity(tokens:Array<String>):Array<String>{
+    	   trace("Special Method");
+    	   var i:Int=0;
+	   var hasError:Bool=false;
+	   var type:Int;
+	   var number:Int;
+	   var currentWord:String="";
+	   var values:Array<String>=[];
+	   var sentValues:Array<String>=[];
+	   //notation std, real, fix, sn
+	   var availableWords:Array<String>=["form", "std", "real", "fix", "sn"];
+	   
+	   while(i<tokens.length && !hasError){
+		if(tokens[i] == " "){
+		     if(currentWord!=""){
+			if(availableWords.indexOf(currentWord)!=-1)
+				hasError=true;
+			else
+				values.push(currentWord);
+		     }
+		     
+		     currentWord="";
+		     i++;
+		     continue;
+		 }
+		 
+		if(tokens[i]=="f" || tokens[i]=="o" || tokens[i]=="r" || tokens[i]=="m" || tokens[i]=="a" || tokens[i]=="t"
+				  || tokens[i]=="e" || tokens[i]=="l" || tokens[i]=="s" || tokens[i]=="i" || tokens[i]=="x"
+				  || tokens[i]=="d" || tokens[i]=="n" || (tokens[i]>="0" && tokens[i]<="8")){
+		trace("Method word" + tokens[i]);
+		  currentWord+=tokens[i];
+		}
+		else{
+			hasError=true;
+		}
+		i++;
+	   }	
+	   if(!hasError){//first Check
+		if(currentWord!=""){
+			values.push(currentWord);
+			trace("The word doesnt end with space");
+		}
+		for(op in values)
+			trace(op);
+		if(values.length<2){
+			hasError=true;
+			trace("FOrmat less than two");
+		}
+		else{
+			if(values[0]!="format")
+				hasError=true;
+		}
+		if(!hasError){
+			if(values[1]=="std" && values.length==2){
+				this.format=0;
+				this.precision=0;
+			}
+			else if(values[1]=="real" && values.length==2){
+			     this.format=2;
+			     this.precision=0;
+			}
+			else if(values[1]=="sn" && values.length==2){
+			     this.format=3;
+			     this.precision=0;
+			}
+			else if(values[1]=="fixed" && values.length==3 && values[2].length==1 && values[2]>="0" && values[2]<="9"){
+			     this.format=1;
+			     this.precision=Std.parseInt(values[2]);
+			}
+			else 
+			     hasError=true;
+		}
+	   }
+	   if(hasError){
+		sentValues.push("The form syntax is incorrect");
+		sentValues.push("11");
+	   }
+	   else {
+	   	sentValues.push("The form has changed correctly!");
+		sentValues.push("11");
+	   }
+	   return sentValues;
+    }
+    public function checkIfIntegrity(tokens:Array<String>):Array<String>{
+    	   var i:Int=0;
+	   var currentWord:String;
+	   var values:Array<String>;
+    	   while(i<tokens.length){
+		if(tokens[i] == " "){
+		     i++;
+		     continue;
+		 }
+	   else if(tokens[i]=="i"){
+	   }
+	   else if(tokens[i]=="f"){
+	   }
+	   else if(tokens[i]=="t"){
+	   }
+	   else if(tokens[i]=="h"){
+	   }
+	   else if(tokens[i]=="e"){
+	   }
+	   else if(tokens[i]=="n"){
+	   }
+	   else if(tokens[i]=="l"){
+	   }
+	   else if(tokens[i]=="s"){
+	   }
+	   else if(tokens[i]==">"){
+	   }
+	   else if(tokens[i]=="<"){
+	   }
+	   else if(tokens[i]=="="){
+	   }
+	   else if(tokens[i]=="["){
+	   }	   
+	   else if(tokens[i]=="]"){
+	   }
+	   else if(tokens[i]=="("){
+	   
+	   }
+	   else if(tokens[i]==")"){
+	   }
+	   else if(tokens[i]=="o"){
+	   }
+	   else if(tokens[i]=="r"){
+	   }
+	   else if(tokens[i]=="a"){
+	   }
+	   else if(tokens[i]=="d"){
+	   }
+	   else{
+	   }
+	   }
+	   return tokens;
+    }
 
-    public function checkIntegrity(tokens:Array<String>){
+    public function checkIntegrity(tokens:Array<String>):Array<String>{
     	   //Regex ("([ ]*[-+]?[0-9]{1,12})([ ]*[+-/*][ ]*[+-]?[0-9]{1,12})*([ ]*[=]{1}[ ]*)", "g");   
 	   var i:Int=0;
-	   var previousSymbol:Int=0; //0=Nothing, 1=Symbol, 2=SIgn,3=Number, 4=(, 5=)
+	   var previousSymbol:Int=0; //0=Nothing, 1=Symbol, 2=SIgn,3=Number, 4=(, 5=), 6=root
 	   var operators:Array<String>=["-", "+", "*", "/", "^"];
 	   var variables:Array<String>=["A", "B", "C"];
 	   var values:Array<String>=[];
@@ -138,6 +297,17 @@ class Calculator{
 					status=8;
 					expressionStillValid=false;
 				}
+		}
+		else if(tokens[i]=="r"){
+		     if(i+1<tokens.length && tokens[i+1]=="o"){
+		     	if(i+2<tokens.length && tokens[i+2]=="o"){
+				if(i+3<tokens.length && tokens[i+3]=="t"){
+					values.push("root");
+				}
+			}
+		     }
+		     else{
+		     }
 		}
 		else if(operators.indexOf(tokens[i])!=-1){
 		     if((previousSymbol==0 || previousSymbol==4) && (tokens[i]=="+" || tokens[i]=="-")){
@@ -199,7 +369,7 @@ class Calculator{
 			expressionStillValid=false;
 		     }
 		     else{
-		     	     while(i<tokens.length && (tokens[i]=="." || tokens[i]=="E" || (tokens[i]>="0" && tokens[i]<="9")) && expressionStillValid){
+		     	     while(i<tokens.length && (tokens[i]=="." || tokens[i]=="e" || (tokens[i]>="0" && tokens[i]<="9")) && expressionStillValid){
 		     					   posNumber+=tokens[i];
 		     					   if(tokens[i]=="."){
 								if(hasPoint || hasE){
@@ -208,7 +378,7 @@ class Calculator{
 		     						}//if(tokens[i]==".")
 		     				           else hasPoint=true;
 		     					   }
-		     					   else if(tokens[i]=="E"){
+		     					   else if(tokens[i]=="e"){
 		     					   	if(hasE){
 									expressionStillValid=false;
 		     							status=8;
@@ -316,7 +486,7 @@ class Calculator{
     }
     
     public function print(){
-    	return this.result.vPrint();	
+    	return this.result.vPrint(this.format, this.precision);
     }
 
     public function printAValue(){
@@ -333,6 +503,20 @@ class Calculator{
 
     public function printOperations(){
     	   return this.operations;
+    }
+    public function printForm(){
+    	   var word:String="";
+	   switch(this.format){
+		case 0:
+		     word="Standard";
+		case 1:
+		     word="Fixed "+this.precision;
+		case 2:
+		     word="Real";
+		case 3:
+		     word="Scientific Notation";
+	   }
+	   return word;
     }
 	   
     public function evaluate(letter:String, tokens:Array<String>)    {
@@ -444,9 +628,9 @@ class Calculator{
 	 if(this.operations.length==0){
 		var a:Number=values[0];
 		if(a.getError()!=0)
-			operations.push(a.vPrint());
+			operations.push(a.vPrint(this.format, this.precision));
 		else
-			operations.push(a.print()+' = '+ a.vPrint());
+			operations.push(a.print()+' = '+ a.vPrint(this.format, this.precision));
 	}
 
 	var lastValue:Number=values.pop();
