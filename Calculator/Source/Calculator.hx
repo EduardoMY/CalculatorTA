@@ -404,6 +404,9 @@ class Calculator{
 		case "12":// Invalid if
 		     this.operations=[realTokens.pop()+""];
 		     this.result=new Number("0");
+		case "13":
+		     this.operations=["Missing comma"];
+		     this.result=new Number("0");
 	   }
     }
     public function checkIntegrity(tokens:Array<String>):Array<String>{
@@ -429,7 +432,7 @@ class Calculator{
 			     }
 			     
 		if(tokens[i]=="("){
-			if(previousSymbol==3 || previousSymbol==5){
+			 if(previousSymbol==3 || previousSymbol==5){
 				expressionStillValid=false;
 				status=8;
 			}
@@ -449,8 +452,7 @@ class Calculator{
 			}
 		}
 		else if(tokens[i]==")"){
-				
-				if(previousSymbol==3 || previousSymbol==5){
+			 if(previousSymbol==3 || previousSymbol==5){
 					var state:Int=0;
 					var c:Int=i;
 					state=checkParenthesis(tokens, c, ")");
@@ -458,16 +460,20 @@ class Calculator{
 						expressionStillValid=false;
 						status=9;
 					}
-					else { 
+					else{ 
 					     	values.push(tokens[i]);
 						previousSymbol=5;
-					
 					}
 				}
 				else{
 					status=8;
 					expressionStillValid=false;
 				}
+		}
+		else if(isRootActive && tokens[i]=="]"){
+		     previousSymbol=5;
+		     values.push("]");
+
 		}
 		else if(tokens[i]=="r"){
 		     if(previousSymbol==3 || previousSymbol==5){
@@ -484,14 +490,57 @@ class Calculator{
 					hasComma=false;
 				}
 			}
-		     i=i+3;
+		     i=i+4;
+		     //searches the beginning of the parenthesis (
+			while(i<tokens.length && tokens[i]!="=" && expressionStillValid){
+				if(tokens[i]==" "){
+					i++;
+				}
+				else if(tokens[i]=="("){
+				     values.push("[");
+				     isParenthesisOpen=true;
+				     break;
+				}
+				else{
+					values.push(tokens[i]);
+					values.push("1");
+					expressionStillValid=false;
+				}
+			}
+			//searches the corresponding )
+			var state:Int=0;
+			isParenthesisOpen=true;
+			previousSymbol=4;
+			state=checkParenthesis(tokens, i, "(");
+			if(state==0){
+				state=parenthesisCloseIndex(tokens, i);
+				tokens[state]="]";
+				values.push("[");
+			}
+			else{
+				status=9;
+				expressionStillValid=false;
+			}
 		}
 		else if(tokens[i]=="]" && isRootActive){
-		     if(!hasComma){ //No format
+		     if(hasComma){ //No format
+		     		    previousSymbol=5;
+		     		    values.push("]");
+		     }
+		     else {
+		     	 status=13;
+			expressionStillValid=false;
 		     }
 		}
 		else if(tokens[i]=="," && isRootActive){
-
+		     if(isParenthesisOpen){
+			previousSymbol=0;
+		     	values.push(",");
+		     }
+		     else {
+		     	  status=9;
+			  expressionStillValid=false;
+		     }
 		}
 		else if(operators.indexOf(tokens[i])!=-1){
 		     if((previousSymbol==0 || previousSymbol==4) && (tokens[i]=="+" || tokens[i]=="-")){
@@ -517,7 +566,6 @@ class Calculator{
 			  values.push(tokens[i]);
 		     }
 		     else {
-	
 			  values.push(tokens[i]);
 			  expressionStillValid=false;
 		     }
@@ -741,6 +789,28 @@ class Calculator{
    	// the special case of a sign affecting a number inside a Parenthesis
 	   if (tokens[i]=="--")
 	      ops.push(tokens[i]);
+	      
+	   else if(tokens[i]=="root"){
+	   	var x:Number, y:Number, res:Number;
+		var xOperations:Array<String>=[],yOperations:Array<String>=[];
+		var index:Int=i+2;
+		while(tokens[index]!=","){
+			xOperations.push(tokens[index]);
+			index++;
+		}
+		while(tokens[index]!="]"){
+			yOperations.push(tokens[index]);
+			index++;
+		}
+		x=evaluate("", xOperations);
+		y=evaluate("", yOperations);
+		//first operation
+		res=applyOp("/", x, new Number("1"));
+		//second operation
+		res=applyOp("^", y, res);
+		values.push(res);
+		i=index;
+	   }
       	// Current token is a number, push it to stack for numbers
             else if (tokens[i].length>1 || variables.indexOf(tokens[i])!=-1 || (tokens[i]>="0" && tokens[i]<="9"))
             {
