@@ -56,49 +56,7 @@ class Calculator{
 	   else
 		realTokens=checkIntegrity(tokens);
 	   
-	   switch(realTokens.pop()){
-		case "0": //No error at all
-		     this.operations=[];
-		     var assign:String=realTokens.pop();
-	   	     this.result=evaluate(assign, realTokens);
-		     quitExecution=false;
-		case "1": //Error Invalid Token
-		     this.operations=["Token invalid ("+realTokens.pop()+")"];
-		     this.result=new Number("0");
-		case "2": //Error  Missing Operation
-		     this.operations=["There is a missing operation"];
-		     this.result=new Number("0");
-		case "3": //Error Bad combination of signs
-		     this.operations=["Bad combination of signs("+realTokens[realTokens.length-2]+realTokens[realTokens.length-1]+")"];
-		     this.result=new Number("pp0");
-		case "4": //Number too big
-		     this.operations=["Overflow !!!"];
-		     this.result=new Number("0");
-		case "5": //Single operation
-		     this.operations=["Error: Cannot aply an operation to a single number"];
-		     this.result=new Number("0");
-		case "6":
-		     this.operations=["No = at the end"];
-		     this.result=new Number("0");
-		case "7":
-		     this.operations=["Empty operation"];
-		     this.result=new Number("0");
-		case "8":
-		     this.operations=["Invalid Number"];
-		     this.result=new Number("0");
-		case "9":
-		     this.operations=["Parenthesis Mismatch"];
-		     this.result=new Number("0");
-		case "10":
-		     this.operations=["Invalid expression after ="];
-		     this.result=new Number("0");
-		case "11": //format
-		     this.operations=[realTokens.pop()+""];
-		     this.result=new Number("0");
-		case "12"://if
-		     this.operations=[realTokens.pop()+""];
-		     this.result=new Number("0");
-	   }
+	   options(realTokens);
     }
     public function checkFormIntegrity(tokens:Array<String>):Array<String>{
     	   trace("Special Method");
@@ -185,58 +143,269 @@ class Calculator{
     }
     public function checkIfIntegrity(tokens:Array<String>):Array<String>{
     	   var i:Int=0;
-	   var currentWord:String;
-	   var values:Array<String>;
-    	   while(i<tokens.length){
-		if(tokens[i] == " "){
-		     i++;
-		     continue;
-		 }
-	   else if(tokens[i]=="i"){
+	   var currentWord:String="";
+	   var values:Array<String>=[];
+	   var operators:Array<String>=["<>", "=", ">", ">=", "<", "<="];
+	   var otherSyntax:Array<String>=["else", "then", "and", "or"];
+	   var isIfInvalid:Bool=false;
+	   var hasAndOr:Bool=false;
+	   var hasElse:Bool=false;
+	   var boolValues:Array<Bool>=[false, true];
+	   var isBooleanElement:Bool=false;
+
+	   /* Common Structure:
+	   if[Operacion] then (Operation=)  else (Operation=)
+	   if[Operacion] then (Operation=)
+	   */
+
+    	   while(i<tokens.length && !isIfInvalid){
+	   
+	   if(tokens[i] == " "){
+	   		if(currentWord!=""){
+				values.push(currentWord);
+				currentWord="";
+	   		}
+	     i++;
+	     continue;
+	    }
+	   else if(!isBooleanElement && (tokens[i]=="i" || tokens[i]=="f" || tokens[i]=="t" || tokens[i]=="h" || tokens[i]=="e" || tokens[i]=="n" ||
+	   	tokens[i]=="l" || tokens[i]=="s" || tokens[i]=="o" || tokens[i]=="r" || tokens[i]=="a" || tokens[i]=="d")){ //normal syntax
+				
+			currentWord+=tokens[i];
+			trace("if token" + tokens[i]);
 	   }
-	   else if(tokens[i]=="f"){
-	   }
-	   else if(tokens[i]=="t"){
-	   }
-	   else if(tokens[i]=="h"){
-	   }
-	   else if(tokens[i]=="e"){
-	   }
-	   else if(tokens[i]=="n"){
-	   }
-	   else if(tokens[i]=="l"){
-	   }
-	   else if(tokens[i]=="s"){
-	   }
-	   else if(tokens[i]==">"){
-	   }
-	   else if(tokens[i]=="<"){
-	   }
-	   else if(tokens[i]=="="){
+	   else if(tokens[i]==">" || tokens[i]=="<" || tokens[i]=="="){
+	   	if(currentWord!=""){ //Checks if the current Value is empty or not
+				     if(operators.indexOf(currentWord)==-1){ //its not an operator
+				     		values.push(currentWord);
+						currentWord=tokens[i];
+						
+					} 
+					else currentWord+=tokens[i];
+		}
+		else currentWord=tokens[i];
 	   }
 	   else if(tokens[i]=="["){
+	   	if(currentWord!=""){
+			values.push(currentWord);
+			currentWord="";
+		}
+		values.push("[");
+		isBooleanElement=true;
 	   }	   
 	   else if(tokens[i]=="]"){
+	   if(currentWord!=""){
+		values.push(currentWord);
+		currentWord="";
+		}
+		values.push("]");
+		isBooleanElement=false;
 	   }
 	   else if(tokens[i]=="("){
-	   
+	   	if(currentWord!=""){
+			values.push(currentWord);
+			currentWord="";
+		}
+	   	var index:Int=parenthesisCloseIndex(tokens, i);
+		trace("El indice es "+index);
+		if(index==-1) //error
+			isIfInvalid=true;
+		else{
+			while(i<=index){
+				trace("Loop "+ i+ " token " +tokens[i]);
+				currentWord+=tokens[i];
+				i++;
+			}
+			i--;
+			values.push(currentWord);
+			currentWord="";
+		}
 	   }
 	   else if(tokens[i]==")"){
 	   }
-	   else if(tokens[i]=="o"){
-	   }
-	   else if(tokens[i]=="r"){
-	   }
-	   else if(tokens[i]=="a"){
-	   }
-	   else if(tokens[i]=="d"){
-	   }
 	   else{
+		if(operators.indexOf(currentWord)!=-1 || otherSyntax.indexOf(currentWord)!=-1){
+			values.push(currentWord);
+			currentWord="";
+		}
+		currentWord+=tokens[i];
 	   }
+	   i++;
+	   } //While end
+
+	   if(currentWord!=""){
+		values.push(currentWord);
+		trace("A token hanging there");
+	}
+	trace("validez del if" +isIfInvalid);
+	trace(values.length);
+	   if(values.length==8 || values.length==10 || values.length==12 || values.length==14){
+	   	//length=6 -> if [ Op comparison Op ] then (Op)
+	   	var actualIndex:Int=0; //A simple index to make the work of knowing the next values easier
+
+	   	if(values[0]=="if" && values[1]=="[" && operators.indexOf(values[3])!=-1 && values[5]=="]" && values[6]=="then"){
+			actualIndex=6;
+			trace("primer if");
+		}
+		else if(values.length>=10 && values[0]=="if" && values[1]=="[" && operators.indexOf(values[3])!=-1 && (values[5]=="and" || values[5]=="or") && 
+		     	operators.indexOf(values[7])!=-1 && values[9]=="]" && values[10]=="then"){
+			actualIndex=10;
+			hasAndOr=true;
+			trace("Second if");
+		}
+		else
+			isIfInvalid=true;
+		
+		if(actualIndex+2<values.length){ //has else, or it should have 
+			if(values[actualIndex+2]=="else")
+				hasElse=true;
+			else {
+			     isIfInvalid=true;
+			     trace("Aqui");
+			     }
+		}
 	   }
-	   return tokens;
+	   else {
+	   	isIfInvalid=true;
+	   }
+
+	   if(isIfInvalid){
+		values.push("The if syntax is incorrect");
+	   	values.push("12");
+	}
+	   else{ // CHecks the values
+	   	trace("CHecking Values");
+	   	var booleanResult:Bool;
+		var realTokens:Array<String>=[];
+		var firstValue:Number, secondValue:Number, thirdValue:Number, fourthValue:Number;
+
+		//First comparison in if
+	   	realTokens=checkIntegrity((values[2]+"=").split(""));
+		options(realTokens);
+		firstValue=this.result;
+
+		realTokens=checkIntegrity((values[4]+"=").split(""));
+		options(realTokens);
+		secondValue=this.result;
+		trace(firstValue.vPrint());
+		trace(secondValue.vPrint());
+		boolValues[0]=comparisons(firstValue, secondValue, values[3]);
+		booleanResult=boolValues[0];
+		trace(booleanResult);
+
+		//Second comparison in if
+		if(hasAndOr){
+
+	   	realTokens=checkIntegrity((values[6]+"=").split(""));
+		options(realTokens);
+		thirdValue=this.result;
+
+		realTokens=checkIntegrity((values[8]+"=").split(""));
+		options(realTokens);
+		fourthValue=this.result;
+		trace(thirdValue.vPrint());
+		trace(fourthValue.vPrint());
+
+		boolValues[1]=comparisons(thirdValue, fourthValue, values[7]);
+		booleanResult=boolValues[1];
+		trace(booleanResult);
+
+			//Apply the second boolean condition
+			if(values[5]=="and")
+				booleanResult=boolValues[0] && boolValues[1];
+			else
+				booleanResult=boolValues[0] || boolValues[1];
+		}		
+		trace(booleanResult);
+		if(booleanResult){ //
+			var operation:String=values[values.indexOf("then")+1];
+			operation=operation.substr(1, operation.length-2);
+		     realTokens=checkIntegrity(operation.split(""));
+		     options(realTokens);
+		}
+		else if(hasAndOr){
+		     var operation:String=values[values.indexOf("else")+1];
+		     operation=operation.substr(1, operation.length-2);
+		     realTokens=checkIntegrity(operation.split(""));
+		     options(realTokens);
+		}
+		else{
+			this.result=new Number("0");
+			this.operations=[];
+		}
+		values.push("Good good");
+		values.push("13");
+	   }
+	   for(c in values)
+	   	 trace(c);
+	   return values;
     }
 
+    public function comparisons(x:Number, y:Number, op:String):Bool{
+    	   var res:Bool=false;
+
+    	   switch(op){
+		case "=":
+		     res=Number.equal(x, y);
+		case "<>":
+		     res=Number.different(x,y);
+		case ">":
+		     res=Number.more(x, y);
+		case ">=":
+		     res=Number.moreequal(x,y);
+		case "<":
+		     res=Number.less(x,y);
+		case "<=":
+		     res=Number.lessequal(x,y);
+	   }
+	   return res;
+    }
+
+    public function options(realTokens:Array<String>):Void{
+    	   	   switch(realTokens.pop()){
+		case "0": //No error at all
+		     this.operations=[];
+		     var assign:String=realTokens.pop();
+	   	     this.result=evaluate(assign, realTokens);
+		     quitExecution=false;
+		case "1": //Error Invalid Token
+		     this.operations=["Token invalid ("+realTokens.pop()+")"];
+		     this.result=new Number("0");
+		case "2": //Error  Missing Operation
+		     this.operations=["There is a missing operation"];
+		     this.result=new Number("0");
+		case "3": //Error Bad combination of signs
+		     this.operations=["Bad combination of signs("+realTokens[realTokens.length-2]+realTokens[realTokens.length-1]+")"];
+		     this.result=new Number("0");
+		case "4": //Number too big
+		     this.operations=["Overflow !!!"];
+		     this.result=new Number("0");
+		case "5": //Single operation
+		     this.operations=["Error: Cannot aply an operation to a single number"];
+		     this.result=new Number("0");
+		case "6":
+		     this.operations=["No = at the end"];
+		     this.result=new Number("0");
+		case "7":
+		     this.operations=["Empty operation"];
+		     this.result=new Number("0");
+		case "8":
+		     this.operations=["Invalid Number"];
+		     this.result=new Number("0");
+		case "9":
+		     this.operations=["Parenthesis Mismatch"];
+		     this.result=new Number("0");
+		case "10":
+		     this.operations=["Invalid expression after ="];
+		     this.result=new Number("0");
+		case "11": //format
+		     this.operations=[realTokens.pop()+""];
+		     this.result=new Number("0");
+		case "12":// Invalid if
+		     this.operations=[realTokens.pop()+""];
+		     this.result=new Number("0");
+	   }
+    }
     public function checkIntegrity(tokens:Array<String>):Array<String>{
     	   //Regex ("([ ]*[-+]?[0-9]{1,12})([ ]*[+-/*][ ]*[+-]?[0-9]{1,12})*([ ]*[=]{1}[ ]*)", "g");   
 	   var i:Int=0;
@@ -246,7 +415,9 @@ class Calculator{
 	   var values:Array<String>=[];
 	   var expressionStillValid:Bool=true;
 	   var status:Int=6;
-	   
+	   //Shit I need to add to quick fix the root problem
+	   var isRootActive:Bool=true, isParenthesisOpen:Bool=false, hasComma:Bool=false;
+	   trace("CHeckIntegrity  "+tokens.toString());
 	   if(tokens.length==0){
 		status=7;
 		expressionStillValid=false;
@@ -299,15 +470,28 @@ class Calculator{
 				}
 		}
 		else if(tokens[i]=="r"){
-		     if(i+1<tokens.length && tokens[i+1]=="o"){
-		     	if(i+2<tokens.length && tokens[i+2]=="o"){
-				if(i+3<tokens.length && tokens[i+3]=="t"){
-					values.push("root");
-				}
-			}
+		     if(previousSymbol==3 || previousSymbol==5){
+			status=2;
+			expressionStillValid=false;
 		     }
 		     else{
+		     if(i+1<tokens.length && tokens[i+1]=="o" && 
+		     		i+2<tokens.length && tokens[i+2]=="o" &&
+				i+3<tokens.length && tokens[i+3]=="t"){
+					values.push("root");
+					isRootActive=true;
+					isParenthesisOpen=false;
+					hasComma=false;
+				}
+			}
+		     i=i+3;
+		}
+		else if(tokens[i]=="]" && isRootActive){
+		     if(!hasComma){ //No format
 		     }
+		}
+		else if(tokens[i]=="," && isRootActive){
+
 		}
 		else if(operators.indexOf(tokens[i])!=-1){
 		     if((previousSymbol==0 || previousSymbol==4) && (tokens[i]=="+" || tokens[i]=="-")){
@@ -333,7 +517,7 @@ class Calculator{
 			  values.push(tokens[i]);
 		     }
 		     else {
-		     	  status = 3;
+	
 			  values.push(tokens[i]);
 			  expressionStillValid=false;
 		     }
@@ -364,7 +548,7 @@ class Calculator{
 			posNumber=".";
 			i++;
 			}
-		     if(previousSymbol==3){
+		     if(previousSymbol==3 || previousSymbol==5){
 			status=2;
 			expressionStillValid=false;
 		     }
@@ -483,6 +667,21 @@ class Calculator{
 		 i=i+df;
 	   }
 	   return state;
+    }
+    public function parenthesisCloseIndex(tokens:Array<String>, i:Int){
+    	   var pos:Int=-1, state:Int=1;
+	   i++;
+	   while(i>=0 && i<tokens.length && state!=0){
+	   	if(tokens[i]=="(")
+			state++;
+		else if(tokens[i]==")")
+		     state--;
+		i++;
+	   }
+	   if(state==0){
+		pos=i-1;
+	   }
+	   return pos;
     }
     
     public function print(){

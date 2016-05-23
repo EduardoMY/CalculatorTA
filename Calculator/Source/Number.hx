@@ -411,4 +411,53 @@ class Number{
 	    }
 	     return rNumber;
       }
+      static public function equal(x:Number, y:Number):Bool{
+      	     var xDecimal:DecimalImpl;
+	     var yDecimal:DecimalImpl;
+	     
+	     xDecimal=x.getValue().multiply(DecimalImpl.ten.pow(x.getExponent()));
+	     yDecimal=y.getValue().multiply(DecimalImpl.ten.pow(y.getExponent()));
+	     return xDecimal.compareTo(yDecimal)==0;
+      }
+
+      static public function different(x:Number, y:Number):Bool{
+             var xDecimal:DecimalImpl;
+	     var yDecimal:DecimalImpl;
+	     
+	     xDecimal=x.getValue().multiply(DecimalImpl.ten.pow(x.getExponent()));
+	     yDecimal=y.getValue().multiply(DecimalImpl.ten.pow(y.getExponent()));
+	     return xDecimal.compareTo(yDecimal)!=0;
+      }
+      static public function moreequal(x:Number, y:Number):Bool{
+             var xDecimal:DecimalImpl;
+	     var yDecimal:DecimalImpl;
+	     
+	     xDecimal=x.getValue().multiply(DecimalImpl.ten.pow(x.getExponent()));
+	     yDecimal=y.getValue().multiply(DecimalImpl.ten.pow(y.getExponent()));
+	     return xDecimal.compareTo(yDecimal)>=0; 
+      }
+      static public function more(x:Number, y:Number):Bool{
+             var xDecimal:DecimalImpl;
+	     var yDecimal:DecimalImpl;
+	     
+	     xDecimal=x.getValue().multiply(DecimalImpl.ten.pow(x.getExponent()));
+	     yDecimal=y.getValue().multiply(DecimalImpl.ten.pow(y.getExponent()));
+	     return xDecimal.compareTo(yDecimal)>0;
+      }
+      static public function lessequal(x:Number, y:Number):Bool{
+      	     var xDecimal:DecimalImpl;
+	     var yDecimal:DecimalImpl;
+	     
+	     xDecimal=x.getValue().multiply(DecimalImpl.ten.pow(x.getExponent()));
+	     yDecimal=y.getValue().multiply(DecimalImpl.ten.pow(y.getExponent()));
+	     return xDecimal.compareTo(yDecimal)<=0;
+      }
+      static public function less(x:Number, y:Number):Bool{
+      	     var xDecimal:DecimalImpl;
+	     var yDecimal:DecimalImpl;
+	     
+	     xDecimal=x.getValue().multiply(DecimalImpl.ten.pow(x.getExponent()));
+	     yDecimal=y.getValue().multiply(DecimalImpl.ten.pow(y.getExponent()));
+	     return xDecimal.compareTo(yDecimal)<0;
+      }
 }
