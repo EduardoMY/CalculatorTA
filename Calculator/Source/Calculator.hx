@@ -6,6 +6,11 @@ package ;
    * Destruir la tabla adicional
 */
 
+
+/* Cosas de esta calculadora
+   * Corregir Raices anidades
+*/
+
 class Calculator{
 
     var originalOperation: String;
@@ -201,7 +206,7 @@ class Calculator{
 		values.push("]");
 		isBooleanElement=false;
 	   }
-	   else if(tokens[i]=="("){
+	   else if(tokens[i]=="(" && !isBooleanElement){
 	   	if(currentWord!=""){
 			values.push(currentWord);
 			currentWord="";
@@ -220,8 +225,6 @@ class Calculator{
 			values.push(currentWord);
 			currentWord="";
 		}
-	   }
-	   else if(tokens[i]==")"){
 	   }
 	   else{
 		if(operators.indexOf(currentWord)!=-1 || otherSyntax.indexOf(currentWord)!=-1){
@@ -318,23 +321,26 @@ class Calculator{
 		}		
 		trace(booleanResult);
 		if(booleanResult){ //
+			trace("First element");
 			var operation:String=values[values.indexOf("then")+1];
 			operation=operation.substr(1, operation.length-2);
 		     realTokens=checkIntegrity(operation.split(""));
 		     options(realTokens);
 		}
-		else if(hasAndOr){
+		else if(hasElse){
+		     trace("Second ELement");
 		     var operation:String=values[values.indexOf("else")+1];
 		     operation=operation.substr(1, operation.length-2);
 		     realTokens=checkIntegrity(operation.split(""));
 		     options(realTokens);
 		}
 		else{
+			trace("third ELement");
 			this.result=new Number("0");
 			this.operations=[];
 		}
 		values.push("Good good");
-		values.push("13");
+		values.push("14");
 	   }
 	   for(c in values)
 	   	 trace(c);
@@ -414,12 +420,12 @@ class Calculator{
 	   var i:Int=0;
 	   var previousSymbol:Int=0; //0=Nothing, 1=Symbol, 2=SIgn,3=Number, 4=(, 5=), 6=root
 	   var operators:Array<String>=["-", "+", "*", "/", "^"];
-	   var variables:Array<String>=["A", "B", "C"];
+	   var variables:Array<String>=["a", "b", "c"];
 	   var values:Array<String>=[];
 	   var expressionStillValid:Bool=true;
 	   var status:Int=6;
 	   //Shit I need to add to quick fix the root problem
-	   var isRootActive:Bool=true, isParenthesisOpen:Bool=false, hasComma:Bool=false;
+	   var isRootActive:Bool=false, isParenthesisOpen:Bool=false, hasComma:Bool=false;
 	   trace("CHeckIntegrity  "+tokens.toString());
 	   if(tokens.length==0){
 		status=7;
@@ -475,7 +481,7 @@ class Calculator{
 		     values.push("]");
 
 		}
-		else if(tokens[i]=="r"){
+		else if(tokens[i]=="r" && !isRootActive){ //root
 		     if(previousSymbol==3 || previousSymbol==5){
 			status=2;
 			expressionStillValid=false;
@@ -573,9 +579,9 @@ class Calculator{
 		else if(variables.indexOf(tokens[i])!=-1){//Checks if the Value is a Variable {A, B, C}
 		     if(previousSymbol!=3){
 				if(previousSymbol==2 && values.pop()=="-"){
-					values.push("-"+tokens[i]);
+					values.push("-"+tokens[i].toUpperCase());
 				}
-				else values.push(tokens[i]);
+				else values.push(tokens[i].toUpperCase());
 		     		previousSymbol=3;
 		     }
 		     else {
@@ -671,7 +677,7 @@ class Calculator{
 	var hasOtherSymbol:Bool=false;
 		while(i<tokens.length && !hasOtherSymbol){
 			if(variables.indexOf(tokens[i])!=-1){
-			values.push(tokens[i]);
+			values.push(tokens[i].toUpperCase());
 			hasAssignation=true;
 			}
 			else if(tokens[i]!=" "){
@@ -807,7 +813,7 @@ class Calculator{
 		//first operation
 		res=applyOp("/", x, new Number("1"));
 		//second operation
-		res=applyOp("^", y, res);
+		res=applyOp("^", res, y);
 		values.push(res);
 		i=index;
 	   }

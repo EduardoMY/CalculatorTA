@@ -189,9 +189,11 @@ class Number{
 				    expComponent="E"+this.exponent;
 				}	
 			}
-			
+
 			//print the fixed form
-			if(expComponent=="" && form==1){
+			if(expComponent=="" && form==1)
+				valueComponent=this.value.multiply(DecimalImpl.ten.pow(this.exponent)).roundTo(precision).toString();
+				/*{
 				if(valueComponent.indexOf(".")==-1){
 					if(precision!=0){
 					valueComponent+=".";
@@ -219,7 +221,7 @@ class Number{
 				          valueComponent=valueComponent.substr(0, pos-1);
 				}
 				}
-			}
+			} //end this    */
 	}
 		name=valueComponent+expComponent;
 	}
