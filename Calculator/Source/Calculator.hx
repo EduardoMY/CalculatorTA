@@ -1,14 +1,9 @@
 package ;
 
 /* Notas rapidas de sistemas de informacion
-   * Alinear las flechas
-   * Corregir las cardinalidades
-   * Destruir la tabla adicional
-*/
-
-
-/* Cosas de esta calculadora
-   * Corregir Raices anidades
+   * Alinear las flechas - DOne
+   * Corregir las cardinalidades -
+   * Destruir la tabla adicional -Done
 */
 
 class Calculator{
@@ -276,7 +271,7 @@ class Calculator{
 		values.push("The if syntax is incorrect");
 	   	values.push("12");
 	}
-	   else{ // CHecks the values
+	   else{ // CHecks the values, now lets work
 	   	trace("CHecking Values");
 	   	var booleanResult:Bool;
 		var realTokens:Array<String>=[];
@@ -477,9 +472,17 @@ class Calculator{
 				}
 		}
 		else if(isRootActive && tokens[i]=="]"){
+		     trace("comma"+hasComma);
+		     trace("previousSymbol: "+ previousSymbol);
+		     if(hasComma && (previousSymbol==3 || previousSymbol==5 )){
 		     previousSymbol=5;
 		     values.push("]");
-
+		     isRootActive=false;
+		     }
+		     else {
+		     	 status=2;
+			expressionStillValid=false;
+		     }
 		}
 		else if(tokens[i]=="r" && !isRootActive){ //root
 		     if(previousSymbol==3 || previousSymbol==5){
@@ -542,6 +545,7 @@ class Calculator{
 		     if(isParenthesisOpen){
 			previousSymbol=0;
 		     	values.push(",");
+			hasComma=true;
 		     }
 		     else {
 		     	  status=9;
@@ -809,15 +813,30 @@ class Calculator{
 			index++;
 		}
 		x=evaluate("", xOperations);
-		y=evaluate("", yOperations);
-		//first operation
-		res=applyOp("/", x, new Number("1"));
-		//second operation
-		res=applyOp("^", res, y);
-		values.push(res);
-		i=index;
+		for(i in this.operations)
+		      trace(i);
+		if(!this.quitExecution){
+			y=evaluate("", yOperations);
+			if(!this.quitExecution){
+				y.setInnerParenthesis();
+				//first operation
+				res=applyOp("/", x, new Number("1"));
+				if(!this.quitExecution){
+					//second operation
+					res=applyOp("^", res, y);
+					values.push(res);
+					i=index;
+				}
+				else 
+				     values.push(res);
+			}
+			else
+				values.push(y);
+		}
+		else
+			values.push(x);
 	   }
-      	// Current token is a number, push it to stack for numbers
+      	// Current token is a number push it to stack for numbers
             else if (tokens[i].length>1 || variables.indexOf(tokens[i])!=-1 || (tokens[i]>="0" && tokens[i]<="9"))
             {
 		var temp:Number;

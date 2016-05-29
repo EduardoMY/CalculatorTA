@@ -207,7 +207,7 @@ class Main extends Sprite {
 		operations.border=true;
 		operations.multiline=true;
 		operations.background=true;
-		trace("Hola crayola");
+
 				helpMessage="Seccion de Ayuda\n"
 				     +"================\n"
 				     +"Instrucciones:\n"
@@ -235,6 +235,7 @@ class Main extends Sprite {
 		
 
 	}
+
 	private function onKeyUp(event:KeyboardEvent):Void{
 	if(event.keyCode==Keyboard.ENTER){
 		operations.text="";

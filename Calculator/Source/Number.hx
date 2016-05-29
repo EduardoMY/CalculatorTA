@@ -289,8 +289,18 @@ class Number{
 		xDecimals=x.getNumber(-dfExp);
 		yDecimals=y.getNumber(0);
 	     }
+	     trace(xDecimals.toString());
+	     trace(yDecimals.toString());
 	     rDecimals=xDecimals.subtract(yDecimals);
-	     rNumber=new Number(rDecimals.toString()+"E"+maxExp );
+	     trace(rDecimals.toString());
+	     if( (rDecimals.compareTo(xDecimals)>0 && yDecimals.compareTo(DecimalImpl.zero)>0) ||
+	     	(rDecimals.compareTo(xDecimals)<0 && yDecimals.compareTo(DecimalImpl.zero)<0)
+	     	)
+		{
+			rNumber=new Number((xDecimals.toFloat()-yDecimals.toFloat())+"E"+maxExp);
+		}
+		else
+			rNumber=new Number(rDecimals.toString()+"E"+maxExp );
 	     rNumber.resetOverflow();
 	     return rNumber;
       }
