@@ -202,22 +202,25 @@ class Main extends Sprite {
 		operations.y=30.0;
 		operations.height=400.0;
 		operations.width=550.0;
-		//operations.wordWrap=true;
+		operations.multiline=true;
+		operations.wordWrap=true;
 		operations.setTextFormat(insideText);
 		operations.border=true;
-		operations.multiline=true;
 		operations.background=true;
 
 				helpMessage="Seccion de Ayuda\n"
 				     +"================\n"
+				     +"**NOTA: Para navegar por el menu de Help hay que utilizar las\n"
+				     +" flechas Up y Down del teclado\n"
 				     +"Instrucciones:\n"
 				     +"*Dar click en la barra de abajo\n"
 				     +"*Insertar la operacion\n"
 				     +"*Presionar la tecla enter\n"
 				     +"==========================\n"
-				     +"Notas Importantes:\n"
+				     +"Notas Generales Importantes:\n"
 				     +"El sistema marcara error por problemas de sintaxis.\n"
-				     +"Al marcar un error el cuadro de resultados y en este.\n"
+				     +"Al marcar un error el cuadro de resultados tendra cero\n"
+				     +" y en este tendra el mensaje de error.\n"
 				     +"El sistema acepta numeros con signo (-N y +N).\n"
 				     +"No se puede utilizar mas de un signo por numero.\n"
 				     +"La operacion deben de tener un signo de igualdad al terminar.\n"
@@ -225,14 +228,28 @@ class Main extends Sprite {
 				     +"Solo aceptan numero con precision de 8 digitos.\n"
 				     +"Si excede esa precision sera error de Overflow\n"
 				     +"Si en alguna operacion excede esa exactitud sera truncado\n"
-				     +"E va desde -99 hasta 99 y debe ser mayuscula\n"
+				     +"E va desde -99 hasta 99\n"
 				     +"Division entre cero tambien es error.\n"
 				     +"Raiz de Numero negativo tambien es error\n"
 				     +"Puedes poner TODOS los espacios que gustes.\n"
-				     +"Si pones signo fuera de un parentesis sera ignorado";
+				     +"==========================\n"
+				     +"Estructura del If\n"
+				     +"La sintaxis es if, [, ], and, (, ), or, then, else,\n"
+				     +" pudiendo ser en mayuscula\n"
+				     +"Las operaciones de igualdad son: =, <>, >, >=, <, <=\n"
+				     +"No pueden ser anidados y solo puede tener un and u or\n"
+				     +"Ejemplo: if[4=4]then(3=)else(4=)\n"
+				     +"if[4=4 or 5=5]then(3=)else(4=)\n *Note la separacion de or con las condiciones\n"
+				     +"No se pueden tener parentesis encerrando un booleano, el sistema no lo reconoce\n"
+				     +"====================\n"
+				     +"Instrucciones de Format\n"
+				     +"Hay 4 tipos de formatos: Real, fixed, std, SN\n"
+				     +"Formato real: format real\n"
+				     +"Formato fixed: format fixed [0:8] *Solo un numero\n"
+				     +"Formato Standard: format std\n"
+				     +"Formato Scientific Notation: format sn";
 				     
 		operations.text=helpMessage;
-		
 
 	}
 
@@ -248,6 +265,12 @@ class Main extends Sprite {
 		      bValue.text=calc.printBValue();
 		      cValue.text=calc.printCValue();
 		}
-	}
+	else if(event.keyCode==Keyboard.DOWN){
+	          operations.scrollV+=1;
+		  }
+	else if(event.keyCode==Keyboard.UP){
+		operations.scrollV-=1;
+	     }
 
+	}
 }

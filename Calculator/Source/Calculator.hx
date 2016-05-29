@@ -281,10 +281,18 @@ class Calculator{
 	   	realTokens=checkIntegrity((values[2]+"=").split(""));
 		options(realTokens);
 		firstValue=this.result;
-
+		trace("El rastro "+firstValue.print());
+		if(this.quitExecution){
+			values.push("14");
+			return values;
+		}
 		realTokens=checkIntegrity((values[4]+"=").split(""));
 		options(realTokens);
 		secondValue=this.result;
+		if(this.quitExecution){
+			values.push("14");
+			return values;
+		}
 		trace(firstValue.vPrint());
 		trace(secondValue.vPrint());
 		boolValues[0]=comparisons(firstValue, secondValue, values[3]);
@@ -297,24 +305,30 @@ class Calculator{
 	   	realTokens=checkIntegrity((values[6]+"=").split(""));
 		options(realTokens);
 		thirdValue=this.result;
-
+		if(this.quitExecution){
+			values.push("14");
+			return values;
+		}
 		realTokens=checkIntegrity((values[8]+"=").split(""));
 		options(realTokens);
 		fourthValue=this.result;
-		trace(thirdValue.vPrint());
-		trace(fourthValue.vPrint());
+		if(this.quitExecution){
+			values.push("14");
+			return values;
+		}
 
 		boolValues[1]=comparisons(thirdValue, fourthValue, values[7]);
 		booleanResult=boolValues[1];
 		trace(booleanResult);
 
-			//Apply the second boolean condition
-			if(values[5]=="and")
-				booleanResult=boolValues[0] && boolValues[1];
-			else
-				booleanResult=boolValues[0] || boolValues[1];
+		//Apply the second boolean condition
+		if(values[5]=="and")
+			booleanResult=boolValues[0] && boolValues[1];
+		else
+			booleanResult=boolValues[0] || boolValues[1];
 		}		
 		trace(booleanResult);
+		if(!this.quitExecution){
 		if(booleanResult){ //
 			trace("First element");
 			var operation:String=values[values.indexOf("then")+1];
@@ -336,6 +350,11 @@ class Calculator{
 		}
 		values.push("Good good");
 		values.push("14");
+		}
+		else {
+		trace("error");
+		values.push("14");
+		}
 	   }
 	   for(c in values)
 	   	 trace(c);
@@ -368,7 +387,7 @@ class Calculator{
 		     this.operations=[];
 		     var assign:String=realTokens.pop();
 	   	     this.result=evaluate(assign, realTokens);
-		     quitExecution=false;
+		     //this.quitExecution=false;
 		case "1": //Error Invalid Token
 		     this.operations=["Token invalid ("+realTokens.pop()+")"];
 		     this.result=new Number("0");

@@ -191,37 +191,11 @@ class Number{
 			}
 
 			//print the fixed form
-			if(expComponent=="" && form==1)
-				valueComponent=this.value.multiply(DecimalImpl.ten.pow(this.exponent)).roundTo(precision).toString();
-				/*{
-				if(valueComponent.indexOf(".")==-1){
-					if(precision!=0){
-					valueComponent+=".";
-					var i:Int=0;
-					while(i<precision){
-					      valueComponent+="0";
-					      i++;
-					      }
-					}
-					
-				}
-				else {
-				var pos:Int=valueComponent.indexOf(".")+1;
-				var lastPos:Int=valueComponent.length;
-				if(lastPos-pos<precision){ //Add zeros
-					var i:Int=0;
-					while(i<precision-(lastPos-pos)){
-					      valueComponent+="0";
-					      i++;
-					}
-				}
-				else if(lastPos-pos>precision){ //Delete Zeros 
-				     valueComponent=valueComponent.substr(0, pos+precision);
-				     if(valueComponent.length==pos)
-				          valueComponent=valueComponent.substr(0, pos-1);
-				}
-				}
-			} //end this    */
+			if(expComponent=="" && form==1){
+				valueComponent=this.value.abs().multiply(DecimalImpl.ten.pow(this.exponent)).roundTo(precision).toString();
+				if(this.value.isNegative())
+				valueComponent="-"+valueComponent;
+			}
 	}
 		name=valueComponent+expComponent;
 	}
