@@ -52,7 +52,7 @@ class Main extends Sprite {
 		var helpImg=new Bitmap(bitmapData);
 		helpImg.width=100;
 		helpImg.height=100;
-		helpImg.x=600;
+		helpImg.x=800;
 		helpImg.y=480;
 		
 		var sprite:Sprite=new Sprite();
@@ -171,7 +171,7 @@ class Main extends Sprite {
 		operation.x=20.0;
 		operation.y=505.0;
 		operation.height=30.0;
-		operation.width=500.0;
+		operation.width=600.0;
 		operation.setTextFormat(insideText);
 		operation.border=true;
 		operation.type=TextFieldType.INPUT;
@@ -218,6 +218,10 @@ class Main extends Sprite {
 				     +"*Presionar la tecla enter\n"
 				     +"==========================\n"
 				     +"Notas Generales Importantes:\n"
+				     +"Acepta la funcion root(Entero, Numero)\n"
+				     +"Root no se puede utilizar anidado a si mismo\n"
+				     +"El elemento de Entero sera truncado\n"
+				     +"Si el numero es muy grande Entero tendra el valor de 1"
 				     +"El sistema marcara error por problemas de sintaxis.\n"
 				     +"Al marcar un error el cuadro de resultados tendra cero\n"
 				     +" y en este tendra el mensaje de error.\n"
@@ -255,6 +259,7 @@ class Main extends Sprite {
 
 	private function onKeyUp(event:KeyboardEvent):Void{
 	if(event.keyCode==Keyboard.ENTER){
+		operations.scrollV=0;
 		operations.text="";
 		calc.setOperation(operation.text);
 		for(i in calc.printOperations())

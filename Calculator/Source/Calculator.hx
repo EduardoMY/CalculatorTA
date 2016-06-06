@@ -835,6 +835,7 @@ class Calculator{
 		for(i in this.operations)
 		      trace(i);
 		if(!this.quitExecution){
+			x=x.getInt();
 			y=evaluate("", yOperations);
 			if(!this.quitExecution){
 				y.setInnerParenthesis();
@@ -972,6 +973,8 @@ class Calculator{
 	     return c;
 	}
         // Top of 'values' contains result, return it
+	for(c in operations)
+	      trace("Operations "+ c);
 	return lastValue;
     }
  

@@ -192,9 +192,15 @@ class Number{
 
 			//print the fixed form
 			if(expComponent=="" && form==1){
-				valueComponent=this.value.abs().multiply(DecimalImpl.ten.pow(this.exponent)).roundTo(precision).toString();
-				if(this.value.isNegative())
-				valueComponent="-"+valueComponent;
+				if(this.value.compareTo(DecimalImpl.zero)==0){
+					valueComponent=this.value.next().roundTo(precision).toString();
+					valueComponent="0"+valueComponent.substr(1, valueComponent.length);
+				}
+				else{
+					valueComponent=this.value.abs().multiply(DecimalImpl.ten.pow(this.exponent)).roundTo(precision).toString();
+					if(this.value.isNegative())
+						valueComponent="-"+valueComponent;
+				}
 			}
 	}
 		name=valueComponent+expComponent;
@@ -326,9 +332,24 @@ class Number{
       public function getNumerator(){
       	     return this.numerator;
       }
+
       public function getDenominator(){
-      	     return this.denominator;
-	    }
+      	     return this.denominator;	
+	}
+	public function getInt():Number{
+	      var integer:Int;
+	      var rNumber:Number;
+	      var rDecimal:DecimalImpl;
+	      if(this.exponent>10 || this.exponent<-10){
+	      	rNumber=new Number("1");
+	      }
+	      else{
+		rDecimal=this.value.multiply(DecimalImpl.ten.pow(this.exponent));
+	      	integer=rDecimal.toInt();
+		rNumber=new Number(integer+"");
+	      }
+	      return rNumber;
+	}
 
       static public function pow(x:Number, y:Number){
              var rNumber:Number=new Number("0");
@@ -397,6 +418,7 @@ class Number{
 	    }
 	     return rNumber;
       }
+      
       static public function equal(x:Number, y:Number):Bool{
       	     var xDecimal:DecimalImpl;
 	     var yDecimal:DecimalImpl;
