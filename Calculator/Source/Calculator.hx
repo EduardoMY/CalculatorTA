@@ -68,13 +68,15 @@ class Calculator{
 	   var values:Array<String>=[];
 	   var sentValues:Array<String>=[];
 	   //notation std, real, fix, sn
-	   var availableWords:Array<String>=["form", "std", "real", "fix", "sn"];
+	   var availableWords:Array<String>=["format", "std", "real", "fix", "sn"];
 	   
 	   while(i<tokens.length && !hasError){
 		if(tokens[i] == " "){
 		     if(currentWord!=""){
-			if(availableWords.indexOf(currentWord)!=-1)
+			if(availableWords.indexOf(currentWord)==-1){
 				hasError=true;
+				trace("Espaciooo"+ currentWord);
+			}
 			else
 				values.push(currentWord);
 		     }
@@ -84,7 +86,7 @@ class Calculator{
 		     continue;
 		 }
 		 
-		if(tokens[i]=="f" || tokens[i]=="o" || tokens[i]=="r" || tokens[i]=="m" || tokens[i]=="a" || tokens[i]=="t"
+		else if(tokens[i]=="f" || tokens[i]=="o" || tokens[i]=="r" || tokens[i]=="m" || tokens[i]=="a" || tokens[i]=="t"
 				  || tokens[i]=="e" || tokens[i]=="l" || tokens[i]=="s" || tokens[i]=="i" || tokens[i]=="x"
 				  || tokens[i]=="d" || tokens[i]=="n" || (tokens[i]>="0" && tokens[i]<="8")){
 		trace("Method word" + tokens[i]);
@@ -123,7 +125,7 @@ class Calculator{
 			     this.format=3;
 			     this.precision=0;
 			}
-			else if(values[1]=="fixed" && values.length==3 && values[2].length==1 && values[2]>="0" && values[2]<="9"){
+			else if(values[1]=="fix" && values.length==3 && values[2].length==1 && values[2]>="0" && values[2]<="9"){
 			     this.format=1;
 			     this.precision=Std.parseInt(values[2]);
 			}
@@ -134,6 +136,8 @@ class Calculator{
 	   if(hasError){
 		sentValues.push("The form syntax is incorrect");
 		sentValues.push("11");
+		for(c in values)
+		      trace("Formato "+ c);
 	   }
 	   else {
 	   	sentValues.push("The form has changed correctly!");
@@ -160,7 +164,7 @@ class Calculator{
 
     	   while(i<tokens.length && !isIfInvalid){
 	   
-	   if(tokens[i] == " "){
+	   if(!isBooleanElement && tokens[i] == " "){
 	   		if(currentWord!=""){
 				values.push(currentWord);
 				currentWord="";
@@ -168,11 +172,25 @@ class Calculator{
 	     i++;
 	     continue;
 	    }
-	   else if(!isBooleanElement && (tokens[i]=="i" || tokens[i]=="f" || tokens[i]=="t" || tokens[i]=="h" || tokens[i]=="e" || tokens[i]=="n" ||
-	   	tokens[i]=="l" || tokens[i]=="s" || tokens[i]=="o" || tokens[i]=="r" || tokens[i]=="a" || tokens[i]=="d")){ //normal syntax
-				
+	   else if(!isBooleanElement && (tokens[i]=="i" || tokens[i]=="f" || tokens[i]=="t" || tokens[i]=="h" || tokens[i]=="e" || tokens[i]=="n" 
+|| tokens[i]=="l" || tokens[i]=="s")){ //normal syntax
 			currentWord+=tokens[i];
 			trace("if token" + tokens[i]);
+			trace("currentWord"+currentWord);
+	   }
+	   else if(isBooleanElement && currentWord.length>0 && currentWord.charAt(currentWord.length-1)==" " && (tokens[i]=="o" || tokens[i]=="a")){
+	   		       values.push(currentWord);
+			       currentWord="";
+			       if(tokens[i]=="o" && i+1<tokens.length && tokens[i+1]=="r"){
+						     values.push("or");
+						     i++;
+			       }
+			       else if(tokens[i]=="a" && i+2<tokens.length && tokens[i+1]=="n" && tokens[i+2]=="d"){
+			       	    values.push("and");
+				    i=i+2;
+			       }
+			       else 
+			       isIfInvalid=false;
 	   }
 	   else if(tokens[i]==">" || tokens[i]=="<" || tokens[i]=="="){
 	   	if(currentWord!=""){ //Checks if the current Value is empty or not
@@ -208,7 +226,7 @@ class Calculator{
 		}
 	   	var index:Int=parenthesisCloseIndex(tokens, i);
 		trace("El indice es "+index);
-		if(index==-1) //error
+		if(index==-1)
 			isIfInvalid=true;
 		else{
 			while(i<=index){
@@ -222,9 +240,12 @@ class Calculator{
 		}
 	   }
 	   else{
-		if(operators.indexOf(currentWord)!=-1 || otherSyntax.indexOf(currentWord)!=-1){
+		if(operators.indexOf(currentWord)!=-1){ //si es un operador u otra sintaxis
 			values.push(currentWord);
 			currentWord="";
+			trace("encontro un operador" +tokens[i]);
+			for(c in operators)
+			      trace("Operatos "+ c);
 		}
 		currentWord+=tokens[i];
 	   }
@@ -714,6 +735,9 @@ class Calculator{
 			values.push("");
 	}
 
+	if(status!=0)
+	     this.quitExecution=true;
+
 	values.push(status+"");
 	return values;
     }
@@ -790,7 +814,7 @@ class Calculator{
 		case 2:
 		     word="Real";
 		case 3:
-		     word="Scientific Notation";
+		     word="S. N. ";
 	   }
 	   return word;
     }

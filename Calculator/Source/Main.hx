@@ -35,6 +35,7 @@ class Main extends Sprite {
 	//fonts
 	var insideText:TextFormat;
 	var outsideText:TextFormat;
+	var outputText:TextFormat;
 
 	//Help Message
 	var helpMessage:String;//Mensaje de Help
@@ -91,7 +92,9 @@ class Main extends Sprite {
 		outsideText=new TextFormat();
 		outsideText.color=0xFFFFFF;
 		outsideText.size=20;
-		
+		outputText=new TextFormat();
+		outputText.size=40;
+
 		operation=new TextField();
 		operations=new TextField();
 		resultDecimal=new TextField();
@@ -114,10 +117,10 @@ class Main extends Sprite {
 		resultDecimalTitle.text="Result: ";
 		resultDecimalTitle.setTextFormat(outsideText);
 		resultDecimal.x=20.0;
-		resultDecimal.y=70.0;
-		resultDecimal.height=30.0;
-		resultDecimal.width=200.0;
-		resultDecimal.setTextFormat(insideText);
+		resultDecimal.y=50.0;
+		resultDecimal.height=60.0;
+		resultDecimal.width=260.0;
+		resultDecimal.setTextFormat(outputText);
 		resultDecimal.selectable=true;
 		resultDecimal.border=true;
 		resultDecimal.background=true;
@@ -185,7 +188,7 @@ class Main extends Sprite {
 		format.x=260.0;
 		format.y=160.0;
 		format.height=30.0;
-		format.width=100.0;
+		format.width=120.0;
 		format.text="std";
 		format.setTextFormat(insideText);
 		format.border=true;
@@ -221,7 +224,7 @@ class Main extends Sprite {
 				     +"Acepta la funcion root(Entero, Numero)\n"
 				     +"Root no se puede utilizar anidado a si mismo\n"
 				     +"El elemento de Entero sera truncado\n"
-				     +"Si el numero es muy grande Entero tendra el valor de 1"
+				     +"Si el numero es muy grande Entero tendra el valor de 1\n"
 				     +"El sistema marcara error por problemas de sintaxis.\n"
 				     +"Al marcar un error el cuadro de resultados tendra cero\n"
 				     +" y en este tendra el mensaje de error.\n"
@@ -249,7 +252,7 @@ class Main extends Sprite {
 				     +"Instrucciones de Format\n"
 				     +"Hay 4 tipos de formatos: Real, fixed, std, SN\n"
 				     +"Formato real: format real\n"
-				     +"Formato fixed: format fixed [0:8] *Solo un numero\n"
+				     +"Formato fix: format fix [0:8] *Solo un numero\n"
 				     +"Formato Standard: format std\n"
 				     +"Formato Scientific Notation: format sn";
 				     
